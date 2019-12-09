@@ -4,7 +4,7 @@ export type Target = { [string]: mixed }
 
 export function makeState(
   object: Target,
-  listener: (newState: Target) => void
+  listener?: (newState: Target) => void
 ): Target {
   return new Proxy(object, {
     get(object: Target, field: string) {
@@ -12,7 +12,9 @@ export function makeState(
     },
     set(object: Target, field: string, value: mixed) {
       object[field] = value
-      listener(object)
+      if (listener) {
+        listener(object)
+      }
       return true
     }
   })

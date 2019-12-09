@@ -12,7 +12,7 @@ export function render(to: string, nodes: MTNode | Component | (MTNode | Compone
   const toElement = document.querySelector(to)
 
   if (toElement) {
-    const newToElement = toElement.cloneNode(false)
+    let newToElement = toElement.cloneNode(false)
 
     if (Array.isArray(nodes)) {
       const elements: HTMLElement[][] = nodes.map((node) => {
@@ -22,11 +22,15 @@ export function render(to: string, nodes: MTNode | Component | (MTNode | Compone
           return [node.createElement()]
         }
       })
-      elements.forEach((element) => newToElement.append(...element))
+      elements.forEach((els) => newToElement.append(...els))
     } else {
       if (nodes instanceof Component) {
         const nodeOrNodes = nodes.build()
-        newToElement.append(...transformNodesToElements(nodeOrNodes))
+        if (Array.isArray(nodeOrNodes)) {
+          newToElement.append(...transformNodesToElements(nodeOrNodes))
+        } else {
+          newToElement = nodeOrNodes.createElement()
+        }
       } else {
         newToElement.append(nodes.createElement())
       }
