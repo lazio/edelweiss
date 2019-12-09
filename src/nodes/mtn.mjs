@@ -96,7 +96,7 @@ export default class MTNode {
   /**  @private */
   +_attributes: Attributes
   /**  @private */
-  +_children: MTNode | MTNode[] | string | typeof undefined
+  +_children: MTNode | (MTNode | string)[] | string | typeof undefined
   /** @private */
   +_listeners: MTNodeEventListener | MTNodeEventListener[] | typeof undefined
 
@@ -154,9 +154,13 @@ export default class MTNode {
     }
 
     if (this._children) {
-      if (this._children instanceof Array) {
-        this._children.forEach((child: MTNode) => {
-          element.append(child.createElement())
+      if (Array.isArray(this._children)) {
+        this._children.forEach((child) => {
+          if (child instanceof MTNode) {
+            element.append(child.createElement())
+          } else {
+            element.append(child)
+          }
         })
       } else if (this._children instanceof MTNode) {
         element.append(this._children.createElement())
@@ -166,7 +170,7 @@ export default class MTNode {
     }
 
     if (this._listeners) {
-      if (this._listeners instanceof Array) {
+      if (Array.isArray(this._listeners)) {
         this._listeners.forEach(({ type, listener }) => {
           element.addEventListener(type, listener)
         })
@@ -185,7 +189,7 @@ export default class MTNode {
 // *extend* is used while creating custom node {@link ./nodes/custom.mjs}. It is name of HTML tag or node instance that will be customized if you want it to be inherited from basic HTML element.
 export type MTNodeOptions = {
   attributes?: Attributes,
-  children?: MTNode | MTNode[] | string,
+  children?: MTNode | (MTNode | string)[] | string,
   listeners?: MTNodeEventListener | MTNodeEventListener[],
   extend?: string | MTNode,
 }

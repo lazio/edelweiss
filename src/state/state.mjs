@@ -4,7 +4,7 @@ export type Target = { [string]: mixed }
 
 export function makeState(
   object: Target,
-  listener: (o: Target) => void
+  listener: (newState: Target) => void
 ): Target {
   return new Proxy(object, {
     get(object: Target, field: string) {
