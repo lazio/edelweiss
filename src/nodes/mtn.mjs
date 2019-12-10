@@ -1,5 +1,6 @@
 // @flow
 
+import Component from '../component/component.mjs'
 import { normalizeStyles } from '../utils/styles.mjs'
 import type { Styles } from '../utils/styles.mjs'
 
@@ -96,7 +97,7 @@ export default class MTNode {
   /**  @private */
   +_attributes: Attributes
   /**  @private */
-  +_children: MTNode | (MTNode | string)[] | string | typeof undefined
+  +_children: MTNode | Component | (MTNode | Component | string)[] | string | typeof undefined
   /** @private */
   +_listeners: MTNodeEventListener | MTNodeEventListener[] | typeof undefined
 
@@ -158,12 +159,26 @@ export default class MTNode {
         this._children.forEach((child) => {
           if (child instanceof MTNode) {
             element.append(child.createElement())
+          } else if (child instanceof Component) {
+            const nodes = child.build()
+            if (Array.isArray(nodes)) {
+              element.append(...nodes.map((node) => node.createElement()))
+            } else {
+              element.append(nodes.createElement())
+            }
           } else {
             element.append(child)
           }
         })
       } else if (this._children instanceof MTNode) {
         element.append(this._children.createElement())
+      } else if (this._children instanceof Component) {
+        const nodes = this._children.build()
+        if (Array.isArray(nodes)) {
+          element.append(...nodes.map((node) => node.createElement()))
+        } else {
+          element.append(nodes.createElement())
+        }
       } else {
         element.append(this._children)
       }
@@ -189,7 +204,7 @@ export default class MTNode {
 // *extend* is used while creating custom node {@link ./nodes/custom.mjs}. It is name of HTML tag or node instance that will be customized if you want it to be inherited from basic HTML element.
 export type MTNodeOptions = {
   attributes?: Attributes,
-  children?: MTNode | (MTNode | string)[] | string,
+  children?: MTNode | Component | (MTNode | Component | string)[] | string,
   listeners?: MTNodeEventListener | MTNodeEventListener[],
   extend?: string | MTNode,
 }
