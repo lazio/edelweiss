@@ -12,18 +12,30 @@ export type Route = {
 }
 
 export default class Router {
-  _routes: Route[]
+  static _routes: Route[]
+  static current: Route | typeof undefined
 
   constructor(routes: Route[]) {
-    this._routes = routes
+    Router._routes = routes
+    // First route of the app.
+    Router.current = routes.find((route) => route.path === '/')
   }
 
-  to(path: string): void {
-    const route = this._routes.find((route) => route.path === path)
+  static to(path: string): void {
+    const route = Router._routes.find((route) => route.path === path)
     if (route) {
+      Router.current = route
       render(route.container, route.nodes())
     } else {
       throw new Error(`No route is specified for path: ${path}!`)
     }
+  }
+
+  to(path: string): void {
+    Router.to(path)
+  }
+
+  get current(): Route | typeof undefined {
+    return Router.current
   }
 }
