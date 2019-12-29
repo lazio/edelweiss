@@ -109,7 +109,7 @@ import Video from './nodes/video.mjs'
 import Wbr from './nodes/wbr.mjs'
 import Custom from './nodes/custom.mjs'
 
-import { makeState } from './state/state.mjs'
+import { createState } from './state/state.mjs'
 
 import Component from './component/component.mjs'
 
@@ -121,7 +121,7 @@ export {
   Router,
   render,
   Component,
-  makeState,
+  createState,
   // --- start of nodes ---
   MTNode,
   Button,

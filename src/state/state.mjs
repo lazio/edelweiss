@@ -1,40 +1,45 @@
 // @flow
 
-import Router from '../router/router.mjs'
+import MTNode from '../nodes/mtn.mjs'
+import Component from '../component/component.mjs'
+
+import { render } from '../render.mjs'
 
 export type Target = { [string]: mixed }
+
 export type StateListener = {
-  +path?: string,
-  update?: (newState: Target) => void
+  to: string,
+  fields: string[],
+  update: (newState: Target) => string | Component | MTNode | (string | Component | MTNode)[]
 }
 
-export function makeState(
-  object: Target,
-  listenerObject?: StateListener
-): Target {
-  return new Proxy(object, {
-    get(object: Target, field: string) {
-      return Object.freeze(object[field])
-    },
-    set(object: Target, field: string, value: mixed) {
-      object[field] = value
+export function createState(object: Target) {
+  const listeners: StateListener[] = []
 
-      if (listenerObject) {
-        if (listenerObject.path) {
-          if (Router.current && listenerObject.path === Router.current.path) {
-            if (listenerObject.update) {
-              listenerObject.update(object)
-            }
-            if (listenerObject.path) {
-              Router.to(listenerObject.path)
-            }
+  return {
+    state: new Proxy(object, {
+      get(target, property, receiver) {
+        return target[property]
+      },
+
+      set(target, property, value) {
+        target[property] = value
+
+        const matchedListeners = listeners.filter((li) => li.fields.includes(property))
+        matchedListeners.forEach(({ to, update }) => {
+          const element = document.querySelector(to)
+
+          if (element) {
+            render(to, update(target))
           }
-        } else if (listenerObject.update) {
-          listenerObject.update(object)
-        }
-      }
+        })
 
-      return true
+        return true
+      }
+    }),
+
+    on(listener: StateListener) {
+      listeners.push(listener)
     }
-  })
+  }
 }
