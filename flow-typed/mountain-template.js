@@ -14,7 +14,7 @@ declare module 'mountain-template' {
   }
 
   declare export class Router {
-    current: Route | typeof undefined;
+    current: Route | void;
 
     constructor(routes: Route[]): Router;
 
@@ -25,13 +25,13 @@ declare module 'mountain-template' {
     object: T
   ): {
     state: Proxy<T>,
-    on(listener: StateListener<T>): void,
+    listen(listener: StateListener<T>): void,
   }
 
   declare export function render(
     to: string,
     nodes: string | MTNode | Component | (string | MTNode | Component)[]
-  ): void
+  ): Promise<void>
 
   declare export type InputType =
     | 'button'
@@ -158,7 +158,7 @@ declare module 'mountain-template' {
   declare export type Route = {
     path: string,
     container: string,
-    nodes: () => string | MTNode | Component | (string | MTNode | Component)[],
+    view: () => string | MTNode | Component | (string | MTNode | Component)[],
   }
 
   declare export type StateListener<T: { [string]: any }> = {
