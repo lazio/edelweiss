@@ -2,9 +2,11 @@
 
 import MTNode from '../nodes/mtn.mjs'
 
-export function transformNodesToElements(nodes: MTNode | MTNode[]): HTMLElement[] {
+export function transformNodesToElements(
+  nodes: MTNode | MTNode[]
+): HTMLElement[] {
   if (Array.isArray(nodes)) {
-    return nodes.map((node) => node.createElement())
+    return nodes.map(node => node.createElement())
   } else {
     return [nodes.createElement()]
   }

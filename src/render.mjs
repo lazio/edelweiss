@@ -9,7 +9,10 @@ import { uid } from './utils/uid.mjs'
 /**
  * Render [MTNode] node or nodes and its derivate nodes as element or elements.
  */
-export function render(to: string, nodes: string | MTNode | Component | (string | MTNode | Component)[]) {
+export async function render(
+  to: string,
+  nodes: string | MTNode | Component | (string | MTNode | Component)[]
+): Promise<void> {
   const toElement = document.querySelector(to)
 
   if (toElement) {
@@ -18,16 +21,20 @@ export function render(to: string, nodes: string | MTNode | Component | (string 
     newToElement.dataset.rid = toElement.dataset.rid || `${uid()}`
 
     if (Array.isArray(nodes)) {
-      const elements: (HTMLElement | string)[][] = nodes.map((node) => {
-        if (node instanceof Component) {
-          return [...transformNodesToElements(node.build())]
-        } else if (node instanceof MTNode) {
-          return [node.createElement()]
-        } else {
-          return [node]
+      const promiseElements: Promise<(HTMLElement | string)[]>[] = nodes.map(
+        async node => {
+          if (node instanceof Component) {
+            return [...transformNodesToElements(await node._render())]
+          } else if (node instanceof MTNode) {
+            return [node.createElement()]
+          } else {
+            return [node]
+          }
         }
-      })
-      elements.forEach((els) => newToElement.append(...els))
+      )
+
+      const elements = await Promise.all(promiseElements)
+      elements.forEach(els => newToElement.append(...els))
     } else {
       if (nodes instanceof Component) {
         const nodeOrNodes = nodes.build()

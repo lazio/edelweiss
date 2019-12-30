@@ -8,12 +8,12 @@ import { render } from '../render.mjs'
 export type Route = {
   path: string,
   container: string,
-  nodes: () => string | MTNode | Component | (string | MTNode | Component)[]
+  view: () => string | MTNode | Component | (string | MTNode | Component)[]
 }
 
 export default class Router {
   _routes: Route[]
-  current: Route | typeof undefined
+  current: Route | void
 
   constructor(routes: Route[]) {
     this._routes = routes
@@ -28,7 +28,7 @@ export default class Router {
 
       if (toContainer) {
         this.current = route
-        render(route.container, route.nodes())
+        render(route.container, route.view())
       } else {
         throw new Error(`On the page is no element that matches ${route.container} selector!`)
       }

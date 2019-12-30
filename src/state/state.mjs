@@ -5,19 +5,19 @@ import Component from '../component/component.mjs'
 
 import { render } from '../render.mjs'
 
-export type Target = { [string]: mixed }
-
-export type StateListener = {
+export type StateListener<T: { [string]: any }> = {
   to: string,
   fields: string[],
-  update: (newState: Target) => string | Component | MTNode | (string | Component | MTNode)[]
+  update: (
+    newState: T
+  ) => string | Component | MTNode | (string | Component | MTNode)[],
 }
 
-export function createState(object: Target) {
-  const listeners: StateListener[] = []
+export function createState<T: { [string]: any }>(object: T) {
+  const listeners: StateListener<T>[] = []
 
   return {
-    state: new Proxy(object, {
+    state: new Proxy<T>(object, {
       get(target, property, receiver) {
         return target[property]
       },
@@ -25,7 +25,9 @@ export function createState(object: Target) {
       set(target, property, value) {
         target[property] = value
 
-        const matchedListeners = listeners.filter((li) => li.fields.includes(property))
+        const matchedListeners = listeners.filter(li =>
+          li.fields.includes(property)
+        )
         matchedListeners.forEach(({ to, update }) => {
           const element = document.querySelector(to)
 
@@ -35,11 +37,11 @@ export function createState(object: Target) {
         })
 
         return true
-      }
+      },
     }),
 
-    on(listener: StateListener) {
+    listen(listener: StateListener<T>) {
       listeners.push(listener)
-    }
+    },
   }
 }

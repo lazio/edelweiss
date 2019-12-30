@@ -27,6 +27,7 @@
 				"named": "never",
 				"asyncArrow": "always"
 			}
-		]
+		],
+		"comma-dangle": ["error", "only-multiline"]
 	}
 }
