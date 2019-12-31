@@ -10,7 +10,7 @@ export type StateListener<T: { [string]: any }> = {
   fields: string[],
   update: (newStateContainer: {
     state: T,
-    listen: (listener: StateListener<T>) => void,
+    onChange: (listener: StateListener<T>) => void,
   }) => string | Component | MTNode | (string | Component | MTNode)[],
 }
 
@@ -19,10 +19,6 @@ export function createState<T: { [string]: any }>(object: T) {
 
   const stateContainer = {
     state: new Proxy<T>(object, {
-      get(target, property, receiver) {
-        return target[property]
-      },
-
       set(target, property, value) {
         target[property] = value
 
@@ -42,7 +38,7 @@ export function createState<T: { [string]: any }>(object: T) {
       },
     }),
 
-    listen(listener: StateListener<T>) {
+    onChange(listener: StateListener<T>) {
       listeners.push(listener)
     },
   }
