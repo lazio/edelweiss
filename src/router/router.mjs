@@ -20,7 +20,9 @@ export default class Router {
     // First route of the app.
     this.current = routes.find(route => {
       const pathRegExp =
-        typeof route.path === 'string' ? new RegExp(route.path) : route.path
+        typeof route.path === 'string'
+          ? new RegExp(`^${route.path}$`)
+          : route.path
 
       return pathRegExp.test('/')
     })
