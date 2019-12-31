@@ -8,15 +8,16 @@ import { render } from '../render.mjs'
 export type StateListener<T: { [string]: any }> = {
   to: string,
   fields: string[],
-  update: (
-    newState: T
-  ) => string | Component | MTNode | (string | Component | MTNode)[],
+  update: (newStateContainer: {
+    state: T,
+    listen: (listener: StateListener<T>) => void,
+  }) => string | Component | MTNode | (string | Component | MTNode)[],
 }
 
 export function createState<T: { [string]: any }>(object: T) {
   const listeners: StateListener<T>[] = []
 
-  return {
+  const stateContainer = {
     state: new Proxy<T>(object, {
       get(target, property, receiver) {
         return target[property]
@@ -32,7 +33,8 @@ export function createState<T: { [string]: any }>(object: T) {
           const element = document.querySelector(to)
 
           if (element) {
-            render(to, update(target))
+            // $FlowFixMe
+            render(to, update(stateContainer))
           }
         })
 
@@ -44,4 +46,6 @@ export function createState<T: { [string]: any }>(object: T) {
       listeners.push(listener)
     },
   }
+
+  return stateContainer
 }
