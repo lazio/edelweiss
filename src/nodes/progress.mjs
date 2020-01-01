@@ -1,14 +1,14 @@
 // @flow
 
-import type { MTNodeOptions } from './mtn.mjs'
+import type { ENodeOptions } from './en.mjs'
 
-import MTNode from './mtn.mjs'
+import ENode from './en.mjs'
 
 /**
  * Construct **<progress>** node with specific options.
  */
-export default class Progress extends MTNode {
-  constructor(value: number, max: ?number, options?: MTNodeOptions) {
+export default class Progress extends ENode {
+  constructor(value: number, max: ?number, options?: ENodeOptions) {
     super('progress', options)
     this._attributes.value = value
     this._attributes.max = max || 1

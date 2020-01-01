@@ -1,14 +1,14 @@
 // @flow
 
-import type { MTNodeOptions } from './mtn.mjs'
+import type { ENodeOptions } from './en.mjs'
 
-import MTNode from './mtn.mjs'
+import ENode from './en.mjs'
 
 /**
  * Construct **<thead>** node with specific options.
  */
-export default class THead extends MTNode {
-  constructor(options?: MTNodeOptions) {
+export default class THead extends ENode {
+  constructor(options?: ENodeOptions) {
     super('thead', options)
   }
 }

@@ -1,8 +1,8 @@
 // @flow
 
-import type { MTNodeOptions } from './mtn.mjs'
+import type { ENodeOptions } from './en.mjs'
 
-import MTNode from './mtn.mjs'
+import ENode from './en.mjs'
 
 /**
  * Construct **<col>** node with specific options.
@@ -10,8 +10,8 @@ import MTNode from './mtn.mjs'
  *
  * Defines a column within a table and is used for defining common semantics on all common cells. It is generally found within a **<colgroup>** node.
  */
-export default class Col extends MTNode {
-  constructor(options?: MTNodeOptions) {
+export default class Col extends ENode {
+  constructor(options?: ENodeOptions) {
     super('col', options)
     this._children = undefined
   }

@@ -1,15 +1,15 @@
 // @flow
 
-declare module 'mountain-template' {
-  declare export class MTNode {
-    constructor(tag: string, options?: MTNodeOptions): MTNode;
+declare module 'edelweiss' {
+  declare export class ENode {
+    constructor(tag: string, options?: ENodeOptions): ENode;
 
     createElement(): HTMLElement;
   }
 
   declare export class Component {
     beforeBuild(): Promise<void>;
-    build(): MTNode | MTNode[];
+    build(): ENode | ENode[];
     afterBuild(): Promise<void>;
   }
 
@@ -30,7 +30,7 @@ declare module 'mountain-template' {
 
   declare export function render(
     to: string,
-    nodes: string | MTNode | Component | (string | MTNode | Component)[]
+    nodes: string | ENode | Component | (string | ENode | Component)[]
   ): Promise<void>
 
   declare export type InputType =
@@ -142,23 +142,23 @@ declare module 'mountain-template' {
     | 'wheel'
     | 'toggle'
 
-  // Object that describe event listener consumed by **MTNode** object.
-  declare export type MTNodeEventListener = {
+  // Object that describe event listener consumed by **ENode** object.
+  declare export type ENodeEventListener = {
     type: EventType,
     listener: EventListener,
   }
 
-  declare export type MTNodeOptions = {
+  declare export type ENodeOptions = {
     attributes?: Attributes,
-    children?: MTNode | Component | (MTNode | Component | string)[] | string,
-    listeners?: MTNodeEventListener | MTNodeEventListener[],
-    extend?: string | MTNode,
+    children?: ENode | Component | (ENode | Component | string)[] | string,
+    listeners?: ENodeEventListener | ENodeEventListener[],
+    extend?: string | ENode,
   }
 
   declare export type Route = {
     path: string,
     container: string,
-    view: () => string | MTNode | Component | (string | MTNode | Component)[],
+    view: () => string | ENode | Component | (string | ENode | Component)[],
   }
 
   declare export type StateListener<T: { [string]: any }> = {
@@ -166,6 +166,6 @@ declare module 'mountain-template' {
     fields: string[],
     update: (
       newState: T
-    ) => string | Component | MTNode | (string | Component | MTNode)[],
+    ) => string | Component | ENode | (string | Component | ENode)[],
   }
 }

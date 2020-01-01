@@ -1,17 +1,17 @@
 // @flow
 
-import MTNode from './nodes/mtn.mjs'
+import ENode from './nodes/en.mjs'
 import Component from './component/component.mjs'
 
 import { transformNodesToElements } from './utils/transform.mjs'
 import { uid } from './utils/uid.mjs'
 
 /**
- * Render [MTNode] node or nodes and its derivate nodes as element or elements.
+ * Render [ENode] node or nodes and its derivate nodes as element or elements.
  */
 export async function render(
   to: string,
-  nodes: string | MTNode | Component | (string | MTNode | Component)[]
+  nodes: string | ENode | Component | (string | ENode | Component)[]
 ): Promise<void> {
   const toElement = document.querySelector(to)
 
@@ -25,7 +25,7 @@ export async function render(
         async node => {
           if (node instanceof Component) {
             return [...transformNodesToElements(await node._render())]
-          } else if (node instanceof MTNode) {
+          } else if (node instanceof ENode) {
             return [node.createElement()]
           } else {
             return [node]
@@ -43,7 +43,7 @@ export async function render(
         } else {
           newToElement = nodeOrNodes.createElement()
         }
-      } else if (nodes instanceof MTNode) {
+      } else if (nodes instanceof ENode) {
         newToElement.append(nodes.createElement())
       } else {
         newToElement.append(nodes)

@@ -1,5 +1,5 @@
 {
-  "name": "mountain-template",
+  "name": "edelweiss",
   "version": "0.1.0",
   "description": "Template engine that builds HTML from JS.",
   "main": "./dist/index.mjs",

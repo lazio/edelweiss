@@ -1,21 +1,21 @@
 // @flow
 
-import type { MTNodeOptions } from './mtn.mjs'
+import type { ENodeOptions } from './en.mjs'
 
-import MTNode from './mtn.mjs'
+import ENode from './en.mjs'
 
 export type Constructor = Class<Element>
 
 /**
  * Construct **<(custom-node-name)>** node with specific options.
  */
-export default class Custom extends MTNode {
-  _extends: string | MTNode | typeof undefined
+export default class Custom extends ENode {
+  _extends: string | ENode | typeof undefined
 
   /**
    * @throws {Error} if **tag** or **constructor** isn't provided.
    */
-  constructor(tag: string, constructor: Constructor, options?: MTNodeOptions = {}) {
+  constructor(tag: string, constructor: Constructor, options?: ENodeOptions = {}) {
     super(tag, options)
     if (!constructor) {
       throw new Error(`Constructor value of the Custom ${tag} node must be provided!`)

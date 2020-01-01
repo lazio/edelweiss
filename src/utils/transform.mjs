@@ -1,9 +1,9 @@
 // @flow
 
-import MTNode from '../nodes/mtn.mjs'
+import ENode from '../nodes/en.mjs'
 
 export function transformNodesToElements(
-  nodes: MTNode | MTNode[]
+  nodes: ENode | ENode[]
 ): HTMLElement[] {
   if (Array.isArray(nodes)) {
     return nodes.map(node => node.createElement())

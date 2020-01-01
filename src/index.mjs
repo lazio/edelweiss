@@ -1,6 +1,6 @@
 // @flow
 
-import MTNode from './nodes/mtn.mjs'
+import ENode from './nodes/en.mjs'
 import Button from './nodes/button.mjs'
 import A from './nodes/a.mjs'
 import Article from './nodes/article.mjs'
@@ -122,8 +122,9 @@ export {
   render,
   Component,
   createState,
+
   // --- start of nodes ---
-  MTNode,
+  ENode,
   Button,
   A,
   Article,

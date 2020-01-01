@@ -1,15 +1,15 @@
 // @flow
 
-import type { MTNodeOptions } from './mtn.mjs'
+import type { ENodeOptions } from './en.mjs'
 
-import MTNode from './mtn.mjs'
+import ENode from './en.mjs'
 
 /**
  * Construct **<rt>** node with specific options.
  * The **<rt>** node must always be contained within a **<ruby>** node.
  */
-export default class Rt extends MTNode {
-  constructor(options?: MTNodeOptions) {
+export default class Rt extends ENode {
+  constructor(options?: ENodeOptions) {
     super('rt', options)
   }
 }

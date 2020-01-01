@@ -1,15 +1,15 @@
 // @flow
 
-import type { MTNodeOptions } from './mtn.mjs'
+import type { ENodeOptions } from './en.mjs'
 
-import MTNode from './mtn.mjs'
+import ENode from './en.mjs'
 
 /**
  * Construct **<ul>** node with specific options.
  * Children must be **<li>** nodes.
  */
-export default class Ul extends MTNode {
-  constructor(options?: MTNodeOptions) {
+export default class Ul extends ENode {
+  constructor(options?: ENodeOptions) {
     super('ul', options)
   }
 }

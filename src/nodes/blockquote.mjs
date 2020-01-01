@@ -1,14 +1,14 @@
 // @flow
 
-import type { MTNodeOptions } from './mtn.mjs'
+import type { ENodeOptions } from './en.mjs'
 
-import MTNode from './mtn.mjs'
+import ENode from './en.mjs'
 
 /**
  * Construct **<blockquote>** node with specific options.
  */
-export default class Blockquote extends MTNode {
-  constructor(cite: ?string, options?: MTNodeOptions) {
+export default class Blockquote extends ENode {
+  constructor(cite: ?string, options?: ENodeOptions) {
     super('blockquote', options)
     if (cite) {
       this._attributes.cite = cite

@@ -1,6 +1,6 @@
 // @flow
 
-import MTNode from '../nodes/mtn.mjs'
+import ENode from '../nodes/en.mjs'
 import Component from '../component/component.mjs'
 
 import { render } from '../render.mjs'
@@ -11,7 +11,7 @@ export type StateListener<T: { [string]: any }> = {
   update: (newStateContainer: {
     state: T,
     onChange: (listener: StateListener<T>) => void,
-  }) => string | Component | MTNode | (string | Component | MTNode)[],
+  }) => string | Component | ENode | (string | Component | ENode)[],
 }
 
 export function createState<T: { [string]: any }>(object: T) {

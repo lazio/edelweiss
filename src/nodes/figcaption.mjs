@@ -1,14 +1,14 @@
 // @flow
 
-import type { MTNodeOptions } from './mtn.mjs'
+import type { ENodeOptions } from './en.mjs'
 
-import MTNode from './mtn.mjs'
+import ENode from './en.mjs'
 
 /**
  * Construct **<figcaption>** node with specific options.
  */
-export default class Figcaption extends MTNode {
-  constructor(options?: MTNodeOptions) {
+export default class Figcaption extends ENode {
+  constructor(options?: ENodeOptions) {
     super('figcaption', options)
   }
 }

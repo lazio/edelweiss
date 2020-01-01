@@ -82,8 +82,8 @@ export type EventType =
   | 'wheel'
   | 'toggle'
 
-// Object that describe event listener consumed by **MTNode** object.
-export type MTNodeEventListener = {
+// Object that describe event listener consumed by **ENode** object.
+export type ENodeEventListener = {
   type: EventType,
   listener: EventListener,
 }
@@ -91,21 +91,21 @@ export type MTNodeEventListener = {
 /**
  * Main class that creates DOM node.
  */
-export default class MTNode {
+export default class ENode {
   /** @private */
   +_tag: string
   /**  @private */
   +_attributes: Attributes
   /**  @private */
-  +_children: MTNode | Component | (MTNode | Component | string)[] | string | typeof undefined
+  +_children: ENode | Component | (ENode | Component | string)[] | string | typeof undefined
   /** @private */
-  +_listeners: MTNodeEventListener | MTNodeEventListener[] | typeof undefined
+  +_listeners: ENodeEventListener | ENodeEventListener[] | typeof undefined
 
   /**
    * Creates node that represent DOM's element.
    * @throws {Error} if **tag** isn't provided.
    */
-  constructor(tag: string, options?: MTNodeOptions = {}) {
+  constructor(tag: string, options?: ENodeOptions = {}) {
     if (!tag) {
       throw new Error("Tag name isn't provided!")
     } else {
@@ -157,7 +157,7 @@ export default class MTNode {
     if (this._children) {
       if (Array.isArray(this._children)) {
         this._children.forEach((child) => {
-          if (child instanceof MTNode) {
+          if (child instanceof ENode) {
             element.append(child.createElement())
           } else if (child instanceof Component) {
             const nodes = child.build()
@@ -170,7 +170,7 @@ export default class MTNode {
             element.append(child)
           }
         })
-      } else if (this._children instanceof MTNode) {
+      } else if (this._children instanceof ENode) {
         element.append(this._children.createElement())
       } else if (this._children instanceof Component) {
         const nodes = this._children.build()
@@ -199,12 +199,12 @@ export default class MTNode {
   }
 }
 
-// Options that define parameters for creating **MTNode** object.
+// Options that define parameters for creating **ENode** object.
 //
 // *extend* is used while creating custom node {@link ./nodes/custom.mjs}. It is name of HTML tag or node instance that will be customized if you want it to be inherited from basic HTML element.
-export type MTNodeOptions = {
+export type ENodeOptions = {
   attributes?: Attributes,
-  children?: MTNode | Component | (MTNode | Component | string)[] | string,
-  listeners?: MTNodeEventListener | MTNodeEventListener[],
-  extend?: string | MTNode,
+  children?: ENode | Component | (ENode | Component | string)[] | string,
+  listeners?: ENodeEventListener | ENodeEventListener[],
+  extend?: string | ENode,
 }

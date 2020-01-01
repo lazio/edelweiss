@@ -1,15 +1,15 @@
 // @flow
 
-import type { MTNodeOptions } from './mtn.mjs'
+import type { ENodeOptions } from './en.mjs'
 
-import MTNode from './mtn.mjs'
+import ENode from './en.mjs'
 
 /**
  * Construct **<legend>** node with specific options.
  * May be only first node of the **<fieldset>** node and represents a caption for the content of its parent.
  */
-export default class Legend extends MTNode {
-  constructor(options?: MTNodeOptions) {
+export default class Legend extends ENode {
+  constructor(options?: ENodeOptions) {
     super('legend', options)
   }
 }

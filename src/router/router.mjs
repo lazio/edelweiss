@@ -1,6 +1,6 @@
 // @flow
 
-import MTNode from '../nodes/mtn.mjs'
+import ENode from '../nodes/en.mjs'
 import Component from '../component/component.mjs'
 
 import { render } from '../render.mjs'
@@ -8,7 +8,7 @@ import { render } from '../render.mjs'
 export type Route = {
   path: string | RegExp,
   container: string,
-  view: () => string | MTNode | Component | (string | MTNode | Component)[],
+  view: () => string | ENode | Component | (string | ENode | Component)[],
 }
 
 export default class Router {

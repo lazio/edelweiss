@@ -1,16 +1,16 @@
 // @flow
 
-import type { MTNodeOptions } from './mtn.mjs'
+import type { ENodeOptions } from './en.mjs'
 
-import MTNode from './mtn.mjs'
+import ENode from './en.mjs'
 
 export type FormMethod = 'post' | 'get' | 'dialog'
 
 /**
  * Construct **<form>** node with specific options.
  */
-export default class Form extends MTNode {
-  constructor(action: ?string, method: ?FormMethod, options?: MTNodeOptions) {
+export default class Form extends ENode {
+  constructor(action: ?string, method: ?FormMethod, options?: ENodeOptions) {
     super('form', options)
     if (action) {
       this._attributes.action = action

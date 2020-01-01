@@ -1,6 +1,6 @@
 // @flow
 
-import MTNode from '../nodes/mtn.mjs'
+import ENode from '../nodes/en.mjs'
 
 /**
  * Class that must be used to describe components of the page or page itself.
@@ -11,14 +11,14 @@ export default class Component {
   async beforeBuild(): Promise<void> {}
 
   /** Must be overridden by child class. */
-  build(): MTNode | MTNode[] {
+  build(): ENode | ENode[] {
     return []
   }
 
   /** Executes after component is builded. */
   async afterBuild(): Promise<void> {}
 
-  async _render(): Promise<MTNode | MTNode[]> {
+  async _render(): Promise<ENode | ENode[]> {
     await this.beforeBuild()
 
     const buildedComponent = this.build()

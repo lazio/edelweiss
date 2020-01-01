@@ -1,17 +1,17 @@
 // @flow
 
-import type { MTNodeOptions } from './mtn.mjs'
+import type { ENodeOptions } from './en.mjs'
 
-import MTNode from './mtn.mjs'
+import ENode from './en.mjs'
 
 /**
  * Construct **<time>** node with specific options.
  */
-export default class Time extends MTNode {
+export default class Time extends ENode {
   /**
    * @throws {TypeError} if *datetime* isn't provided and its children isn't a valid date.
    */
-  constructor(datetime: ?string, options?: MTNodeOptions) {
+  constructor(datetime: ?string, options?: ENodeOptions) {
     super('time', options)
     if (!datetime) {
       if (options && options.children && typeof options.children !== 'string') {

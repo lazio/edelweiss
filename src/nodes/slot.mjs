@@ -1,14 +1,14 @@
 // @flow
 
-import type { MTNodeOptions } from './mtn.mjs'
+import type { ENodeOptions } from './en.mjs'
 
-import MTNode from './mtn.mjs'
+import ENode from './en.mjs'
 
 /**
  * Construct **<slot>** node with specific options.
  */
-export default class Slot extends MTNode {
-  constructor(name: string, options?: MTNodeOptions) {
+export default class Slot extends ENode {
+  constructor(name: string, options?: ENodeOptions) {
     super('slot', options)
     this._attributes.name = name
   }
