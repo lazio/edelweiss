@@ -24,7 +24,7 @@ export async function render(
       const promiseElements: Promise<(HTMLElement | string)[]>[] = nodes.map(
         async node => {
           if (node instanceof Component) {
-            return [...transformNodesToElements(await node._render())]
+            return [...transformNodesToElements(await node._createNodes())]
           } else if (node instanceof ENode) {
             return [node.createElement()]
           } else {

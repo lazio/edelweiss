@@ -18,7 +18,7 @@ export default class Component {
   /** Executes after component is builded. */
   async afterBuild(): Promise<void> {}
 
-  async _render(): Promise<ENode | ENode[]> {
+  async _createNodes(): Promise<ENode | ENode[]> {
     await this.beforeBuild()
 
     const buildedComponent = this.build()
