@@ -18,14 +18,15 @@ declare module 'edelweiss' {
 
     constructor(routes: Route[]): Router;
 
-    to(path: string): void;
+    to(path: string): Promise<void>;
+    reload(): Promise<void>;
+    back(): void;
+    forward(): void;
   }
 
-  declare export function createState<T: { [string]: any }>(
-    object: T
-  ): {
-    state: Proxy<T>,
-    listen(listener: StateListener<T>): void,
+  declare export function createState<T: { [string]: any }>(object: T): {
+    state: T,
+    onChange: (listener: StateListener<T>) => void,
   }
 
   declare export function render(
@@ -164,8 +165,9 @@ declare module 'edelweiss' {
   declare export type StateListener<T: { [string]: any }> = {
     to: string,
     fields: string[],
-    update: (
-      newState: T
-    ) => string | Component | ENode | (string | Component | ENode)[],
+    update: (newStateContainer: {
+      state: T,
+      onChange: (listener: StateListener<T>) => void,
+    }) => string | Component | ENode | (string | Component | ENode)[],
   }
 }
