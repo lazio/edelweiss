@@ -7,6 +7,14 @@ declare module 'edelweiss' {
     createElement(): HTMLElement;
   }
 
+  declare export class Button extends ENode {
+    constructor(options?: ENodeOptions): Button;
+  }
+
+  declare export class Span extends ENode {
+    constructor(options?: ENodeOptions): Button;
+  }
+
   declare export class Component {
     constructor(options?: ComponentOptions): Component;
 
@@ -68,7 +76,8 @@ declare module 'edelweiss' {
   declare export type Styles = { [string]: number | string } | string
 
   declare export type Attributes = {
-    style: Styles,
+    style?: Styles,
+    class?: string,
     [string]: string | boolean | number,
   }
 

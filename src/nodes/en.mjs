@@ -5,7 +5,8 @@ import { normalizeStyles } from '../utils/styles.mjs'
 import type { Styles } from '../utils/styles.mjs'
 
 export type Attributes = {
-  style: Styles,
+  style?: Styles,
+  class?: string,
   [string]: string | boolean | number,
 }
 
