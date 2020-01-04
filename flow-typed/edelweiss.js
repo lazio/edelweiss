@@ -8,6 +8,8 @@ declare module 'edelweiss' {
   }
 
   declare export class Component {
+    constructor(options?: ComponentOptions): Component;
+
     beforeBuild(): Promise<void>;
     build(): ENode | ENode[];
     afterBuild(): Promise<void>;
@@ -169,5 +171,9 @@ declare module 'edelweiss' {
       state: T,
       onChange: (listener: StateListener<T>) => void,
     }) => string | Component | ENode | (string | Component | ENode)[],
+  }
+
+  declare type ComponentOptions = {
+    css?: string | string[]
   }
 }

@@ -1,12 +1,27 @@
 // @flow
 
 import ENode from '../nodes/en.mjs'
+import { loadCSS } from '../utils/styles.mjs'
+
+type ComponentOptions = {
+  css?: string | string[]
+}
 
 /**
  * Class that must be used to describe components of the page or page itself.
  * Can be replaced by plain function.
  */
 export default class Component {
+  constructor(options?: ComponentOptions = {}) {
+    const { css } = options
+
+    if (css) {
+      typeof css === 'string'
+        ? loadCSS(css)
+        : css.forEach(loadCSS)
+    }
+  }
+
   /** Executes before component builds. */
   async beforeBuild(): Promise<void> {}
 
