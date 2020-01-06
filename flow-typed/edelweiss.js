@@ -7,12 +7,236 @@ declare module 'edelweiss' {
     createElement(): HTMLElement;
   }
 
+  declare export class A extends ENode {
+    constructor(href: string, options?: ENodeOptions): A;
+  }
+
+  declare export class Abbr extends ENode {
+    constructor(title?: string, options?: ENodeOptions): Abbr;
+  }
+
+  declare export class Address extends ENode {
+    constructor(options?: ENodeOptions): Address;
+  }
+
+  declare export class Area extends ENode {
+    constructor(options?: ENodeOptions): Area;
+  }
+
+  declare export class Article extends ENode {
+    constructor(options?: ENodeOptions): Article;
+  }
+
+  declare export class Aside extends ENode {
+    constructor(options?: ENodeOptions): Aside;
+  }
+
+  declare export class Audio extends ENode {
+    constructor(options?: ENodeOptions): Audio;
+  }
+
+  declare export class B extends ENode {
+    constructor(options?: ENodeOptions): B;
+  }
+
+  declare export class Base extends ENode {
+    constructor(
+      href: string,
+      target: ?TargetType,
+      options?: ENodeOptions
+    ): Base;
+  }
+
+  declare export class Bdi extends ENode {
+    constructor(options?: ENodeOptions): Bdi;
+  }
+
+  declare export class Bdo extends ENode {
+    constructor(options?: ENodeOptions): Bdo;
+  }
+
+  declare export class Blockquote extends ENode {
+    constructor(cite: ?string, options?: ENodeOptions): Blockquote;
+  }
+
+  declare export class Body extends ENode {
+    constructor(options?: ENodeOptions): Body;
+  }
+
+  declare export class Br extends ENode {
+    constructor(): Br;
+  }
+
   declare export class Button extends ENode {
     constructor(options?: ENodeOptions): Button;
   }
 
+  declare export class Canvas extends ENode {
+    constructor(options?: ENodeOptions): Canvas;
+  }
+
+  declare export class Caption extends ENode {
+    constructor(options?: ENodeOptions): Caption;
+  }
+
+  declare export class Cite extends ENode {
+    constructor(options?: ENodeOptions): Cite;
+  }
+
+  declare export class Code extends ENode {
+    constructor(options?: ENodeOptions): Code;
+  }
+
+  declare export class Col extends ENode {
+    constructor(options?: ENodeOptions): Col;
+  }
+
+  declare export class Colgroup extends ENode {
+    constructor(options?: ENodeOptions): Colgroup;
+  }
+
+  declare export class Custom extends ENode {
+    constructor(
+      tag: string,
+      constructor: Constructor,
+      options?: ENodeOptions
+    ): Custom;
+  }
+
+  declare export class Data extends ENode {
+    constructor(value: string, options?: ENodeOptions): Data;
+  }
+
+  declare export class Datalist extends ENode {
+    constructor(id: string, options?: ENodeOptions): Datalist;
+  }
+
+  declare export class Dd extends ENode {
+    constructor(options?: ENodeOptions): Dd;
+  }
+
+  declare export class Del extends ENode {
+    constructor(options?: ENodeOptions): Del;
+  }
+
+  declare export class Details extends ENode {
+    constructor(open?: boolean, options?: ENodeOptions): Details;
+  }
+
+  declare export class Dfn extends ENode {
+    constructor(options?: ENodeOptions): Dfn;
+  }
+
+  declare export class Dialog extends ENode {
+    constructor(open?: boolean, options?: ENodeOptions): Dialog;
+  }
+
+  declare export class Div extends ENode {
+    constructor(options?: ENodeOptions): Div;
+  }
+
+  declare export class Dl extends ENode {
+    constructor(options?: ENodeOptions): Dl;
+  }
+
+  declare export class Dt extends ENode {
+    constructor(options?: ENodeOptions): Dt;
+  }
+
+  declare export class Em extends ENode {
+    constructor(options?: ENodeOptions): Em;
+  }
+
+  declare export class Embed extends ENode {
+    constructor(options?: ENodeOptions): Embed;
+  }
+
+  declare export class Fieldset extends ENode {
+    constructor(options?: ENodeOptions): Fieldset;
+  }
+
+  declare export class Figcaption extends ENode {
+    constructor(options?: ENodeOptions): Figcaption;
+  }
+
+  declare export class Figure extends ENode {
+    constructor(options?: ENodeOptions): Figure;
+  }
+
+  declare export class Footer extends ENode {
+    constructor(options?: ENodeOptions): Footer;
+  }
+
+  declare export class Form extends ENode {
+    constructor(action: ?string, method: ?FormMethod, options?: ENodeOptions): Form;
+  }
+
+  declare export class H extends ENode {
+    constructor(importance: number, options?: ENodeOptions): H;
+  }
+
+  declare export class Head extends ENode {
+    constructor(options?: ENodeOptions): Head;
+  }
+
+  declare export class Header extends ENode {
+    constructor(options?: ENodeOptions): Header;
+  }
+
+  declare export class Hr extends ENode {
+    constructor(options?: ENodeOptions): Hr;
+  }
+
+  declare export class Html extends ENode {
+    constructor(options?: ENodeOptions): Html;
+  }
+
+  declare export class I extends ENode {
+    constructor(options?: ENodeOptions): I;
+  }
+
+  declare export class Iframe extends ENode {
+    constructor(options?: ENodeOptions): Iframe;
+  }
+
+  declare export class Img extends ENode {
+    constructor(src: string, alt: string, options?: ENodeOptions): Img;
+  }
+
+  declare export class Input extends ENode {
+    constructor(type: InputType, options?: ENodeOptions): Input;
+  }
+
+  declare export class Ins extends ENode {
+    constructor(options?: ENodeOptions): Ins;
+  }
+
+  declare export class Kbd extends ENode {
+    constructor(options?: ENodeOptions): Kbd;
+  }
+
+  declare export class Label extends ENode {
+    constructor(options?: ENodeOptions): Label;
+  }
+
+  declare export class Legend extends ENode {
+    constructor(options?: ENodeOptions): Legend;
+  }
+
+  declare export class Li extends ENode {
+    constructor(options?: ENodeOptions): Li;
+  }
+
+  declare export class Link extends ENode {
+    constructor(options?: ENodeOptions): Link;
+  }
+
+  declare export class Main extends ENode {
+    constructor(options?: ENodeOptions): Main;
+  }
+
   declare export class Span extends ENode {
-    constructor(options?: ENodeOptions): Button;
+    constructor(options?: ENodeOptions): Span;
   }
 
   declare export class Component {
@@ -34,7 +258,9 @@ declare module 'edelweiss' {
     forward(): void;
   }
 
-  declare export function createState<T: { [string]: any }>(object: T): {
+  declare export function createState<T: { [string]: any }>(
+    object: T
+  ): {
     state: T,
     onChange: (listener: StateListener<T>) => void,
   }
@@ -184,6 +410,10 @@ declare module 'edelweiss' {
   }
 
   declare type ComponentOptions = {
-    css?: string | string[]
+    css?: string | string[],
   }
+
+  declare type Constructor = Class<Element>
+
+  declare type FormMethod = 'post' | 'get' | 'dialog'
 }

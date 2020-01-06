@@ -34,7 +34,7 @@ export default class Custom extends ENode {
       }
     }
 
-    const customElementConstructor: Class<Element> = customElements.get(tag)
+    const customElementConstructor: Constructor | null = customElements.get(tag)
     if (!customElementConstructor) {
       customElements.define(
         tag,
