@@ -168,7 +168,11 @@ declare module 'edelweiss' {
   }
 
   declare export class Form extends ENode {
-    constructor(action: ?string, method: ?FormMethod, options?: ENodeOptions): Form;
+    constructor(
+      action: ?string,
+      method: ?FormMethod,
+      options?: ENodeOptions
+    ): Form;
   }
 
   declare export class H extends ENode {
@@ -235,8 +239,216 @@ declare module 'edelweiss' {
     constructor(options?: ENodeOptions): Main;
   }
 
+  declare export class Map extends ENode {
+    constructor(name: string, options?: ENodeOptions): Map;
+  }
+
+  declare export class Mark extends ENode {
+    constructor(options?: ENodeOptions): Mark;
+  }
+
+  declare export class Meta extends ENode {
+    constructor(options?: ENodeOptions): Meta;
+  }
+
+  declare export class Meter extends ENode {
+    constructor(options?: ENodeOptions): Meter;
+  }
+
+  declare export class Nav extends ENode {
+    constructor(options?: ENodeOptions): Nav;
+  }
+
+  declare export class NoScript extends ENode {
+    constructor(options?: ENodeOptions): NoScript;
+  }
+
+  declare export class Object extends ENode {
+    constructor(options?: ENodeOptions): Object;
+  }
+
+  declare export class Ol extends ENode {
+    constructor(options?: ENodeOptions): Ol;
+  }
+
+  declare export class OptGroup extends ENode {
+    constructor(
+      label: string,
+      disabled: ?boolean,
+      options?: ENodeOptions
+    ): OptGroup;
+  }
+
+  declare export class Option extends ENode {
+    constructor(options?: ENodeOptions): Option;
+  }
+
+  declare export class Output extends ENode {
+    constructor(options?: ENodeOptions): Output;
+  }
+
+  declare export class P extends ENode {
+    constructor(options?: ENodeOptions): P;
+  }
+
+  declare export class Param extends ENode {
+    constructor(name: string, value: string, options?: ENodeOptions): Param;
+  }
+
+  declare export class Picture extends ENode {
+    constructor(options?: ENodeOptions): Picture;
+  }
+
+  declare export class Pre extends ENode {
+    constructor(options?: ENodeOptions): Pre;
+  }
+
+  declare export class Progress extends ENode {
+    constructor(value: number, max: ?number, options?: ENodeOptions): Progress;
+  }
+
+  declare export class Q extends ENode {
+    constructor(cite: string, options?: ENodeOptions): Q;
+  }
+
+  declare export class Rp extends ENode {
+    constructor(options?: ENodeOptions): Rp;
+  }
+
+  declare export class Rt extends ENode {
+    constructor(options?: ENodeOptions): Rt;
+  }
+
+  declare export class Rtc extends ENode {
+    constructor(options?: ENodeOptions): Rtc;
+  }
+
+  declare export class Ruby extends ENode {
+    constructor(options?: ENodeOptions): Ruby;
+  }
+
+  declare export class S extends ENode {
+    constructor(options?: ENodeOptions): S;
+  }
+
+  declare export class Samp extends ENode {
+    constructor(options?: ENodeOptions): Samp;
+  }
+
+  declare export class Script extends ENode {
+    constructor(src: ?string, options?: ENodeOptions): Script;
+  }
+
+  declare export class Section extends ENode {
+    constructor(options?: ENodeOptions): Section;
+  }
+
+  declare export class Select extends ENode {
+    constructor(options?: ENodeOptions): Select;
+  }
+
+  declare export class Slot extends ENode {
+    constructor(name: string, options?: ENodeOptions): Slot;
+  }
+
+  declare export class Small extends ENode {
+    constructor(options?: ENodeOptions): Small;
+  }
+
+  declare export class Source extends ENode {
+    constructor(options?: ENodeOptions): Source;
+  }
+
   declare export class Span extends ENode {
     constructor(options?: ENodeOptions): Span;
+  }
+
+  declare export class Strong extends ENode {
+    constructor(options?: ENodeOptions): Strong;
+  }
+
+  declare export class Style extends ENode {
+    constructor(options?: ENodeOptions): Style;
+  }
+
+  declare export class Sub extends ENode {
+    constructor(options?: ENodeOptions): Sub;
+  }
+
+  declare export class Summary extends ENode {
+    constructor(options?: ENodeOptions): Summary;
+  }
+
+  declare export class Sup extends ENode {
+    constructor(options?: ENodeOptions): Sup;
+  }
+
+  declare export class Table extends ENode {
+    constructor(options?: ENodeOptions): Table;
+  }
+
+  declare export class TBody extends ENode {
+    constructor(options?: ENodeOptions): TBody;
+  }
+
+  declare export class Td extends ENode {
+    constructor(options?: ENodeOptions): Td;
+  }
+
+  declare export class Template extends ENode {
+    constructor(options?: ENodeOptions): Template;
+  }
+
+  declare export class TextArea extends ENode {
+    constructor(options?: ENodeOptions): TextArea;
+  }
+
+  declare export class TFoot extends ENode {
+    constructor(options?: ENodeOptions): TFoot;
+  }
+
+  declare export class Th extends ENode {
+    constructor(options?: ENodeOptions): Th;
+  }
+
+  declare export class THead extends ENode {
+    constructor(options?: ENodeOptions): THead;
+  }
+
+  declare export class Time extends ENode {
+    constructor(datetime: ?string, options?: ENodeOptions): Time;
+  }
+
+  declare export class Title extends ENode {
+    constructor(options?: ENodeOptions): Title;
+  }
+
+  declare export class Tr extends ENode {
+    constructor(options?: ENodeOptions): Tr;
+  }
+
+  declare export class Track extends ENode {
+    constructor(options?: ENodeOptions): Track;
+  }
+
+  declare export class U extends ENode {
+    constructor(options?: ENodeOptions): U;
+  }
+
+  declare export class Ul extends ENode {
+    constructor(options?: ENodeOptions): Ul;
+  }
+
+  declare export class Var extends ENode {
+    constructor(options?: ENodeOptions): Var;
+  }
+
+  declare export class Video extends ENode {
+    constructor(options?: ENodeOptions): Video;
+  }
+
+  declare export class Wbr extends ENode {
+    constructor(options?: ENodeOptions): Wbr;
   }
 
   declare export class Component {
