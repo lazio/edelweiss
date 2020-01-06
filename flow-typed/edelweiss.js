@@ -174,12 +174,13 @@ declare module 'edelweiss' {
   }
 
   declare export type StateListener<T: { [string]: any }> = {
-    to: string,
+    to?: string,
     fields: string[],
+    reactiveAttributes?: $Keys<Attributes>[],
     update: (newStateContainer: {
       state: T,
       onChange: (listener: StateListener<T>) => void,
-    }) => string | Component | ENode | (string | Component | ENode)[],
+    }) => string | Component | ENode | (string | Component | ENode)[] | void,
   }
 
   declare type ComponentOptions = {
