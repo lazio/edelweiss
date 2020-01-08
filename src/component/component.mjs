@@ -1,10 +1,11 @@
 // @flow
 
-import ENode from '../nodes/en.mjs'
+import type ENode from '../nodes/en.mjs'
 import { loadCSS } from '../utils/styles.mjs'
 
 type ComponentOptions = {
-  css?: string | string[]
+  css?: { relativeTo: string, cssFilePath: string }
+    | { relativeTo: string, cssFilePath: string }[],
 }
 
 /**
@@ -16,9 +17,7 @@ export default class Component {
     const { css } = options
 
     if (css) {
-      typeof css === 'string'
-        ? loadCSS(css)
-        : css.forEach(loadCSS)
+      Array.isArray(css) ? css.forEach(loadCSS) : loadCSS(css)
     }
   }
 

@@ -4,8 +4,8 @@
   "description": "Template engine that builds HTML from JS.",
   "main": "./dist/index.mjs",
   "scripts": {
-    "clean": "rm -rf dist/",
-    "build": "npm run clean; ./node_modules/.bin/flow-remove-types src/ -d dist/"
+    "clean": "rm -r dist/",
+    "build": "npm run clean; flow-remove-types --pretty src/ -d dist/"
   },
   "author": "Kapelianovych Yevhen",
   "license": "MIT",
@@ -13,13 +13,13 @@
     "babel-eslint": "^10.0.3",
     "eslint": "^6.8.0",
     "eslint-config-standard": "^14.1.0",
-    "eslint-plugin-flowtype": "^4.5.2",
+    "eslint-plugin-flowtype": "^4.5.3",
     "eslint-plugin-import": "^2.19.1",
     "eslint-plugin-node": "^11.0.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
-    "flow-bin": "^0.114.0",
-    "flow-remove-types": "^2.114.0"
+    "flow-bin": "^0.115.0",
+    "flow-remove-types": "^2.115.0"
   },
   "dependencies": {}
 }

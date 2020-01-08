@@ -622,7 +622,8 @@ declare module 'edelweiss' {
   }
 
   declare type ComponentOptions = {
-    css?: string | string[],
+    css?: { relativeTo: string, cssFilePath: string }
+      | { relativeTo: string, cssFilePath: string }[],
   }
 
   declare type Constructor = Class<Element>

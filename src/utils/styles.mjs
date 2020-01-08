@@ -11,17 +11,66 @@ export function normalizeStyles(styles: Styles): string {
   return stringStyles.replace(/,(?![\s\d])/g, ';').replace(/[{}"']/g, '')
 }
 
-export function loadCSS(path: string): void {
+/**
+ * @param {string} relativeTo - path of the file relative to which
+ * css file will be searched.
+ */
+export function loadCSS(paths: {
+  relativeTo: string,
+  cssFilePath: string,
+}): void {
+  const normalizedPath = buildCssPath(paths)
+
   if (document.head) {
-    const oldLinkElement = document.head.querySelector(`link[href="${path}"]`)
+    const oldLinkElement = document.head.querySelector(
+      `link[href="${normalizedPath}"]`
+    )
 
     if (!oldLinkElement) {
       const linkElement = document.createElement('link')
       linkElement.setAttribute('rel', 'stylesheet')
-      linkElement.setAttribute('href', path)
+      linkElement.setAttribute('href', normalizedPath)
 
       // $FlowFixMe - querySelector doesn't change the head element.
       document.head.append(linkElement)
     }
+  }
+}
+
+function buildCssPath(paths: {
+  relativeTo: string,
+  cssFilePath: string,
+}): string {
+  const { relativeTo, cssFilePath } = paths
+
+  const rootPathToArray = relativeTo
+    .replace(/([\w\d-]+)\.[\w]{2,4}$/, '')
+    .match(/(\/([\w\d_-])*)+$/)
+
+  if (rootPathToArray) {
+    const normalizedPathSegments: string[] = []
+
+    const [rootPathTo] = rootPathToArray
+
+    const reversedPathSplitted = cssFilePath.split('/').reverse()
+    const rootPathToSplitted = rootPathTo.split('/')
+
+    reversedPathSplitted.forEach(segment => {
+      if (segment === '..') {
+        rootPathToSplitted.pop()
+      } else {
+        if (segment !== '.') {
+          normalizedPathSegments.unshift(segment)
+        }
+      }
+    })
+
+    return `${rootPathToSplitted.join('/')}${normalizedPathSegments.join('/')}`
+  } else {
+    console.error(
+      `CSS file's path cannot be computed relative to ${relativeTo}.
+      So empty path is returned.`
+    )
+    return ''
   }
 }
