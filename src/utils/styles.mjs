@@ -2,6 +2,10 @@
 
 export type Styles = { [string]: number | string } | string
 
+export type CssDeclaration =
+  | string
+  | { relativeTo: string, cssFilePath: string }
+
 /**
  * Convert object of styles or string in inline CSS. It must be a valid CSS expressions (not camelCase).
  */
@@ -15,11 +19,8 @@ export function normalizeStyles(styles: Styles): string {
  * @param {string} relativeTo - path of the file relative to which
  * css file will be searched.
  */
-export function loadCSS(paths: {
-  relativeTo: string,
-  cssFilePath: string,
-}): void {
-  const normalizedPath = buildCssPath(paths)
+export function loadCSS(declaration: CssDeclaration): void {
+  const normalizedPath = buildCssPath(declaration)
 
   if (document.head) {
     const oldLinkElement = document.head.querySelector(
@@ -37,11 +38,19 @@ export function loadCSS(paths: {
   }
 }
 
-function buildCssPath(paths: {
+function buildCssPath(declaration: CssDeclaration): string {
+  if (typeof declaration === 'string') {
+    return declaration
+  } else {
+    return buildCssPathFromObject(declaration)
+  }
+}
+
+function buildCssPathFromObject(declaration: {
   relativeTo: string,
   cssFilePath: string,
 }): string {
-  const { relativeTo, cssFilePath } = paths
+  const { relativeTo, cssFilePath } = declaration
 
   const rootPathToArray = relativeTo
     .replace(/([\w\d-]+)\.[\w]{2,4}$/, '')

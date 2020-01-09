@@ -621,9 +621,12 @@ declare module 'edelweiss' {
     }) => string | Component | ENode | (string | Component | ENode)[] | void,
   }
 
+  declare type CssDeclaration =
+    | string
+    | { relativeTo: string, cssFilePath: string }
+
   declare type ComponentOptions = {
-    css?: { relativeTo: string, cssFilePath: string }
-      | { relativeTo: string, cssFilePath: string }[],
+    css?: CssDeclaration | CssDeclaration[],
   }
 
   declare type Constructor = Class<Element>

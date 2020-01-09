@@ -1,11 +1,12 @@
 // @flow
 
 import type ENode from '../nodes/en.mjs'
+import type { CssDeclaration } from '../utils/styles.mjs'
+
 import { loadCSS } from '../utils/styles.mjs'
 
 type ComponentOptions = {
-  css?: { relativeTo: string, cssFilePath: string }
-    | { relativeTo: string, cssFilePath: string }[],
+  css?: CssDeclaration | CssDeclaration[],
 }
 
 /**
