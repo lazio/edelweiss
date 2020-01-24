@@ -14,7 +14,8 @@
   },
   "scripts": {
     "clean": "rm -r dist/",
-    "build": "npm run clean; flow-remove-types --pretty src/ -d dist/"
+    "build": "npm run clean; flow-remove-types --pretty src/ -d dist/",
+    "release": "npm run build; npm publish --access public"
   },
   "author": "Kapelianovych Yevhen",
   "license": "MIT",
