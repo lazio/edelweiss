@@ -1,8 +1,17 @@
 {
-  "name": "edelweiss",
+  "name": "@prostory/edelweiss",
   "version": "0.1.0",
-  "description": "Template engine that builds HTML from JS.",
+  "description": "ES module small framework that builds HTML from JS.",
+  "keywords": [
+    "Edelweiss",
+    "ES framework"
+  ],
   "main": "./dist/index.mjs",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YevhenKap/edelweiss"
+  },
   "scripts": {
     "clean": "rm -r dist/",
     "build": "npm run clean; flow-remove-types --pretty src/ -d dist/"
@@ -18,8 +27,8 @@
     "eslint-plugin-node": "^11.0.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
-    "flow-bin": "^0.115.0",
-    "flow-remove-types": "^2.115.0"
+    "flow-bin": "^0.116.1",
+    "flow-remove-types": "^2.117.0"
   },
   "dependencies": {}
 }

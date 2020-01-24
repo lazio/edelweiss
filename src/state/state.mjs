@@ -64,12 +64,14 @@ export function createState<T: { [string]: any }>(object: T) {
                               : element.removeAttribute(attribute)
                             break
                           case 'object':
-                            element.setAttribute(
-                              attribute,
-                              `${normalizeStyles(
-                                initialAttributeValue
-                              )} ${nodes}`
-                            )
+                            if (attribute === 'style') {
+                              element.setAttribute(
+                                attribute,
+                                `${normalizeStyles(
+                                  initialAttributeValue
+                                )} ${nodes}`
+                              )
+                            }
                             break
                           default:
                             element.setAttribute(attribute, nodes)

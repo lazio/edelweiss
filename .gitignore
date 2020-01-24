@@ -1,6 +1,5 @@
 node_modules/
 dist/
-local_test/
-
 .DS_Store
+
 package-lock.json

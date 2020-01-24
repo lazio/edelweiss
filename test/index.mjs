@@ -1,5 +1,3 @@
-// @flow
-
 import { Custom, Main, render, Footer, Button } from '../dist/index.mjs'
 
 const main = new Main({
