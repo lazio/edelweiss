@@ -20,7 +20,13 @@ const footer = new Footer({
     attributes: {
       style: 'margin: 0; padding: 5px 10px; border: none; outline: none; background-color: blue; color: black;'
     },
-    children: 'Click me) I am a cool button!'
+    children: 'Click me) I am a cool button!',
+    listeners: {
+      type: 'click',
+      listener(event) {
+        console.log('Clicked')
+      }
+    }
   })
 })
 
