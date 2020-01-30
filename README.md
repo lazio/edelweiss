@@ -80,7 +80,7 @@ class MyComponent extends Component {
   }
 
   async build() {
-    retuns new H(1, {
+    return new H(1, {
       attributes: { class: 'title' },
       children: 'Hello world!'
     })
@@ -106,7 +106,7 @@ class MyComponent extends Component {
   }
 
   async build() {
-    retuns new H(1, {
+    return new H(1, {
       attributes: { class: 'title' },
       children: 'Hello world!'
     })
@@ -117,7 +117,8 @@ class MyComponent extends Component {
 ### render
 
 It is the function that inserts builded nodes into DOM.
-Function accepts selector that will be replaced with nodes and nodes as the second parameter.
+Function accepts selector that will be replaced with nodes and nodes as the second parameter. You probably
+will not using it directly.
 
 ```javascript
 render(
@@ -125,3 +126,52 @@ render(
   new MyComponent()
 )
 ```
+
+### Router
+
+If you are creating SPA, you probably do not need it.
+
+It is used for navigating through site. It interacts with browser's *History* API and, based on path of the page, renders needed nodes.
+
+```javascript
+router.to('/')
+```
+
+While creating `Router` instance you must give him routes. Route is plain object:
+
+```javascript
+type Route = {
+  path: string | RegExp,
+  container: string,
+  view: () => string | ENode | Component | (string | ENode | Component)[],
+}
+```
+
+1. `path` - path of the page that will be visible in browser's search box.
+2. `container` - selector of element with which nodes will be replaced.
+3. `view` - function that returns nodes that need to be rendered.
+
+```javascript
+const router = new Router([
+  {
+    path: '/',
+    container: '.body',
+    view() {
+      // We will think that HomePage is the component
+      return new HomePage({
+        // some properties
+      })
+    }
+  },
+  // Many others routes
+])
+```
+
+`Router` have four methods:
+
+1. `to(path: string)` - it is asyncrounous method. Renders needed page.
+2. `reload()` - it is asyncrounous method. Reloads current page.
+3. `back()` - return to previous page. 
+3. `forward()` - forwards to next page if it is in history.
+
+Also it can `current` field that contains information about current route (it is object that you pass to `Route`s constructor).
