@@ -4,7 +4,7 @@ declare module 'edelweiss' {
   declare export class ENode {
     constructor(tag: string, options?: ENodeOptions): ENode;
 
-    createElement(): HTMLElement;
+    createElement(): Promise<HTMLElement>;
   }
 
   declare export class A extends ENode {
@@ -455,7 +455,7 @@ declare module 'edelweiss' {
     constructor(options?: ComponentOptions): Component;
 
     beforeBuild(): Promise<void>;
-    build(): ENode | ENode[];
+    build(): Promise<string | ENode | Component | (string | ENode | Component)[]>;
     afterBuild(): Promise<void>;
   }
 
@@ -593,15 +593,14 @@ declare module 'edelweiss' {
     | 'toggle'
 
   // Object that describe event listener consumed by **ENode** object.
-  declare export type ENodeEventListener = {
-    type: EventType,
-    listener: EventListener,
+  declare export type ENodeEventListenersObject = {
+    [type: EventType]: EventListener,
   }
 
   declare export type ENodeOptions = {
     attributes?: Attributes,
     children?: ENode | Component | (ENode | Component | string)[] | string,
-    listeners?: ENodeEventListener | ENodeEventListener[],
+    listeners?: ENodeEventListenersObject,
     extend?: string | ENode,
   }
 

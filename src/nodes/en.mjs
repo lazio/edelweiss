@@ -84,9 +84,8 @@ export type EventType =
   | 'toggle'
 
 // Object that describe event listener consumed by **ENode** object.
-export type ENodeEventListener = {
-  type: EventType,
-  listener: EventListener,
+export type ENodeEventListenersObject = {
+  [type: EventType]: EventListener,
 }
 
 /**
@@ -100,7 +99,7 @@ export default class ENode {
   /**  @private */
   +_children: ENode | Component | (ENode | Component | string)[] | string | typeof undefined
   /** @private */
-  +_listeners: ENodeEventListener | ENodeEventListener[] | typeof undefined
+  +_listeners: ENodeEventListenersObject | typeof undefined
 
   /**
    * Creates node that represent DOM's element.
@@ -161,14 +160,11 @@ export default class ENode {
     }
 
     if (this._listeners) {
-      if (Array.isArray(this._listeners)) {
-        this._listeners.forEach(({ type, listener }) => {
-          element.addEventListener(type, listener)
-        })
-      } else {
-        const { type, listener } = this._listeners
-        element.addEventListener(type, listener)
-      }
+      const types = Object.keys(this._listeners)
+      types.forEach(eventType => {
+        // $FlowFixMe
+        element.addEventListener(eventType, this._listeners[eventType])
+      })
     }
 
     return Promise.resolve(element)
@@ -181,7 +177,7 @@ export default class ENode {
 export type ENodeOptions = {
   attributes?: Attributes,
   children?: ENode | Component | (ENode | Component | string)[] | string,
-  listeners?: ENodeEventListener | ENodeEventListener[],
+  listeners?: ENodeEventListenersObject,
   extend?: string | ENode,
 }
 

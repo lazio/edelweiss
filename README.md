@@ -31,7 +31,7 @@ All of them accept `options` object that can have three properties:
 
 1. `attributes` - object whose keys are attribute names and values is attribute values.
 2. `children` - internal nodes that can contain this node. It can be `string`, `ENode`, `Component` or array of them.
-3. `listeners` - can be an object with properties: `type` (type of event: *click*, *keyup* and so on.) and `listener` - funtion that have `event` parameter (accepts raw `event` object). Or it can be array of this objects.
+3. `listeners` - an object with methods. Name of the method must be like name of type of event: *click*, *keyup* and so on. It accepts raw `event` object.
 
 ```javascript
 const footer = new Footer({
@@ -45,8 +45,7 @@ const footer = new Footer({
     },
     children: 'Click me) I am a cool button!',
     listeners: {
-      type: 'click',
-      listener(event) {
+      click(event) {
         console.log('Clicked')
       }
     }
