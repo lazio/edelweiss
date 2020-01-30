@@ -26,17 +26,17 @@ export default class Component {
   async beforeBuild(): Promise<void> {}
 
   /** Must be overridden by child class. */
-  build(): ENode | ENode[] {
+  async build(): Promise<string | ENode | Component | (string | Component | ENode)[]> {
     return []
   }
 
   /** Executes after component is builded. */
   async afterBuild(): Promise<void> {}
 
-  async _createNodes(): Promise<ENode | ENode[]> {
+  async _createNodes(): Promise<string | ENode | Component | (string | Component | ENode)[]> {
     await this.beforeBuild()
 
-    const buildedComponent = this.build()
+    const buildedComponent = await this.build()
 
     await this.afterBuild()
 

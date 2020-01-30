@@ -127,7 +127,7 @@ export default class ENode {
   /**
    * Creates element based on [this] node information.
    */
-  createElement(): HTMLElement {
+  async createElement(): Promise<HTMLElement> {
     const element = document.createElement(this._tag)
     return this._attachOptionsTo(element)
   }
@@ -135,7 +135,7 @@ export default class ENode {
   /**
    * Attach listeners, sets attributes and add children to *element* parameter.
    */
-  _attachOptionsTo(element: HTMLElement): HTMLElement {
+  async _attachOptionsTo(element: HTMLElement): Promise<HTMLElement> {
     if (Object.keys(this._attributes).length > 0) {
       // $FlowFixMe
       const attributesEntries: [string, $Values<Attributes>][] = Object.entries(
@@ -156,33 +156,8 @@ export default class ENode {
     }
 
     if (this._children) {
-      if (Array.isArray(this._children)) {
-        this._children.forEach((child) => {
-          if (child instanceof ENode) {
-            element.append(child.createElement())
-          } else if (child instanceof Component) {
-            const nodes = child.build()
-            if (Array.isArray(nodes)) {
-              element.append(...nodes.map((node) => node.createElement()))
-            } else {
-              element.append(nodes.createElement())
-            }
-          } else {
-            element.append(child)
-          }
-        })
-      } else if (this._children instanceof ENode) {
-        element.append(this._children.createElement())
-      } else if (this._children instanceof Component) {
-        const nodes = this._children.build()
-        if (Array.isArray(nodes)) {
-          element.append(...nodes.map((node) => node.createElement()))
-        } else {
-          element.append(nodes.createElement())
-        }
-      } else {
-        element.append(this._children)
-      }
+      const elements = await transformNodesToElements(this._children)
+      element.append(...elements)
     }
 
     if (this._listeners) {
@@ -196,7 +171,7 @@ export default class ENode {
       }
     }
 
-    return element
+    return Promise.resolve(element)
   }
 }
 
@@ -208,4 +183,45 @@ export type ENodeOptions = {
   children?: ENode | Component | (ENode | Component | string)[] | string,
   listeners?: ENodeEventListener | ENodeEventListener[],
   extend?: string | ENode,
+}
+
+/**
+  Transforms elelweiss node to DOM nodes.
+ */
+export async function transformNodesToElements(
+  nodes: string | ENode | Component | (string | Component | ENode)[]
+): Promise<(string | HTMLElement)[]> {
+  if (Array.isArray(nodes)) {
+    const returnedArray: (string | HTMLElement)[] = []
+
+    nodes
+      .map(async node => {
+        if (node instanceof Component) {
+          const cbuildedNodes = await node._createNodes()
+          return transformNodesToElements(cbuildedNodes)
+        } else {
+          return Promise.resolve(
+            node instanceof ENode ? node.createElement() : node
+          )
+        }
+      })
+      .forEach(async node => {
+        const value = await node
+
+        Array.isArray(value)
+          ? returnedArray.push(...value)
+          : returnedArray.push(value)
+      })
+
+    return Promise.resolve(returnedArray)
+  } else {
+    if (nodes instanceof Component) {
+      const cbuildedNodes = await nodes._createNodes()
+      return transformNodesToElements(cbuildedNodes)
+    } else {
+      return Promise.resolve([
+        nodes instanceof ENode ? await nodes.createElement() : nodes,
+      ])
+    }
+  }
 }

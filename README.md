@@ -31,7 +31,7 @@ All of them accept `options` object that can have three properties:
 
 1. `attributes` - object whose keys are attribute names and values is attribute values.
 2. `children` - internal nodes that can contain this node. It can be `string`, `ENode`, `Component` or array of them.
-3. `listeners` - can be an object with properties: `type` (type of event: *click*, *keyup* and so on.) and `listener` - funtion that have `event` paraneter (accepts raw `event` object). Or it can be array of this objects.
+3. `listeners` - can be an object with properties: `type` (type of event: *click*, *keyup* and so on.) and `listener` - funtion that have `event` parameter (accepts raw `event` object). Or it can be array of this objects.
 
 ```javascript
 const footer = new Footer({
@@ -54,7 +54,7 @@ const footer = new Footer({
 })
 ```
 
-Some classes such as `A` accept not only `options` object, but also have parameters that are for this tag or is hightly recommended.
+Some classes such as `A` accept not only `options` object, but also have parameters that are specific for this tag or is hightly recommended.
 
 ```javascript
 const a = new A(
@@ -71,7 +71,7 @@ For information about such classes see [edelweiss.js](./flow-typed/edelweiss.js)
 
 If you create template that can be used in two or more places of your site you can group it in plain function that will returns them or define *component*.
 
-It can be achieved by creating class that extends `Component` class. You must override `build()` method that must returns `ENode` or array of `ENode` objects.
+It can be achieved by creating class that extends `Component` class. You must override `build()` method that can returns `ENode`, `string`, another `Component` or array of them.
 Also you can override `beforeBuild()` method that invokes before `build()` method and `afterBuild()` that invokes after `build()`. They return promises, so you can use them for getting data for your view or other tasks that need to be finished before or after rendering.
 
 ```javascript
@@ -80,7 +80,7 @@ class MyComponent extends Component {
     // Some useful work
   }
 
-  build() {
+  async build() {
     retuns new H(1, {
       attributes: { class: 'title' },
       children: 'Hello world!'
@@ -95,7 +95,7 @@ class MyComponent extends Component {
 
 Also you can pass into `Component`'s constructor (not override!) object `css` property that can be `string` (absolute path to css file that are associated with this component) or object that describes relative path to css file and contains `relativeTo` property (path to file or dir relative to which css file will be searched) and `cssFilePath` - relative path of css file to file or dir that specified in `relativeTo` property.
 
-> Note for specifying path to css file that is in the same directory you must provide object. It is not convinient so will be changed.
+> Note: for specifying path to css file that is in the same directory you must provide object. It is not convinient so will be changed.
 
 ```javascript
 class MyComponent extends Component {
@@ -106,11 +106,23 @@ class MyComponent extends Component {
     })
   }
 
-  build() {
+  async build() {
     retuns new H(1, {
       attributes: { class: 'title' },
       children: 'Hello world!'
     })
   }
 }
+```
+
+### render
+
+It is the function that inserts builded nodes into DOM.
+Function accepts selector that will be replaced with nodes and nodes as the second parameter.
+
+```javascript
+render(
+  '.body',
+  new MyComponent()
+)
 ```
