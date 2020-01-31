@@ -24,7 +24,7 @@ Importing library:
 import { ENode } from '/path/to/@prostory/edelweiss'
 ```
 
-> Note that in current times you canot import any package as it is in *commonjs* module system. You must provide absolute path from root of your project (site's root). It can be fixed be [import maps](https://github.com/WICG/import-maps), but is is not standard yet.
+> Note that in current times you cannot import any package like you do with `require()`. You must provide absolute path from root of your project (site's root). It can be fixed be [import maps](https://github.com/WICG/import-maps), but is is not standard yet. Also only **.mjs** files can be imported. (See [ES modules: A cartoon deep-dive](https://hacks.mozilla.org/2018/03/es-modules-a-cartoon-deep-dive/))
 
 This small framework does not use virtual DOM, but work with browser's DOM. All HTML tags are wrapped in classes (*A*, *Div*, *Main* and so on.). They extend *ENode* class.
 All of them accept `options` object that can have three properties: 

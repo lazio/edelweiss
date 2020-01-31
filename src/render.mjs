@@ -1,6 +1,6 @@
 // @flow
 
-import ENode, { transformNodesToElements } from './nodes/en.mjs'
+import ENode, { attach } from './nodes/en.mjs'
 import Component from './component/component.mjs'
 
 import { uid } from './utils/uid.mjs'
@@ -19,9 +19,7 @@ export async function render(
 
     newToElement.dataset.rid = toElement.dataset.rid || `${uid()}`
 
-    const buildedElements = await transformNodesToElements(nodes)
-
-    newToElement.append(...buildedElements)
+    attach(newToElement, nodes)
 
     toElement.replaceWith(newToElement)
   }

@@ -97,7 +97,12 @@ export default class ENode {
   /**  @private */
   +_attributes: Attributes
   /**  @private */
-  +_children: ENode | Component | (ENode | Component | string)[] | string | typeof undefined
+  +_children: string
+    | ENode
+    | Component
+    | (string | ENode | Component)[]
+    | typeof undefined
+
   /** @private */
   +_listeners: ENodeEventListenersObject | typeof undefined
 
@@ -155,8 +160,7 @@ export default class ENode {
     }
 
     if (this._children) {
-      const elements = await transformNodesToElements(this._children)
-      element.append(...elements)
+      attach(element, this._children)
     }
 
     if (this._listeners) {
@@ -182,42 +186,24 @@ export type ENodeOptions = {
 }
 
 /**
-  Transforms elelweiss node to DOM nodes.
+ * Attaches builded DOM elements into parent element.
  */
-export async function transformNodesToElements(
-  nodes: string | ENode | Component | (string | Component | ENode)[]
-): Promise<(string | HTMLElement)[]> {
+export async function attach(
+  to: HTMLElement,
+  nodes: string | ENode | Component | (string | ENode | Component)[]
+) {
   if (Array.isArray(nodes)) {
-    const returnedArray: (string | HTMLElement)[] = []
-
-    nodes
-      .map(async node => {
-        if (node instanceof Component) {
-          const cbuildedNodes = await node._createNodes()
-          return transformNodesToElements(cbuildedNodes)
-        } else {
-          return Promise.resolve(
-            node instanceof ENode ? node.createElement() : node
-          )
-        }
-      })
-      .forEach(async node => {
-        const value = await node
-
-        Array.isArray(value)
-          ? returnedArray.push(...value)
-          : returnedArray.push(value)
-      })
-
-    return Promise.resolve(returnedArray)
+    nodes.forEach(node => attach(to, node))
   } else {
     if (nodes instanceof Component) {
-      const cbuildedNodes = await nodes._createNodes()
-      return transformNodesToElements(cbuildedNodes)
+      const builded = await nodes._createNodes()
+      Array.isArray(builded)
+        ? builded.forEach(node => attach(to, node))
+        : attach(to, builded)
+    } else if (nodes instanceof ENode) {
+      to.append(await nodes.createElement())
     } else {
-      return Promise.resolve([
-        nodes instanceof ENode ? await nodes.createElement() : nodes,
-      ])
+      to.append(nodes)
     }
   }
 }
