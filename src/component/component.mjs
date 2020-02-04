@@ -23,22 +23,22 @@ export default class Component {
   }
 
   /** Executes before component builds. */
-  async beforeBuild(): Promise<void> {}
+  beforeBuild(): void {}
 
   /** Must be overridden by child class. */
-  async build(): Promise<string | ENode | Component | (string | Component | ENode)[]> {
-    return []
+  build(): string | ENode | Component | (string | Component | ENode)[] {
+    return ''
   }
 
   /** Executes after component is builded. */
-  async afterBuild(): Promise<void> {}
+  afterBuild(): void {}
 
-  async _createNodes(): Promise<string | ENode | Component | (string | Component | ENode)[]> {
-    await this.beforeBuild()
+  _createNodes(): string | ENode | Component | (string | Component | ENode)[] {
+    this.beforeBuild()
 
-    const buildedComponent = await this.build()
+    const buildedComponent = this.build()
 
-    await this.afterBuild()
+    this.afterBuild()
 
     return buildedComponent
   }

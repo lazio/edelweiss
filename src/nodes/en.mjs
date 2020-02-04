@@ -131,7 +131,7 @@ export default class ENode {
   /**
    * Creates element based on [this] node information.
    */
-  async createElement(): Promise<HTMLElement> {
+  createElement(): HTMLElement {
     const element = document.createElement(this._tag)
     return this._attachOptionsTo(element)
   }
@@ -139,7 +139,7 @@ export default class ENode {
   /**
    * Attach listeners, sets attributes and add children to *element* parameter.
    */
-  async _attachOptionsTo(element: HTMLElement): Promise<HTMLElement> {
+  _attachOptionsTo(element: HTMLElement): HTMLElement {
     if (Object.keys(this._attributes).length > 0) {
       // $FlowFixMe
       const attributesEntries: [string, $Values<Attributes>][] = Object.entries(
@@ -171,7 +171,7 @@ export default class ENode {
       })
     }
 
-    return Promise.resolve(element)
+    return element
   }
 }
 
@@ -188,20 +188,20 @@ export type ENodeOptions = {
 /**
  * Attaches builded DOM elements into parent element.
  */
-export async function attach(
+export function attach(
   to: HTMLElement,
   nodes: string | ENode | Component | (string | ENode | Component)[]
 ) {
   if (Array.isArray(nodes)) {
-    nodes.forEach(node => attach(to, node))
+    nodes.forEach(node => { attach(to, node) })
   } else {
     if (nodes instanceof Component) {
-      const builded = await nodes._createNodes()
+      const builded = nodes._createNodes()
       Array.isArray(builded)
-        ? builded.forEach(node => attach(to, node))
+        ? builded.forEach(node => { attach(to, node) })
         : attach(to, builded)
     } else if (nodes instanceof ENode) {
-      to.append(await nodes.createElement())
+      to.append(nodes.createElement())
     } else {
       to.append(nodes)
     }

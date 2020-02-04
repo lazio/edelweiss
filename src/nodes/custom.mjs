@@ -44,7 +44,7 @@ export default class Custom extends ENode {
     }
   }
 
-  async createElement() {
+  createElement() {
     let elementName = ''
     if (this._extends) {
       if (typeof this._extends === 'string') {
@@ -61,7 +61,7 @@ export default class Custom extends ENode {
 
     const fulfilledElement = this._attachOptionsTo(element)
     if (elementCreationOptions) {
-      (await fulfilledElement).setAttribute('is', elementCreationOptions.is)
+      fulfilledElement.setAttribute('is', elementCreationOptions.is)
     }
     return fulfilledElement
   }

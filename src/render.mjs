@@ -1,17 +1,19 @@
 // @flow
 
-import ENode, { attach } from './nodes/en.mjs'
-import Component from './component/component.mjs'
-
+import { attach } from './nodes/en.mjs'
 import { uid } from './utils/uid.mjs'
+import { diff } from './utils/dom.mjs'
+
+import type ENode from './nodes/en.mjs'
+import type Component from './component/component.mjs'
 
 /**
  * Render [ENode] node or nodes and its derivate nodes as element or elements.
  */
-export async function render(
+export function render(
   to: string,
   nodes: string | ENode | Component | (string | ENode | Component)[]
-): Promise<void> {
+): void {
   const toElement = document.querySelector(to)
 
   if (toElement) {
@@ -21,6 +23,8 @@ export async function render(
 
     attach(newToElement, nodes)
 
-    toElement.replaceWith(newToElement)
+    toElement.hasChildNodes()
+      ? diff(toElement, newToElement)
+      : toElement.replaceWith(newToElement)
   }
 }

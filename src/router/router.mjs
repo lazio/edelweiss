@@ -28,7 +28,7 @@ export default class Router {
     })
   }
 
-  async to(path: string): Promise<void> {
+  to(path: string): void {
     const route = this._routes.find(r => {
       const pathRegExp =
         typeof r.path === 'string' ? new RegExp(`^${r.path}$`) : r.path
@@ -41,7 +41,7 @@ export default class Router {
 
       if (toContainer) {
         this.current = route
-        await render(route.container, route.view())
+        render(route.container, route.view())
         window.history.pushState({ path, container: route.container }, '', path)
       } else {
         throw new Error(
@@ -53,10 +53,10 @@ export default class Router {
     }
   }
 
-  async reload() {
+  reload(): void {
     if (this.current) {
       const { path, container, view } = this.current
-      await render(container, view())
+      render(container, view())
       window.history.replaceState({ path, container }, '', path)
     }
   }

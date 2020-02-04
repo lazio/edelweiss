@@ -71,22 +71,22 @@ For information about such classes see [edelweiss.js](./flow-typed/edelweiss.js)
 If you create template that can be used in two or more places of your site you can group it in plain function that will returns them or define *component*.
 
 It can be achieved by creating class that extends `Component` class. You must override `build()` method that can returns `ENode`, `string`, another `Component` or array of them.
-Also you can override `beforeBuild()` method that invokes before `build()` method and `afterBuild()` that invokes after `build()`. They return promises, so you can use them for getting data for your view or other tasks that need to be finished before or after rendering.
+Also you can override `beforeBuild()` method that invokes before `build()` method and `afterBuild()` that invokes after `build()`. You can use them for getting data for your view or other tasks that need to be finished before or after rendering.
 
 ```javascript
 class MyComponent extends Component {
-  async beforeBuild() {
+  beforeBuild() {
     // Some useful work
   }
 
-  async build() {
+  build() {
     return new H(1, {
       attributes: { class: 'title' },
       children: 'Hello world!'
     })
   }
 
-  async afterBuild() {
+  afterBuild() {
     // Some useful work
   }
 }
@@ -105,7 +105,7 @@ class MyComponent extends Component {
     })
   }
 
-  async build() {
+  build() {
     return new H(1, {
       attributes: { class: 'title' },
       children: 'Hello world!'
@@ -117,8 +117,7 @@ class MyComponent extends Component {
 ### render
 
 It is the function that inserts builded nodes into DOM.
-Function accepts selector that will be replaced with nodes and nodes as the second parameter. You probably
-will not using it directly.
+Function accepts selector that will be replaced with nodes and nodes as the second parameter. If you will have defined router you probably will not using it directly.
 
 ```javascript
 render(
@@ -169,9 +168,117 @@ const router = new Router([
 
 `Router` have four methods:
 
-1. `to(path: string)` - it is asyncrounous method. Renders needed page.
-2. `reload()` - it is asyncrounous method. Reloads current page.
+1. `to(path: string)` - Renders needed page.
+2. `reload()` - Reloads current page.
 3. `back()` - return to previous page. 
 3. `forward()` - forwards to next page if it is in history.
 
 Also it can `current` field that contains information about current route (it is object that you pass to `Route`s constructor).
+
+### State
+
+Every site need to have state.
+For creating it use `createState()` function. It accepts object with properties that need to be reactive.
+
+Function returns object with `state` object that has properties from parameter's object. You can use that object to get or to update properties like in plain objects.
+
+```javascript
+const { state, onChange } = createState({ clicks: 0 })
+
+const clicks = state.clicks
+
+state.clicks++
+```
+
+Also `onChange` function is returned from `createState()` function. It is used for registering listeners to specific properties. Function accepts object with three properties: 
+
+1. `to` - container to which nodes must be rendered.
+2. `fields` - array of fields to which this listener is listen.
+3. `update` - method that returns nodes that need to be rebuilded or cannot return anything (you can navigating to other page by `Router`).
+
+```javascript
+onChange({
+  to: string,
+  fields: string[],
+  update: (
+    state: T // update method accepts new state object
+  ) => string | Component | ENode | (string | Component | ENode)[],
+})
+```
+
+For example if you need rerender current page:
+
+```javascript
+// @flow
+
+import {
+  Component,
+  P,
+  Header,
+  Nav,
+  A,
+  createState
+} from '/node_modules/@prostory/edelweiss/dist/index.mjs'
+import router from './router.mjs'
+
+const { state, onChange } = createState({ clicks: 0 })
+
+export default class Home extends Component {
+  constructor() {
+    super({
+      css: {
+        relativeTo: import.meta.url,
+        cssFilePath: './home.css'
+      }
+    })
+  }
+
+  build() {
+    return [
+      new Header({
+        attributes: {
+          class: 'home-header'
+        },
+        children: new Nav({
+          attributes: { class: 'home-header__menu' },
+          children: new A('/click', {
+                      attributes: { class: 'home-header__menu-item' },
+                      children: 'Click',
+                      listeners: {
+                        click(event) {
+                          event.preventDefault()
+                          ++state.clicks
+                        }
+                      }
+                    })
+        })
+      }),
+      new P({
+        children: `${state.clicks}`
+      })
+    ]
+  }
+}
+
+onChange({
+  to: '.page',
+  fields: ['clicks'],
+  update() {
+    return new Home()
+  }
+})
+
+// or 
+
+onChange({
+  to: '.page',
+  fields: ['clicks'],
+  update() {
+    router.reload() // Not desired because clicks may be changed in other page, so it will be reloaded, but not Home.
+  }
+})
+```
+
+## Warning
+
+Currently library is in beta, so any API may be changed. Always see **CHANGELOG** and **flow-typed** for types.

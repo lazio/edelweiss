@@ -4,7 +4,7 @@ declare module 'edelweiss' {
   declare export class ENode {
     constructor(tag: string, options?: ENodeOptions): ENode;
 
-    createElement(): Promise<HTMLElement>;
+    createElement(): HTMLElement;
   }
 
   declare export class A extends ENode {
@@ -454,9 +454,9 @@ declare module 'edelweiss' {
   declare export class Component {
     constructor(options?: ComponentOptions): Component;
 
-    beforeBuild(): Promise<void>;
-    build(): Promise<string | ENode | Component | (string | ENode | Component)[]>;
-    afterBuild(): Promise<void>;
+    beforeBuild(): void;
+    build(): string | ENode | Component | (string | ENode | Component)[];
+    afterBuild(): void;
   }
 
   declare export class Router {
@@ -464,8 +464,8 @@ declare module 'edelweiss' {
 
     constructor(routes: Route[]): Router;
 
-    to(path: string): Promise<void>;
-    reload(): Promise<void>;
+    to(path: string): void;
+    reload(): void;
     back(): void;
     forward(): void;
   }
@@ -480,7 +480,7 @@ declare module 'edelweiss' {
   declare export function render(
     to: string,
     nodes: string | ENode | Component | (string | ENode | Component)[]
-  ): Promise<void>
+  ): void
 
   declare export type InputType =
     | 'button'
@@ -611,13 +611,11 @@ declare module 'edelweiss' {
   }
 
   declare export type StateListener<T: { [string]: any }> = {
-    to?: string,
+    to: string,
     fields: string[],
-    reactiveAttributes?: $Keys<Attributes>[],
-    update: (newStateContainer: {
-      state: T,
-      onChange: (listener: StateListener<T>) => void,
-    }) => string | Component | ENode | (string | Component | ENode)[] | void,
+    update: (
+      state: T
+    ) => string | Component | ENode | (string | Component | ENode)[] | void,
   }
 
   declare type CssDeclaration =
