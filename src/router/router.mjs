@@ -24,7 +24,7 @@ export default class Router {
           ? new RegExp(`^${route.path}$`)
           : route.path
 
-      return pathRegExp.test('/')
+      return pathRegExp.test(window.location.pathname)
     })
   }
 

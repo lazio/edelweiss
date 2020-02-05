@@ -107,7 +107,7 @@ class MyComponent extends Component {
 ### render
 
 It is the function that inserts builded nodes into DOM.
-Function accepts selector that will be replaced with nodes and nodes as the second parameter. If you will have defined router you probably will not using it directly.
+Function accepts selector that will be replaced with nodes and nodes as the second parameter. If you define router you will not using it directly.
 
 ```javascript
 render(
@@ -123,7 +123,13 @@ If you are creating SPA, you probably do not need it.
 It is used for navigating through site. It interacts with browser's *History* API and, based on path of the page, renders needed nodes.
 
 ```javascript
+// It will always navigate to root page after reloading, opening page even if address bar will have another path.
 router.to('/')
+
+// It will navigate to page based on path in address bar. Reloading window in browser will not
+// return to home page but stay in current page.
+// It need to be put in script that is defined in HTML.
+router.to(window.location.pathname)
 ```
 
 While creating `Router` instance you must give him routes. Route is plain object:
@@ -188,11 +194,11 @@ Also `onChange` function is returned from `createState()` function. It is used f
 
 ```javascript
 onChange({
-  to: string,
+  to?: string,
   fields: string[],
   update: (
     state: T // update method accepts new state object
-  ) => string | Component | ENode | (string | Component | ENode)[],
+  ) => string | Component | ENode | (string | Component | ENode)[] | void,
 })
 ```
 
@@ -272,7 +278,6 @@ onChange({
 // or 
 
 onChange({
-  to: '.page',
   fields: ['clicks'],
   update() {
     router.reload() // Not desired because clicks may be changed in other page, so it will be reloaded, but not Home.

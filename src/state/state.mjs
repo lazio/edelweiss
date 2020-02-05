@@ -6,7 +6,7 @@ import type Component from '../component/component.mjs'
 import { render } from '../render.mjs'
 
 export type StateListener<T: { [string]: any }> = {
-  to: string,
+  to?: string,
   fields: string[],
   update: (
     state: T
@@ -26,12 +26,23 @@ export function createState<T: { [string]: any }>(object: T) {
         )
 
         listenersArray.forEach(({ to, update }) => {
-          const container = document.querySelector(to)
+          if (to) {
+            const container = document.querySelector(to)
 
-          if (container) {
+            if (container) {
+              const nodes = update(target)
+              if (nodes) {
+                render(to, nodes)
+              } else {
+                console.warn('If you provide "to" field in "onChange" method, you probably want to return value in "update" function?')
+              }
+            } else {
+              console.error(`Such element(s): ${to} doesn't exists in document.`)
+            }
+          } else {
             const nodes = update(target)
             if (nodes) {
-              render(to, nodes)
+              console.error('If you return value from "update" function, then you must provide "to" field.')
             }
           }
         })

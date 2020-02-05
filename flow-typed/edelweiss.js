@@ -1061,7 +1061,7 @@ declare module 'edelweiss' {
   }
 
   declare export type StateListener<T: { [string]: any }> = {
-    to: string,
+    to?: string,
     fields: string[],
     update: (
       state: T

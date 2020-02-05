@@ -1,4 +1,13 @@
-# 0.3.0
+# 0.3.2
+
+- Make possible to reload current page without returning to home page. Or open specific route from address bar.
+- Add errors in `State` if some needed properties are missing or used do not fully.
+
+## 0.3.1
+
+- Fix typos in README.
+
+## 0.3.0
 
 - Change signatures of all classes that inherits from `ENode` (except `Custom`). Now
 they stricter limit its options.
