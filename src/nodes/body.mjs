@@ -1,6 +1,6 @@
 // @flow
 
-import type { ENodeOptions } from './en.mjs'
+import type { Attributes, Nodes, ENodeEventListenersObject } from './en.mjs'
 
 import ENode from './en.mjs'
 
@@ -8,7 +8,11 @@ import ENode from './en.mjs'
  * Construct **<body>** node with specific options.
  */
 export default class Body extends ENode {
-  constructor(options?: ENodeOptions) {
-    super('body', options)
+  constructor(children?: Nodes, attributes?: Attributes, listeners?: ENodeEventListenersObject) {
+    super('body', {
+      children,
+      attributes,
+      listeners
+    })
   }
 }

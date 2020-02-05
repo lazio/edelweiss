@@ -1,6 +1,6 @@
 // @flow
 
-import type { ENodeOptions } from './en.mjs'
+import type { Attributes, Nodes, ENodeEventListenersObject } from './en.mjs'
 
 import ENode from './en.mjs'
 
@@ -9,7 +9,11 @@ import ENode from './en.mjs'
  * Children must be **<li>** nodes.
  */
 export default class Ul extends ENode {
-  constructor(options?: ENodeOptions) {
-    super('ul', options)
+  constructor(children?: Nodes, attributes?: Attributes, listeners?: ENodeEventListenersObject) {
+    super('ul', {
+      children,
+      attributes,
+      listeners
+    })
   }
 }

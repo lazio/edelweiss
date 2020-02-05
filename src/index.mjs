@@ -7,7 +7,12 @@ import Article from './nodes/article.mjs'
 import Aside from './nodes/aside.mjs'
 import Div from './nodes/div.mjs'
 import Footer from './nodes/footer.mjs'
-import H from './nodes/h.mjs'
+import H1 from './nodes/h1.mjs'
+import H2 from './nodes/h2.mjs'
+import H3 from './nodes/h3.mjs'
+import H4 from './nodes/h4.mjs'
+import H5 from './nodes/h5.mjs'
+import H6 from './nodes/h6.mjs'
 import Header from './nodes/header.mjs'
 import I from './nodes/i.mjs'
 import Main from './nodes/main.mjs'
@@ -131,7 +136,12 @@ export {
   Aside,
   Div,
   Footer,
-  H,
+  H1,
+  H2,
+  H3,
+  H4,
+  H5,
+  H6,
   Header,
   I,
   Main,

@@ -4,9 +4,55 @@ import Component from '../component/component.mjs'
 import { normalizeStyles } from '../utils/styles.mjs'
 import type { Styles } from '../utils/styles.mjs'
 
+/**
+ * Define all possible types of **<input>**.
+ */
+export type InputType =
+  | 'button'
+  | 'checkbox'
+  | 'color'
+  | 'date'
+  | 'datetime-local'
+  | 'email'
+  | 'file'
+  | 'hidden'
+  | 'image'
+  | 'month'
+  | 'number'
+  | 'password'
+  | 'radio'
+  | 'range'
+  | 'reset'
+  | 'search'
+  | 'submit'
+  | 'tel'
+  | 'text'
+  | 'time'
+  | 'url'
+  | 'week'
+
+/**
+ * Define target value for links.
+ */
+export type TargetType = '_blank' | '_self' | '_parent' | '_top'
+
+export type FormMethod = 'post' | 'get' | 'dialog'
+
 export type Attributes = {
   style?: Styles,
   class?: string,
+  target?: TargetType,
+  method?: FormMethod,
+  type?: InputType,
+  name?: string,
+  label?: string,
+  disabled?: boolean,
+  value?: string | number,
+  max?: number,
+  cite?: string,
+  src?: string,
+  alt?: string,
+  datetime?: string,
   [string]: string | boolean | number,
 }
 
@@ -175,12 +221,16 @@ export default class ENode {
   }
 }
 
+export type Nodes = string | ENode | Component | (string | ENode | Component)[]
+
 // Options that define parameters for creating **ENode** object.
 //
-// *extend* is used while creating custom node {@link ./nodes/custom.mjs}. It is name of HTML tag or node instance that will be customized if you want it to be inherited from basic HTML element.
+// *extend* is used while creating custom node {@link ./nodes/custom.mjs}.
+// It is name of HTML tag or node instance that will be customized if you want
+// it to be inherited from basic HTML element.
 export type ENodeOptions = {
   attributes?: Attributes,
-  children?: ENode | Component | (ENode | Component | string)[] | string,
+  children?: Nodes,
   listeners?: ENodeEventListenersObject,
   extend?: string | ENode,
 }

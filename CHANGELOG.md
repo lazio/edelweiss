@@ -1,4 +1,10 @@
-# 0.2.0
+# 0.3.0
+
+- Change signatures of all classes that inherits from `ENode` (except `Custom`). Now
+they stricter limit its options.
+- Make 6 separate *headings* classes.
+
+## 0.2.0
 
 - Change asyncronous functions to syncronous in `Component`, `render` and in `ENode`.
 - Implement rendering based on difference of old DOM and new DOM.

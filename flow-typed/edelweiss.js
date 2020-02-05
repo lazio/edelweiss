@@ -8,59 +8,105 @@ declare module 'edelweiss' {
   }
 
   declare export class A extends ENode {
-    constructor(href: string, options?: ENodeOptions): A;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): A;
   }
 
   declare export class Abbr extends ENode {
-    constructor(title?: string, options?: ENodeOptions): Abbr;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Abbr;
   }
 
   declare export class Address extends ENode {
-    constructor(options?: ENodeOptions): Address;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Address;
   }
 
   declare export class Area extends ENode {
-    constructor(options?: ENodeOptions): Area;
+    constructor(
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Area;
   }
 
   declare export class Article extends ENode {
-    constructor(options?: ENodeOptions): Article;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Article;
   }
 
   declare export class Aside extends ENode {
-    constructor(options?: ENodeOptions): Aside;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Aside;
   }
 
   declare export class Audio extends ENode {
-    constructor(options?: ENodeOptions): Audio;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Audio;
   }
 
   declare export class B extends ENode {
-    constructor(options?: ENodeOptions): B;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): B;
   }
 
   declare export class Base extends ENode {
     constructor(
-      href: string,
-      target: ?TargetType,
-      options?: ENodeOptions
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
     ): Base;
   }
 
   declare export class Bdi extends ENode {
-    constructor(options?: ENodeOptions): Bdi;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Bdi;
   }
 
   declare export class Bdo extends ENode {
-    constructor(options?: ENodeOptions): Bdo;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Bdo;
   }
 
   declare export class Blockquote extends ENode {
-    constructor(cite: ?string, options?: ENodeOptions): Blockquote;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Blockquote;
   }
 
   declare export class Body extends ENode {
-    constructor(options?: ENodeOptions): Body;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Body;
   }
 
   declare export class Br extends ENode {
@@ -68,31 +114,58 @@ declare module 'edelweiss' {
   }
 
   declare export class Button extends ENode {
-    constructor(options?: ENodeOptions): Button;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Button;
   }
 
   declare export class Canvas extends ENode {
-    constructor(options?: ENodeOptions): Canvas;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Canvas;
   }
 
   declare export class Caption extends ENode {
-    constructor(options?: ENodeOptions): Caption;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Caption;
   }
 
   declare export class Cite extends ENode {
-    constructor(options?: ENodeOptions): Cite;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Cite;
   }
 
   declare export class Code extends ENode {
-    constructor(options?: ENodeOptions): Code;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Code;
   }
 
   declare export class Col extends ENode {
-    constructor(options?: ENodeOptions): Col;
+    constructor(
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Col;
   }
 
   declare export class Colgroup extends ENode {
-    constructor(options?: ENodeOptions): Colgroup;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Colgroup;
   }
 
   declare export class Custom extends ENode {
@@ -104,351 +177,710 @@ declare module 'edelweiss' {
   }
 
   declare export class Data extends ENode {
-    constructor(value: string, options?: ENodeOptions): Data;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Data;
   }
 
   declare export class Datalist extends ENode {
-    constructor(id: string, options?: ENodeOptions): Datalist;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Datalist;
   }
 
   declare export class Dd extends ENode {
-    constructor(options?: ENodeOptions): Dd;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Dd;
   }
 
   declare export class Del extends ENode {
-    constructor(options?: ENodeOptions): Del;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Del;
   }
 
   declare export class Details extends ENode {
-    constructor(open?: boolean, options?: ENodeOptions): Details;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Details;
   }
 
   declare export class Dfn extends ENode {
-    constructor(options?: ENodeOptions): Dfn;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Dfn;
   }
 
   declare export class Dialog extends ENode {
-    constructor(open?: boolean, options?: ENodeOptions): Dialog;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Dialog;
   }
 
   declare export class Div extends ENode {
-    constructor(options?: ENodeOptions): Div;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Div;
   }
 
   declare export class Dl extends ENode {
-    constructor(options?: ENodeOptions): Dl;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Dl;
   }
 
   declare export class Dt extends ENode {
-    constructor(options?: ENodeOptions): Dt;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Dt;
   }
 
   declare export class Em extends ENode {
-    constructor(options?: ENodeOptions): Em;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Em;
   }
 
   declare export class Embed extends ENode {
-    constructor(options?: ENodeOptions): Embed;
+    constructor(
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Embed;
   }
 
   declare export class Fieldset extends ENode {
-    constructor(options?: ENodeOptions): Fieldset;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Fieldset;
   }
 
   declare export class Figcaption extends ENode {
-    constructor(options?: ENodeOptions): Figcaption;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Figcaption;
   }
 
   declare export class Figure extends ENode {
-    constructor(options?: ENodeOptions): Figure;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Figure;
   }
 
   declare export class Footer extends ENode {
-    constructor(options?: ENodeOptions): Footer;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Footer;
   }
 
   declare export class Form extends ENode {
     constructor(
-      action: ?string,
-      method: ?FormMethod,
-      options?: ENodeOptions
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
     ): Form;
   }
 
-  declare export class H extends ENode {
-    constructor(importance: number, options?: ENodeOptions): H;
+  declare export class H1 extends ENode {
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): H1;
+  }
+
+  declare export class H2 extends ENode {
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): H2;
+  }
+
+  declare export class H3 extends ENode {
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): H3;
+  }
+
+  declare export class H4 extends ENode {
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): H4;
+  }
+
+  declare export class H5 extends ENode {
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): H5;
+  }
+
+  declare export class H6 extends ENode {
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): H6;
   }
 
   declare export class Head extends ENode {
-    constructor(options?: ENodeOptions): Head;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Head;
   }
 
   declare export class Header extends ENode {
-    constructor(options?: ENodeOptions): Header;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Header;
   }
 
   declare export class Hr extends ENode {
-    constructor(options?: ENodeOptions): Hr;
+    constructor(
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Hr;
   }
 
   declare export class Html extends ENode {
-    constructor(options?: ENodeOptions): Html;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Html;
   }
 
   declare export class I extends ENode {
-    constructor(options?: ENodeOptions): I;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): I;
   }
 
   declare export class Iframe extends ENode {
-    constructor(options?: ENodeOptions): Iframe;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Iframe;
   }
 
   declare export class Img extends ENode {
-    constructor(src: string, alt: string, options?: ENodeOptions): Img;
+    constructor(
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Img;
   }
 
   declare export class Input extends ENode {
-    constructor(type: InputType, options?: ENodeOptions): Input;
+    constructor(
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Input;
   }
 
   declare export class Ins extends ENode {
-    constructor(options?: ENodeOptions): Ins;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Ins;
   }
 
   declare export class Kbd extends ENode {
-    constructor(options?: ENodeOptions): Kbd;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Kbd;
   }
 
   declare export class Label extends ENode {
-    constructor(options?: ENodeOptions): Label;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Label;
   }
 
   declare export class Legend extends ENode {
-    constructor(options?: ENodeOptions): Legend;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Legend;
   }
 
   declare export class Li extends ENode {
-    constructor(options?: ENodeOptions): Li;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Li;
   }
 
   declare export class Link extends ENode {
-    constructor(options?: ENodeOptions): Link;
+    constructor(
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Link;
   }
 
   declare export class Main extends ENode {
-    constructor(options?: ENodeOptions): Main;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Main;
   }
 
   declare export class Map extends ENode {
-    constructor(name: string, options?: ENodeOptions): Map;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Map;
   }
 
   declare export class Mark extends ENode {
-    constructor(options?: ENodeOptions): Mark;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Mark;
   }
 
   declare export class Meta extends ENode {
-    constructor(options?: ENodeOptions): Meta;
+    constructor(
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Meta;
   }
 
   declare export class Meter extends ENode {
-    constructor(options?: ENodeOptions): Meter;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Meter;
   }
 
   declare export class Nav extends ENode {
-    constructor(options?: ENodeOptions): Nav;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Nav;
   }
 
   declare export class NoScript extends ENode {
-    constructor(options?: ENodeOptions): NoScript;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): NoScript;
   }
 
   declare export class Object extends ENode {
-    constructor(options?: ENodeOptions): Object;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Object;
   }
 
   declare export class Ol extends ENode {
-    constructor(options?: ENodeOptions): Ol;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Ol;
   }
 
   declare export class OptGroup extends ENode {
     constructor(
-      label: string,
-      disabled: ?boolean,
-      options?: ENodeOptions
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
     ): OptGroup;
   }
 
   declare export class Option extends ENode {
-    constructor(options?: ENodeOptions): Option;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Option;
   }
 
   declare export class Output extends ENode {
-    constructor(options?: ENodeOptions): Output;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Output;
   }
 
   declare export class P extends ENode {
-    constructor(options?: ENodeOptions): P;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): P;
   }
 
   declare export class Param extends ENode {
-    constructor(name: string, value: string, options?: ENodeOptions): Param;
+    constructor(
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Param;
   }
 
   declare export class Picture extends ENode {
-    constructor(options?: ENodeOptions): Picture;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Picture;
   }
 
   declare export class Pre extends ENode {
-    constructor(options?: ENodeOptions): Pre;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Pre;
   }
 
   declare export class Progress extends ENode {
-    constructor(value: number, max: ?number, options?: ENodeOptions): Progress;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Progress;
   }
 
   declare export class Q extends ENode {
-    constructor(cite: string, options?: ENodeOptions): Q;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Q;
   }
 
   declare export class Rp extends ENode {
-    constructor(options?: ENodeOptions): Rp;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Rp;
   }
 
   declare export class Rt extends ENode {
-    constructor(options?: ENodeOptions): Rt;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Rt;
   }
 
   declare export class Rtc extends ENode {
-    constructor(options?: ENodeOptions): Rtc;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Rtc;
   }
 
   declare export class Ruby extends ENode {
-    constructor(options?: ENodeOptions): Ruby;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Ruby;
   }
 
   declare export class S extends ENode {
-    constructor(options?: ENodeOptions): S;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): S;
   }
 
   declare export class Samp extends ENode {
-    constructor(options?: ENodeOptions): Samp;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Samp;
   }
 
   declare export class Script extends ENode {
-    constructor(src: ?string, options?: ENodeOptions): Script;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Script;
   }
 
   declare export class Section extends ENode {
-    constructor(options?: ENodeOptions): Section;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Section;
   }
 
   declare export class Select extends ENode {
-    constructor(options?: ENodeOptions): Select;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Select;
   }
 
   declare export class Slot extends ENode {
-    constructor(name: string, options?: ENodeOptions): Slot;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Slot;
   }
 
   declare export class Small extends ENode {
-    constructor(options?: ENodeOptions): Small;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Small;
   }
 
   declare export class Source extends ENode {
-    constructor(options?: ENodeOptions): Source;
+    constructor(
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Source;
   }
 
   declare export class Span extends ENode {
-    constructor(options?: ENodeOptions): Span;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Span;
   }
 
   declare export class Strong extends ENode {
-    constructor(options?: ENodeOptions): Strong;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Strong;
   }
 
   declare export class Style extends ENode {
-    constructor(options?: ENodeOptions): Style;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Style;
   }
 
   declare export class Sub extends ENode {
-    constructor(options?: ENodeOptions): Sub;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Sub;
   }
 
   declare export class Summary extends ENode {
-    constructor(options?: ENodeOptions): Summary;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Summary;
   }
 
   declare export class Sup extends ENode {
-    constructor(options?: ENodeOptions): Sup;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Sup;
   }
 
   declare export class Table extends ENode {
-    constructor(options?: ENodeOptions): Table;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Table;
   }
 
   declare export class TBody extends ENode {
-    constructor(options?: ENodeOptions): TBody;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): TBody;
   }
 
   declare export class Td extends ENode {
-    constructor(options?: ENodeOptions): Td;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Td;
   }
 
   declare export class Template extends ENode {
-    constructor(options?: ENodeOptions): Template;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Template;
   }
 
   declare export class TextArea extends ENode {
-    constructor(options?: ENodeOptions): TextArea;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): TextArea;
   }
 
   declare export class TFoot extends ENode {
-    constructor(options?: ENodeOptions): TFoot;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): TFoot;
   }
 
   declare export class Th extends ENode {
-    constructor(options?: ENodeOptions): Th;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Th;
   }
 
   declare export class THead extends ENode {
-    constructor(options?: ENodeOptions): THead;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): THead;
   }
 
   declare export class Time extends ENode {
-    constructor(datetime: ?string, options?: ENodeOptions): Time;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Time;
   }
 
   declare export class Title extends ENode {
-    constructor(options?: ENodeOptions): Title;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Title;
   }
 
   declare export class Tr extends ENode {
-    constructor(options?: ENodeOptions): Tr;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Tr;
   }
 
   declare export class Track extends ENode {
-    constructor(options?: ENodeOptions): Track;
+    constructor(
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Track;
   }
 
   declare export class U extends ENode {
-    constructor(options?: ENodeOptions): U;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): U;
   }
 
   declare export class Ul extends ENode {
-    constructor(options?: ENodeOptions): Ul;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Ul;
   }
 
   declare export class Var extends ENode {
-    constructor(options?: ENodeOptions): Var;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Var;
   }
 
   declare export class Video extends ENode {
-    constructor(options?: ENodeOptions): Video;
+    constructor(
+      children?: Nodes,
+      attributes?: Attributes,
+      listeners?: ENodeEventListenersObject
+    ): Video;
   }
 
   declare export class Wbr extends ENode {
-    constructor(options?: ENodeOptions): Wbr;
+    constructor(attributes?: Attributes): Wbr;
   }
 
   declare export class Component {
@@ -516,6 +948,18 @@ declare module 'edelweiss' {
   declare export type Attributes = {
     style?: Styles,
     class?: string,
+    target?: TargetType,
+    method?: FormMethod,
+    type?: InputType,
+    name?: string,
+    label?: string,
+    disabled?: boolean,
+    value?: string | number,
+    max?: number,
+    cite?: string,
+    src?: string,
+    alt?: string,
+    datetime?: string,
     [string]: string | boolean | number,
   }
 
@@ -597,9 +1041,15 @@ declare module 'edelweiss' {
     [type: EventType]: EventListener,
   }
 
+  declare export type Nodes =
+    | string
+    | ENode
+    | Component
+    | (string | ENode | Component)[]
+
   declare export type ENodeOptions = {
     attributes?: Attributes,
-    children?: ENode | Component | (ENode | Component | string)[] | string,
+    children?: Nodes,
     listeners?: ENodeEventListenersObject,
     extend?: string | ENode,
   }

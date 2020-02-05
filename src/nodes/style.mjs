@@ -1,6 +1,6 @@
 // @flow
 
-import type { ENodeOptions } from './en.mjs'
+import type { Attributes, Nodes, ENodeEventListenersObject } from './en.mjs'
 
 import ENode from './en.mjs'
 
@@ -9,7 +9,11 @@ import ENode from './en.mjs'
  * In order to define styles, give stringified styles to *options.children* property.
  */
 export default class Style extends ENode {
-  constructor(options?: ENodeOptions) {
-    super('style', options)
+  constructor(children?: Nodes, attributes?: Attributes, listeners?: ENodeEventListenersObject) {
+    super('style', {
+      children,
+      attributes,
+      listeners
+    })
   }
 }

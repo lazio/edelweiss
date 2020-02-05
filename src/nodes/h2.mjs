@@ -5,11 +5,11 @@ import type { Attributes, Nodes, ENodeEventListenersObject } from './en.mjs'
 import ENode from './en.mjs'
 
 /**
- * Construct **<picture>** node with specific options.
+ * Construct **<h2>** node with specific options.
  */
-export default class Picture extends ENode {
+export default class H2 extends ENode {
   constructor(children?: Nodes, attributes?: Attributes, listeners?: ENodeEventListenersObject) {
-    super('picture', {
+    super('h2', {
       children,
       attributes,
       listeners

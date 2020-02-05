@@ -1,6 +1,6 @@
 // @flow
 
-import type { ENodeOptions } from './en.mjs'
+import type { Attributes, Nodes, ENodeEventListenersObject } from './en.mjs'
 
 import ENode from './en.mjs'
 
@@ -11,10 +11,14 @@ export default class Title extends ENode {
   /**
    * @throws {Error} if *options.children* isn't type of string.
    */
-  constructor(options?: ENodeOptions) {
-    super('title', options)
-    if (options && options.children && typeof options.children !== 'string') {
-      throw new TypeError(`Children of the <title> node must be string, but got ${typeof options.children}`)
+  constructor(children?: Nodes, attributes?: Attributes, listeners?: ENodeEventListenersObject) {
+    super('title', {
+      children,
+      attributes,
+      listeners
+    })
+    if (children && typeof children !== 'string') {
+      throw new TypeError(`Children of the <title> node must be string, but got ${typeof children}`)
     }
   }
 }

@@ -27,40 +27,36 @@ import { ENode } from '/path/to/@prostory/edelweiss'
 > Note that in current times you cannot import any package like you do with `require()`. You must provide absolute path from root of your project (site's root). It can be fixed be [import maps](https://github.com/WICG/import-maps), but is is not standard yet. Also only **.mjs** files can be imported. (See [ES modules: A cartoon deep-dive](https://hacks.mozilla.org/2018/03/es-modules-a-cartoon-deep-dive/))
 
 This small framework does not use virtual DOM, but work with browser's DOM. All HTML tags are wrapped in classes (*A*, *Div*, *Main* and so on.). They extend *ENode* class.
-All of them accept `options` object that can have three properties: 
+Many of them can accept three objects (in such order): 
 
-1. `attributes` - object whose keys are attribute names and values is attribute values.
-2. `children` - internal nodes that can contain this node. It can be `string`, `ENode`, `Component` or array of them.
+1. `children` - internal nodes that can contain this node. It can be `string`, `ENode`, `Component` or array of them.
+2. `attributes` - object whose keys are attribute names and values is attribute values.
 3. `listeners` - an object with methods. Name of the method must be like name of type of event: *click*, *keyup* and so on. It accepts raw `event` object.
 
 ```javascript
-const footer = new Footer({
-  attributes: {
-    class: 'footer',
-    style: 'padding: 15px; background-color: #cecece;'
-  },
-  children: new Button({
-    attributes: {
-      style: 'margin: 0; padding: 5px 10px; border: none; outline: none; background-color: blue; color: black;'
-    },
-    children: 'Click me) I am a cool button!',
-    listeners: {
+const footer = new Footer(
+  new Button(
+    'Click me) I am a cool button!',
+    { style: 'margin: 0;' },
+    {
       click(event) {
         console.log('Clicked')
-      }
+      },
     }
-  })
-})
+  ),
+  {
+    class: 'footer',
+    style: 'padding: 15px; background-color: #cecece;',
+  },
+)
 ```
 
-Some classes such as `A` accept not only `options` object, but also have parameters that are specific for this tag or is hightly recommended.
+Some classes such as `Wbr` does not accept `children` object. See [empty elements](https://developer.mozilla.org/en-US/docs/Glossary/empty_element):
 
 ```javascript
-const a = new A(
-  '#', // href attribute
-
-  // Note that you can provide href attribute in attributes property. And it will override one that is defined above. So try to avoid it.
-  { /* some properties */ }
+const wbr = new Wbr(
+  { /* some attributes */ },
+  // Wbr also does not accept listeners object.
 )
 ```
 
@@ -106,10 +102,7 @@ class MyComponent extends Component {
   }
 
   build() {
-    return new H(1, {
-      attributes: { class: 'title' },
-      children: 'Hello world!'
-    })
+    return new H1('Hello world!', { class: 'title' })
   }
 }
 ```
@@ -158,7 +151,7 @@ const router = new Router([
     view() {
       // We will think that HomePage is the component
       return new HomePage({
-        // some properties
+        // Custom component may accept some properties
       })
     }
   },
@@ -217,9 +210,11 @@ import {
   Header,
   Nav,
   A,
-  createState
+  Button,
+  createState,
 } from '/node_modules/@prostory/edelweiss/dist/index.mjs'
-import router from './router.mjs'
+
+import router from '../../router.mjs'
 
 const { state, onChange } = createState({ clicks: 0 })
 
@@ -228,34 +223,43 @@ export default class Home extends Component {
     super({
       css: {
         relativeTo: import.meta.url,
-        cssFilePath: './home.css'
-      }
+        cssFilePath: './home.css',
+      },
     })
   }
 
   build() {
     return [
-      new Header({
-        attributes: {
-          class: 'home-header'
-        },
-        children: new Nav({
-          attributes: { class: 'home-header__menu' },
-          children: new A('/click', {
-                      attributes: { class: 'home-header__menu-item' },
-                      children: 'Click',
-                      listeners: {
-                        click(event) {
-                          event.preventDefault()
-                          ++state.clicks
-                        }
-                      }
-                    })
-        })
-      }),
-      new P({
-        children: `${state.clicks}`
-      })
+      new Header(
+        new Nav(
+          [
+            new Button(
+              'Click',
+              { class: 'home-header__menu-item' },
+              {
+                click(event) {
+                  state.clicks++
+                },
+              }
+            ),
+            new A(
+              'About',
+              { class: 'home-header__menu-item', href: '/about' },
+              {
+                click(event) {
+                  event.preventDefault()
+                  router.to('/about')
+                },
+              }
+            ),
+          ],
+          { class: 'home-header__menu' }
+        ),
+        {
+          class: 'home-header',
+        }
+      ),
+      new P(`${state.clicks}`),
     ]
   }
 }
@@ -265,7 +269,7 @@ onChange({
   fields: ['clicks'],
   update() {
     return new Home()
-  }
+  },
 })
 
 // or 
