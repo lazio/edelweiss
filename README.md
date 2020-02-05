@@ -24,7 +24,7 @@ Importing library:
 import { ENode } from '/path/to/@prostory/edelweiss'
 ```
 
-> Note that in current times you cannot import any package like you do with `require()`. You must provide absolute path from root of your project (site's root). It can be fixed be [import maps](https://github.com/WICG/import-maps), but is is not standard yet. Also only **.mjs** files can be imported. (See [ES modules: A cartoon deep-dive](https://hacks.mozilla.org/2018/03/es-modules-a-cartoon-deep-dive/))
+> Note that in current times you cannot import any package like you do with `require()`. You must provide absolute path from root of your project (site's root). It can be fixed by [import maps](https://github.com/WICG/import-maps), but is is not standard yet. Also only **.mjs** files can be imported. (See [ES modules: A cartoon deep-dive](https://hacks.mozilla.org/2018/03/es-modules-a-cartoon-deep-dive/))
 
 This small framework does not use virtual DOM, but work with browser's DOM. All HTML tags are wrapped in classes (*A*, *Div*, *Main* and so on.). They extend *ENode* class.
 Many of them can accept three objects (in such order): 
@@ -76,10 +76,7 @@ class MyComponent extends Component {
   }
 
   build() {
-    return new H(1, {
-      attributes: { class: 'title' },
-      children: 'Hello world!'
-    })
+    return new H('Hello world!', { class: 'title' })
   }
 
   afterBuild() {
