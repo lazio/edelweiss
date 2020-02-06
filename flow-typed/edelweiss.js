@@ -1,6 +1,6 @@
 // @flow
 
-declare module 'edelweiss' {
+declare module '@prostory/edelweiss' {
   declare export class ENode {
     constructor(tag: string, options?: ENodeOptions): ENode;
 

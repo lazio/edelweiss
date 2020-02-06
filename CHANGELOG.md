@@ -1,4 +1,9 @@
-# 0.3.2
+# 0.3.3
+
+- Minify distributed code.
+- Add build system `gulp`.
+
+## 0.3.2
 
 - Make possible to reload current page without returning to home page. Or open specific route from address bar.
 - Add errors in `State` if some needed properties are missing or used do not fully.

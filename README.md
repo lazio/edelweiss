@@ -76,7 +76,7 @@ class MyComponent extends Component {
   }
 
   build() {
-    return new H('Hello world!', { class: 'title' })
+    return new H1('Hello world!', { class: 'title' })
   }
 
   afterBuild() {

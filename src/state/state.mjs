@@ -21,8 +21,8 @@ export function createState<T: { [string]: any }>(object: T) {
       set(target, property, value) {
         target[property] = value
 
-        const listenersArray = listeners.filter(
-          listener => listener.fields.includes(property)
+        const listenersArray = listeners.filter(listener =>
+          listener.fields.includes(property)
         )
 
         listenersArray.forEach(({ to, update }) => {
@@ -34,15 +34,21 @@ export function createState<T: { [string]: any }>(object: T) {
               if (nodes) {
                 render(to, nodes)
               } else {
-                console.warn('If you provide "to" field in "onChange" method, you probably want to return value in "update" function?')
+                console.warn(
+                  'If you provide "to" field in "onChange" method, you probably want to return value in "update" function?'
+                )
               }
             } else {
-              console.error(`Such element(s): ${to} doesn't exists in document.`)
+              console.error(
+                `Such element(s): "${to}" doesn't exists in document.`
+              )
             }
           } else {
             const nodes = update(target)
             if (nodes) {
-              console.error('If you return value from "update" function, then you must provide "to" field.')
+              console.error(
+                'If you return value from "update" function, then you must provide "to" field.'
+              )
             }
           }
         })
