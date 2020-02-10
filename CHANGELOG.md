@@ -1,4 +1,10 @@
-# 0.3.3
+# 0.4.0
+
+- Add `I18n` class that repersents localization functionality.
+- Add log when container does not exist on the page in `render`.
+- Add *I18n* section to README.
+
+## 0.3.3
 
 - Minify distributed code.
 - Add build system `gulp`.

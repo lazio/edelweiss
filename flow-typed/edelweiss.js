@@ -902,6 +902,15 @@ declare module '@prostory/edelweiss' {
     forward(): void;
   }
 
+  declare export class I18n {
+    +currentLanguage: string;
+
+    constructor(options: I18nOptions, router: Router, current?: string): I18n;
+
+    setLanguage(tag: string): void;
+    translate(path: string): string;
+  }
+
   declare export function createState<T: { [string]: any }>(
     object: T
   ): {
@@ -1079,4 +1088,12 @@ declare module '@prostory/edelweiss' {
   declare type Constructor = Class<Element>
 
   declare type FormMethod = 'post' | 'get' | 'dialog'
+
+  declare type I18nValue = {
+    [string]: string | { [string]: I18nValue },
+  }
+
+  declare type I18nOptions = {
+    [string]: I18nValue,
+  }
 }

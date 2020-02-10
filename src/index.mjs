@@ -114,19 +114,19 @@ import Video from './nodes/video.mjs'
 import Wbr from './nodes/wbr.mjs'
 import Custom from './nodes/custom.mjs'
 
+import { render } from './render.mjs'
 import { createState } from './state/state.mjs'
 
-import Component from './component/component.mjs'
-
-import { render } from './render.mjs'
-
 import Router from './router/router.mjs'
+import Component from './component/component.mjs'
+import I18n from './intl/i18n.mjs'
 
 export {
-  Router,
   render,
-  Component,
   createState,
+  Router,
+  Component,
+  I18n,
 
   // --- start of nodes ---
   ENode,

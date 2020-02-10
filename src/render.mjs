@@ -26,5 +26,7 @@ export function render(
     toElement.hasChildNodes()
       ? diff(toElement, newToElement)
       : toElement.replaceWith(newToElement)
+  } else {
+    console.warn(`"${to}" element is not exist on the page.`)
   }
 }

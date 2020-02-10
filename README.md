@@ -285,6 +285,49 @@ onChange({
 })
 ```
 
+### I18n
+
+Framework has `I18n` class for internationalization purposes. It accepts object whose keys are language tags and values is
+object with translations. The second parameter must be your `router` instance. And third is `tag` - represents initial
+language for site. If omitted then first language of object (first parameter) will be used.
+
+```javascript
+export const i18n = new I18n(
+  {
+    uk: {
+      home: {
+        title: 'Ще однин набридливий фреймворк.',
+        menu: {
+          docs: 'Документація',
+          about: 'Про проект'
+        }
+      }
+    },
+    en: {
+      home: {
+        title: 'Another boring framework.',
+        menu: {
+          docs: 'Documentation',
+          about: 'About project'
+        }
+      }
+    },
+  },
+  router,
+  // tag is optional
+)
+```
+
+`I18n` has two methods:
+
+1. `setLanguage(tag: string)` - change language on site.
+2. `translate(path: string): string` - returns translated text for current language. **path** is string
+  that provide path to text as object keys limited by dot.
+
+```javascript
+i18n.translate('home.menu.about')
+```
+
 ## Warning
 
 Currently library is in beta, so any API may be changed. Always see **CHANGELOG** and **flow-typed** for types.

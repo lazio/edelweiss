@@ -17,3 +17,4 @@ function mjs() {
 exports.default = function () {
   watch('src/**/*.mjs', mjs)
 }
+exports.minimize = mjs
