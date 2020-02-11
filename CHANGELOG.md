@@ -1,4 +1,8 @@
-# 0.5.0
+# 0.5.1
+
+- Fix typo in `flor-typed/edelweiss.js`
+
+## 0.5.0
 
 - Make all methods and properties of `Router` and `I18n` classes static.
 - Add `Router.add(routes: Route | Route[])` method.

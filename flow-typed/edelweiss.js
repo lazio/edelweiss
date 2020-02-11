@@ -894,7 +894,7 @@ declare module '@prostory/edelweiss' {
   declare export class Router {
     static +current: Route | void;
 
-    static add(routes: Routes | Route[]): void;
+    static add(routes: Route | Route[]): void;
     static to(path: string): void;
     static reload(): void;
     static back(): void;
