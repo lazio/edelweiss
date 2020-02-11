@@ -39,11 +39,9 @@ export function loadCSS(declaration: CssDeclaration): void {
 }
 
 function buildCssPath(declaration: CssDeclaration): string {
-  if (typeof declaration === 'string') {
-    return declaration
-  } else {
-    return buildCssPathFromObject(declaration)
-  }
+  return typeof declaration === 'string'
+    ? declaration
+    : buildCssPathFromObject(declaration)
 }
 
 function buildCssPathFromObject(declaration: {
@@ -53,8 +51,8 @@ function buildCssPathFromObject(declaration: {
   const { relativeTo, cssFilePath } = declaration
 
   const rootPathToArray = relativeTo
-    .replace(/([\w\d-]+)\.[\w]{2,4}$/, '')
-    .match(/(\/([\w\d_-])*)+$/)
+    .replace(/([\w\d-]+)\.[\w]{2,4}$/, '') // Remove filename (end) if exists
+    .match(/(\/([\w\d_-])*)+$/) // Get path as directory without trailing "/"
 
   if (rootPathToArray) {
     const normalizedPathSegments: string[] = []
