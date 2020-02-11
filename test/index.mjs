@@ -1,4 +1,4 @@
-import { Custom, Main, render, Footer, Button } from '../dist/index.mjs'
+import { Custom, Main, Footer, Button } from '../dist/index.mjs'
 
 const main = new Main(
   new Custom('custom-p', class extends HTMLElement {}, {
@@ -25,5 +25,3 @@ const footer = new Footer(
     style: 'padding: 15px; background-color: #cecece;',
   },
 )
-
-render('body', [main, footer])

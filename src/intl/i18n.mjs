@@ -1,45 +1,40 @@
 // @flow
 
-import type Router from '../router/router.mjs'
+import Router from '../router/router.mjs'
 
-export type I18nValue = {
-  [string]: string | { [string]: I18nValue }
+export type I18nLanguage = {
+  [string]: string | { [string]: I18nLanguage }
 }
 
-export type I18nOptions = {
-  [string]: I18nValue
+export type I18nLanguagesSet = {
+  [string]: I18nLanguage
 }
 
 export default class I18n {
-  +_languages: I18nOptions
-  _currentLanguageFile: I18nValue
-  +_router: Router
-  currentLanguage: string
+  static _languages: I18nLanguagesSet
+  static currentLanguage: string
 
-  constructor(options: I18nOptions, router: Router, current?: string) {
-    this._languages = options
-    this._router = router
+  static add(languages: I18nLanguagesSet, initial?: string) {
+    I18n._languages = languages
 
-    const tmp = Object.entries(this._languages)
-    this.currentLanguage = current || tmp[0][0]
-    this._currentLanguageFile = this._languages[this.currentLanguage]
+    const tmp = Object.entries(languages)
+    I18n.currentLanguage = initial || tmp[0][0]
   }
 
-  setLanguage(tag: string) {
-    const translation = this._languages[tag]
+  static setLanguage(tag: string) {
+    const translation = I18n._languages[tag]
 
     if (!translation) {
       console.error(`You do not have translation for ${tag} language!`)
     } else {
-      this.currentLanguage = tag
-      this._currentLanguageFile = translation
-      this._router.reload()
+      I18n.currentLanguage = tag
+      Router.reload()
     }
   }
 
-  translate(path: string): string {
+  static translate(path: string): string {
     const splitted = path.split('.')
-    let maybeText = this._currentLanguageFile
+    let maybeText = I18n._languages[I18n.currentLanguage]
 
     splitted.forEach(part => {
       if (typeof maybeText !== 'string') {

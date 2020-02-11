@@ -1,4 +1,14 @@
-# 0.4.0
+# 0.5.0
+
+- Make all methods and properties of `Router` and `I18n` classes static.
+- Add `Router.add(routes: Route | Route[])` method.
+- Add `I18n.add(languages: I18nLanguagesSet, initial?: string)` method.
+- Remove `onChange` function from state object. Now `createState` returns
+plain *state* object.
+- Remove `render` function from export. Use `Router` instead.
+- Improve README.
+
+## 0.4.0
 
 - Add `I18n` class that repersents localization functionality.
 - Add log when container does not exist on the page in `render`.

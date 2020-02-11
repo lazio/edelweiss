@@ -892,31 +892,26 @@ declare module '@prostory/edelweiss' {
   }
 
   declare export class Router {
-    current: Route | void;
+    static +current: Route | void;
 
-    constructor(routes: Route[]): Router;
-
-    to(path: string): void;
-    reload(): void;
-    back(): void;
-    forward(): void;
+    static add(routes: Routes | Route[]): void;
+    static to(path: string): void;
+    static reload(): void;
+    static back(): void;
+    static forward(): void;
   }
 
   declare export class I18n {
-    +currentLanguage: string;
+    static +currentLanguage: string;
 
-    constructor(options: I18nOptions, router: Router, current?: string): I18n;
-
-    setLanguage(tag: string): void;
-    translate(path: string): string;
+    static add(languages: I18nLanguagesSet, initial?: string): void;
+    static setLanguage(tag: string): void;
+    static translate(path: string): string;
   }
 
   declare export function createState<T: { [string]: any }>(
     object: T
-  ): {
-    state: T,
-    onChange: (listener: StateListener<T>) => void,
-  }
+  ): T;
 
   declare export function render(
     to: string,
@@ -1069,14 +1064,6 @@ declare module '@prostory/edelweiss' {
     view: () => string | ENode | Component | (string | ENode | Component)[],
   }
 
-  declare export type StateListener<T: { [string]: any }> = {
-    to?: string,
-    fields: string[],
-    update: (
-      state: T
-    ) => string | Component | ENode | (string | Component | ENode)[] | void,
-  }
-
   declare type CssDeclaration =
     | string
     | { relativeTo: string, cssFilePath: string }
@@ -1089,11 +1076,11 @@ declare module '@prostory/edelweiss' {
 
   declare type FormMethod = 'post' | 'get' | 'dialog'
 
-  declare type I18nValue = {
-    [string]: string | { [string]: I18nValue },
+  declare type I18nLanguage = {
+    [string]: string | { [string]: I18nLanguage },
   }
 
-  declare type I18nOptions = {
-    [string]: I18nValue,
+  declare type I18nLanguagesSet = {
+    [string]: I18nLanguage,
   }
 }

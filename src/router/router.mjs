@@ -12,24 +12,33 @@ export type Route = {
 }
 
 export default class Router {
-  _routes: Route[]
-  current: Route | void
+  static _routes: Route[]
+  static current: Route | void
 
-  constructor(routes: Route[]) {
-    this._routes = routes
-    // First route of the app.
-    this.current = routes.find(route => {
-      const pathRegExp =
-        typeof route.path === 'string'
-          ? new RegExp(`^${route.path}$`)
-          : route.path
+  static add(routes: Route | Route[]) {
+    if (!Router._routes) {
+      Router._routes = []
+    }
 
-      return pathRegExp.test(window.location.pathname)
-    })
+    Array.isArray(routes)
+      ? Router._routes.push(...routes)
+      : Router._routes.push(routes)
+
+    if (!Router.current) {
+      // First route of the app.
+      Router.current = Router._routes.find(route => {
+        const pathRegExp =
+          typeof route.path === 'string'
+            ? new RegExp(`^${route.path}$`)
+            : route.path
+
+        return pathRegExp.test(window.location.pathname)
+      })
+    }
   }
 
-  to(path: string): void {
-    const route = this._routes.find(r => {
+  static to(path: string): void {
+    const route = Router._routes.find(r => {
       const pathRegExp =
         typeof r.path === 'string' ? new RegExp(`^${r.path}$`) : r.path
 
@@ -40,7 +49,7 @@ export default class Router {
       const toContainer = document.querySelector(route.container)
 
       if (toContainer) {
-        this.current = route
+        Router.current = route
         render(route.container, route.view())
         window.history.pushState({ path, container: route.container }, '', path)
       } else {
@@ -53,19 +62,19 @@ export default class Router {
     }
   }
 
-  reload(): void {
-    if (this.current) {
-      const { path, container, view } = this.current
+  static reload(): void {
+    if (Router.current) {
+      const { path, container, view } = Router.current
       render(container, view())
       window.history.replaceState({ path, container }, '', path)
     }
   }
 
-  back() {
+  static back() {
     window.history.back()
   }
 
-  forward() {
+  static forward() {
     window.history.forward()
   }
 }

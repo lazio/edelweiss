@@ -21,10 +21,10 @@ ES modules are supported by almost all modern browser from 2017-2018 year.
 Importing library:
 
 ```javascript
-import { ENode } from '/path/to/@prostory/edelweiss'
+import { ENode } from '/path/to/@prostory/edelweiss/dist/index.mjs'
 ```
 
-> Note that in current times you cannot import any package like you do with `require()`. You must provide absolute path from root of your project (site's root). It can be fixed by [import maps](https://github.com/WICG/import-maps), but is is not standard yet. Also only **.mjs** files can be imported. (See [ES modules: A cartoon deep-dive](https://hacks.mozilla.org/2018/03/es-modules-a-cartoon-deep-dive/))
+> Note that in current time you cannot import any package like you do with `require()`. You must provide absolute path from root of your project (site's root). It can be fixed by [import maps](https://github.com/WICG/import-maps), but is is not standard yet. Also only **.mjs** files can be imported. (See [ES modules: A cartoon deep-dive](https://hacks.mozilla.org/2018/03/es-modules-a-cartoon-deep-dive/))
 
 This small framework does not use virtual DOM, but work with browser's DOM. All HTML tags are wrapped in classes (*A*, *Div*, *Main* and so on.). They extend *ENode* class.
 Many of them can accept three objects (in such order): 
@@ -104,35 +104,22 @@ class MyComponent extends Component {
 }
 ```
 
-### render
-
-It is the function that inserts builded nodes into DOM.
-Function accepts selector that will be replaced with nodes and nodes as the second parameter. If you define router you will not using it directly.
-
-```javascript
-render(
-  '.body',
-  new MyComponent()
-)
-```
-
 ### Router
 
-If you are creating SPA, you probably do not need it.
-
-It is used for navigating through site. It interacts with browser's *History* API and, based on path of the page, renders needed nodes.
+It is used for navigating through site and rendering. It interacts with browser's *History* API and, based on path of the page, renders needed nodes. `Router` has only static methods and static readable `current` field.
 
 ```javascript
-// It will always navigate to root page after reloading, opening page even if address bar will have another path.
-router.to('/')
+import { Router } from '/path/to/@prostory/edelweiss/dist/index.mjs'
+// It will always navigate to root page after reloading, opens "/" page even if address bar will have another path.
+Router.to('/')
 
 // It will navigate to page based on path in address bar. Reloading window in browser will not
 // return to home page but stay in current page.
-// It need to be put in script that is defined in HTML.
-router.to(window.location.pathname)
+// It need to be put in script that is directly defined in HTML.
+Router.to(window.location.pathname)
 ```
 
-While creating `Router` instance you must give him routes. Route is plain object:
+You must set up `Router` with routes. Route is a plain object:
 
 ```javascript
 type Route = {
@@ -147,7 +134,7 @@ type Route = {
 3. `view` - function that returns nodes that need to be rendered.
 
 ```javascript
-const router = new Router([
+Router.add([
   {
     path: '/',
     container: '.body',
@@ -162,141 +149,53 @@ const router = new Router([
 ])
 ```
 
-`Router` have four methods:
+`Router` have five static methods:
 
 1. `to(path: string)` - Renders needed page.
 2. `reload()` - Reloads current page.
 3. `back()` - return to previous page. 
-3. `forward()` - forwards to next page if it is in history.
+4. `forward()` - forwards to next page if it is in history.
+5. `add(routes: Route | Route[])` - add routes to `Router`. May be called many times.
 
-Also it can `current` field that contains information about current route (it is object that you pass to `Route`s constructor).
+Also it has static `current` field that contains information about current route (it is `Route` object).
 
 ### State
 
 Every site need to have state.
 For creating it use `createState()` function. It accepts object with properties that need to be reactive.
 
-Function returns object with `state` object that has properties from parameter's object. You can use that object to get or to update properties like in plain objects.
+Function returns `state` object that has properties from parameter's object. You can use that object to get or to update properties like in plain objects.
 
 ```javascript
-const { state, onChange } = createState({ clicks: 0 })
+const state = createState({ clicks: 0 })
 
 const clicks = state.clicks
 
-state.clicks++
-```
-
-Also `onChange` function is returned from `createState()` function. It is used for registering listeners to specific properties. Function accepts object with three properties: 
-
-1. `to` - container to which nodes must be rendered.
-2. `fields` - array of fields to which this listener is listen.
-3. `update` - method that returns nodes that need to be rebuilded or cannot return anything (you can navigating to other page by `Router`).
-
-```javascript
-onChange({
-  to?: string,
-  fields: string[],
-  update: (
-    state: T // update method accepts new state object
-  ) => string | Component | ENode | (string | Component | ENode)[] | void,
-})
-```
-
-For example if you need rerender current page:
-
-```javascript
-// @flow
-
-import {
-  Component,
-  P,
-  Header,
-  Nav,
-  A,
-  Button,
-  createState,
-} from '/node_modules/@prostory/edelweiss/dist/index.mjs'
-
-import router from '../../router.mjs'
-
-const { state, onChange } = createState({ clicks: 0 })
-
-export default class Home extends Component {
-  constructor() {
-    super({
-      css: {
-        relativeTo: import.meta.url,
-        cssFilePath: './home.css',
-      },
-    })
-  }
-
-  build() {
-    return [
-      new Header(
-        new Nav(
-          [
-            new Button(
-              'Click',
-              { class: 'home-header__menu-item' },
-              {
-                click(event) {
-                  state.clicks++
-                },
-              }
-            ),
-            new A(
-              'About',
-              { class: 'home-header__menu-item', href: '/about' },
-              {
-                click(event) {
-                  event.preventDefault()
-                  router.to('/about')
-                },
-              }
-            ),
-          ],
-          { class: 'home-header__menu' }
-        ),
-        {
-          class: 'home-header',
-        }
-      ),
-      new P(`${state.clicks}`),
-    ]
-  }
-}
-
-onChange({
-  to: '.page',
-  fields: ['clicks'],
-  update() {
-    return new Home()
-  },
-})
-
-// or 
-
-onChange({
-  fields: ['clicks'],
-  update() {
-    router.reload() // Not desired because clicks may be changed in other page, so it will be reloaded, but not Home.
-  }
-})
+state.clicks++ // Nodes that depends from this property will be rerendered
 ```
 
 ### I18n
 
-Framework has `I18n` class for internationalization purposes. It accepts object whose keys are language tags and values is
-object with translations. The second parameter must be your `router` instance. And third is `tag` - represents initial
-language for site. If omitted then first language of object (first parameter) will be used.
+Framework has `I18n` class for internationalization purposes.
+
+`I18n` has three static methods:
+
+1. `setLanguage(tag: string)` - change language on site. Reactively changes language on site.
+2. `translate(path: string): string` - returns translated text for current language. **path** is string
+  that provide path to text as object keys limited by dot.
 
 ```javascript
-export const i18n = new I18n(
+I18n.translate('home.menu.about')
+```
+
+3. `add(languages: I18nLanguagesSet, initial?: string)` - add languages set to `I18n` object. `initial` is a optional tag that, if provided, will be used ad initial language on the site. If it is omitted first language in set will be used.
+
+```javascript
+I18n.add(
   {
     uk: {
       home: {
-        title: 'Ще однин набридливий фреймворк.',
+        title: 'Ще один набридливий фреймворк.',
         menu: {
           docs: 'Документація',
           about: 'Про проект'
@@ -313,19 +212,8 @@ export const i18n = new I18n(
       }
     },
   },
-  router,
-  // tag is optional
+  // initial is optional
 )
-```
-
-`I18n` has two methods:
-
-1. `setLanguage(tag: string)` - change language on site.
-2. `translate(path: string): string` - returns translated text for current language. **path** is string
-  that provide path to text as object keys limited by dot.
-
-```javascript
-i18n.translate('home.menu.about')
 ```
 
 ## Warning
