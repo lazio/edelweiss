@@ -1076,9 +1076,7 @@ declare module '@prostory/edelweiss' {
 
   declare type FormMethod = 'post' | 'get' | 'dialog'
 
-  declare type I18nLanguage = {
-    [string]: string | { [string]: I18nLanguage },
-  }
+  declare type I18nLanguage = string | { [string]: I18nLanguage }
 
   declare type I18nLanguagesSet = {
     [string]: I18nLanguage,
