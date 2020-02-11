@@ -32,6 +32,10 @@ export default class I18n {
     }
   }
 
+  static getLanguagesTags(): string[] {
+    return Object.keys(I18n._languages)
+  }
+
   static translate(path: string): string {
     const splitted = path.split('.')
     let maybeText = I18n._languages[I18n.currentLanguage]

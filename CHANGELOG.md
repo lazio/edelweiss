@@ -1,4 +1,8 @@
-# 0.5.1
+# 0.5.2
+
+- Add `I18n.getLanguagesTags(): string[]` method.
+
+## 0.5.1
 
 - Fix typo in `flor-typed/edelweiss.js`
 

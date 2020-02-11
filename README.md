@@ -178,7 +178,7 @@ state.clicks++ // Nodes that depends from this property will be rerendered
 
 Framework has `I18n` class for internationalization purposes.
 
-`I18n` has three static methods:
+`I18n` has four static methods:
 
 1. `setLanguage(tag: string)` - change language on site. Reactively changes language on site.
 2. `translate(path: string): string` - returns translated text for current language. **path** is string
@@ -214,6 +214,12 @@ I18n.add(
   },
   // initial is optional
 )
+```
+
+4. `getLanguagesTags(): string[]` -  returns all tags for languages, that you set to `I18n.add` method.
+
+```javascript
+I18n.getLanguagesTags() // returns ['uk', 'en']
 ```
 
 ## Warning
