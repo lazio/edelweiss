@@ -85,7 +85,7 @@ class MyComponent extends Component {
 }
 ```
 
-Also you can pass into `Component`'s constructor (not override!) object `css` property that can be `string` (absolute path to css file that are associated with this component) or object that describes relative path to css file and contains `relativeTo` property (path to file or dir relative to which css file will be searched) and `cssFilePath` - relative path of css file to file or dir that specified in `relativeTo` property.
+Also you can pass into `Component`'s constructor (not override!) object with `css` property that can be `string` (absolute path to css file that are associated with this component) or object that describes relative path to css file and contains `relativeTo` property (path to file or dir relative to which css file will be searched) and `cssFilePath` - relative path of css file to file or dir that specified in `relativeTo` property.
 
 > Note: for specifying path to css file that is in the same directory you must provide object. It is not convinient so will be changed.
 
@@ -93,8 +93,10 @@ Also you can pass into `Component`'s constructor (not override!) object `css` pr
 class MyComponent extends Component {
   constructor() {
     super({
-      relativeTo: import.meta.url, // If file is in the same directory
-      cssFilePath: './styles.css'
+      css: {
+        relativeTo: import.meta.url, // If file is in the same directory
+        cssFilePath: './styles.css'
+      }
     })
   }
 
