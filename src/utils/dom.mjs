@@ -1,5 +1,9 @@
 // @flow
 
+import Component from '../component/component.mjs'
+
+import type { ElementChildren } from '../elements/element_function.mjs'
+
 export function diff(oldNode: HTMLElement, newNode: HTMLElement) {
   if (oldNode.nodeType === newNode.nodeType) {
     if (oldNode.tagName === newNode.tagName) {
@@ -60,4 +64,28 @@ function diffAttributes(oldNode: HTMLElement, newNode: HTMLElement) {
       oldNode.setAttribute(name, value)
     }
   )
+}
+
+export function convertToDom(elements: ElementChildren): (string | HTMLElement)[] {
+  const result: (string | HTMLElement)[] = []
+
+  if (Array.isArray(elements)) {
+    elements.forEach(child => {
+      if (child instanceof Component) {
+        const nodes = child._createNodes()
+        result.push(...convertToDom(nodes))
+      } else {
+        result.push(child)
+      }
+    })
+  } else {
+    if (elements instanceof Component) {
+      const nodes = elements._createNodes()
+      result.push(...convertToDom(nodes))
+    } else {
+      result.push(elements)
+    }
+  }
+
+  return result
 }

@@ -32,7 +32,7 @@ export default class I18n {
     }
   }
 
-  static getLanguagesTags(): string[] {
+  static get languagesTags(): string[] {
     return Object.keys(I18n._languages)
   }
 

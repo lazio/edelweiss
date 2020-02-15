@@ -18,24 +18,24 @@ ES modules are supported by almost all modern browser from 2017-2018 year.
 
 ## Dig in
 
-Importing library:
+Importing from framework:
 
 ```javascript
-import { ENode } from '/path/to/@prostory/edelweiss/dist/index.mjs'
+import { Router } from '/path/to/@prostory/edelweiss/dist/index.mjs'
 ```
 
 > Note that in current time you cannot import any package like you do with `require()`. You must provide absolute path from root of your project (site's root). It can be fixed by [import maps](https://github.com/WICG/import-maps), but is is not standard yet. Also only **.mjs** files can be imported. (See [ES modules: A cartoon deep-dive](https://hacks.mozilla.org/2018/03/es-modules-a-cartoon-deep-dive/))
 
-This small framework does not use virtual DOM, but work with browser's DOM. All HTML tags are wrapped in classes (*A*, *Div*, *Main* and so on.). They extend *ENode* class.
-Many of them can accept three objects (in such order): 
+This small framework does not use virtual DOM, but work with browser's DOM. All HTML tags are wrapped in functions (*a*, *div*, *main* and so on.). They return object of type `HTMLElement`.
+Most of them can accept three objects (in such order): 
 
-1. `children` - internal nodes that can contain this node. It can be `string`, `ENode`, `Component` or array of them.
+1. `children` - internal nodes that can contain this node. It can be `string`, `HTMLElement`, `Component` or array of them.
 2. `attributes` - object whose keys are attribute names and values is attribute values.
 3. `listeners` - an object with methods. Name of the method must be like name of type of event: *click*, *keyup* and so on. It accepts raw `event` object.
 
 ```javascript
-const footer = new Footer(
-  new Button(
+const footer: HTMLElement = footer(
+  button(
     'Click me) I am a cool button!',
     { style: 'margin: 0;' },
     {
@@ -51,10 +51,10 @@ const footer = new Footer(
 )
 ```
 
-Some classes such as `Wbr` does not accept `children` object. See [empty elements](https://developer.mozilla.org/en-US/docs/Glossary/empty_element):
+Some functions such as `wbr(...)` does not accept `children` object. See [empty elements](https://developer.mozilla.org/en-US/docs/Glossary/empty_element):
 
 ```javascript
-const wbr = new Wbr(
+const wbr: HTMLElement = wbr(
   { /* some attributes */ },
   // Wbr also does not accept listeners object.
 )
@@ -66,7 +66,7 @@ For information about such classes see [edelweiss.js](./flow-typed/edelweiss.js)
 
 If you create template that can be used in two or more places of your site you can group it in plain function that will returns them or define *component*.
 
-It can be achieved by creating class that extends `Component` class. You must override `build()` method that can returns `ENode`, `string`, another `Component` or array of them.
+It can be achieved by creating class that extends `Component` class. You must override `build()` method that can returns `HTMLElement`, `string`, another `Component` or array of them.
 Also you can override `beforeBuild()` method that invokes before `build()` method and `afterBuild()` that invokes after `build()`. You can use them for getting data for your view or other tasks that need to be finished before or after rendering.
 
 ```javascript
@@ -76,7 +76,7 @@ class MyComponent extends Component {
   }
 
   build() {
-    return new H1('Hello world!', { class: 'title' })
+    return h1('Hello world!', { class: 'title' })
   }
 
   afterBuild() {
@@ -101,7 +101,7 @@ class MyComponent extends Component {
   }
 
   build() {
-    return new H1('Hello world!', { class: 'title' })
+    return h1('Hello world!', { class: 'title' })
   }
 }
 ```
@@ -127,7 +127,7 @@ You must set up `Router` with routes. Route is a plain object:
 type Route = {
   path: string | RegExp,
   container: string,
-  view: () => string | ENode | Component | (string | ENode | Component)[],
+  view: () => ElementChildren, // string | HTMLElement | Component | (string | HTMLElement | Component)[],
 }
 ```
 
@@ -180,7 +180,7 @@ state.clicks++ // Nodes that depends from this property will be rerendered
 
 Framework has `I18n` class for internationalization purposes.
 
-`I18n` has four static methods:
+`I18n` has three static methods:
 
 1. `setLanguage(tag: string)` - change language on site. Reactively changes language on site.
 2. `translate(path: string): string` - returns translated text for current language. **path** is string
@@ -218,10 +218,12 @@ I18n.add(
 )
 ```
 
-4. `getLanguagesTags(): string[]` -  returns all tags for languages, that you set to `I18n.add` method.
+`I18n` has one static getter:
+
+1. `languagesTags: string[]` -  returns all tags for languages, that you set to `I18n.add` method.
 
 ```javascript
-I18n.getLanguagesTags() // returns ['uk', 'en']
+I18n.languagesTags // returns ['uk', 'en']
 ```
 
 ## Warning

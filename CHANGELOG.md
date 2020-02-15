@@ -1,4 +1,11 @@
-# 0.5.2
+# 0.6.0
+
+- Rewrite node classes to plain functions (`new A(...)` to `a(...)` and so on.).
+- Replace `I18n.getLanguagesTags(): string[]` method with `I18n.languagesTags: string[]` getter.
+- Update typings.
+- Update README.
+
+## 0.5.2
 
 - Add `I18n.getLanguagesTags(): string[]` method.
 

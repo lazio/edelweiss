@@ -1,14 +1,13 @@
 // @flow
 
-import ENode from '../nodes/en.mjs'
-import Component from '../component/component.mjs'
+import type { ElementChildren } from '../elements/element_function.mjs'
 
 import { render } from '../render.mjs'
 
 export type Route = {
   path: string | RegExp,
   container: string,
-  view: () => string | ENode | Component | (string | ENode | Component)[],
+  view: () => ElementChildren,
 }
 
 export default class Router {

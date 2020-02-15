@@ -1,6 +1,5 @@
 // @flow
 
-import type ENode from '../nodes/en.mjs'
 import type { CssDeclaration } from '../utils/styles.mjs'
 
 import { loadCSS } from '../utils/styles.mjs'
@@ -26,14 +25,14 @@ export default class Component {
   beforeBuild(): void {}
 
   /** Must be overridden by child class. */
-  build(): string | ENode | Component | (string | Component | ENode)[] {
+  build(): string | HTMLElement | (string | HTMLElement | Component)[] {
     return ''
   }
 
   /** Executes after component is builded. */
   afterBuild(): void {}
 
-  _createNodes(): string | ENode | Component | (string | Component | ENode)[] {
+  _createNodes(): string | HTMLElement | (string | HTMLElement | Component)[] {
     this.beforeBuild()
 
     const buildedComponent = this.build()
