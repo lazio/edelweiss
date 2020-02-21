@@ -1,4 +1,9 @@
-# 0.6.0
+# 0.6.1
+
+- Fix `back()` and `forward()` methods of `Router` class.
+- Update typings.
+
+## 0.6.0
 
 - Rewrite node classes to plain functions (`new A(...)` to `a(...)` and so on.).
 - Replace `I18n.getLanguagesTags(): string[]` method with `I18n.languagesTags: string[]` getter.

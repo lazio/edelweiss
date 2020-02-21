@@ -120,6 +120,8 @@ declare module '/node_modules/@prostory/edelweiss/dist/index.mjs' {
     listeners?: ElementEventListenersObject
   ): HTMLElement
 
+  declare export function custom(options: CustomOptions): HTMLElement
+
   declare export function data(
     children?: ElementChildren,
     attributes?: Attributes,
@@ -830,7 +832,7 @@ declare module '/node_modules/@prostory/edelweiss/dist/index.mjs' {
   }
 
   declare export type Route = {
-    path: string,
+    path: string | RegExp,
     container: string,
     view: () => ElementChildren,
   }
