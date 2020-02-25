@@ -1,13 +1,13 @@
 // @flow
 
-import type { ElementChildren } from '../elements/element_function.mjs'
+import type Component from '../component/component.mjs'
 
 import { render } from '../render.mjs'
 
 export type Route = {
   path: string | RegExp,
   container: string,
-  view: () => ElementChildren,
+  view: () => string | Component | (string | Component)[],
 }
 
 export default class Router {

@@ -1,8 +1,8 @@
 // @flow
 
 import Component from '../component/component.mjs'
-
-import type { ElementChildren } from '../elements/element_function.mjs'
+import { eventListenersMap } from '../template/template.mjs'
+import { dataEventIdJSRegExp } from './regexps.mjs'
 
 export function diff(oldNode: HTMLElement, newNode: HTMLElement) {
   if (oldNode.nodeType === newNode.nodeType) {
@@ -66,26 +66,33 @@ function diffAttributes(oldNode: HTMLElement, newNode: HTMLElement) {
   )
 }
 
-export function convertToDom(elements: ElementChildren): (string | HTMLElement)[] {
-  const result: (string | HTMLElement)[] = []
-
-  if (Array.isArray(elements)) {
-    elements.forEach(child => {
-      if (child instanceof Component) {
-        const nodes = child._createNodes()
-        result.push(...convertToDom(nodes))
-      } else {
-        result.push(child)
-      }
-    })
+export function normalizeHTML(nodes: string | Component | (string | Component)[]): string {
+  if (Array.isArray(nodes)) {
+    return nodes.reduce((prev, current) => prev + normalizeHTML(current), '')
   } else {
-    if (elements instanceof Component) {
-      const nodes = elements._createNodes()
-      result.push(...convertToDom(nodes))
-    } else {
-      result.push(elements)
+    return nodes instanceof Component
+      ? nodes._createNodes()
+      : nodes
+  }
+}
+
+export function attachEvents(element: HTMLElement | string) {
+  if (element instanceof HTMLElement) {
+    const dataAttributes = element.dataset
+
+    for (const key in dataAttributes) {
+      if (dataEventIdJSRegExp.test(key)) {
+        const eventListener = eventListenersMap.get(dataAttributes[key])
+        if (eventListener) {
+          const [listener] = Object.entries(eventListener)
+          // $FlowFixMe
+          element.addEventListener(listener[0], listener[1])
+        }
+      }
+    }
+
+    if (element.childElementCount > 0) {
+      Array.from(element.children).forEach(attachEvents)
     }
   }
-
-  return result
 }

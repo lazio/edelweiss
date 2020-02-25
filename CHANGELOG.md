@@ -1,4 +1,10 @@
-# 0.6.1
+# 0.7.0
+
+- Completely rewrite template part of framework. Now instead of separate functions
+(`a(...)`, `div(...)`) templates are created as template literals (html function).
+- Update README.
+
+## 0.6.1
 
 - Fix `back()` and `forward()` methods of `Router` class.
 - Update typings.

@@ -26,48 +26,87 @@ import { Router } from '/path/to/@prostory/edelweiss/dist/index.mjs'
 
 > Note that in current time you cannot import any package like you do with `require()`. You must provide absolute path from root of your project (site's root). It can be fixed by [import maps](https://github.com/WICG/import-maps), but is is not standard yet. Also only **.mjs** files can be imported. (See [ES modules: A cartoon deep-dive](https://hacks.mozilla.org/2018/03/es-modules-a-cartoon-deep-dive/))
 
-This small framework does not use virtual DOM, but work with browser's DOM. All HTML tags are wrapped in functions (*a*, *div*, *main* and so on.). They return object of type `HTMLElement`.
-Most of them can accept three objects (in such order): 
+This small framework does not use virtual DOM, but work with browser's DOM. 
 
-1. `children` - internal nodes that can contain this node. It can be `string`, `HTMLElement`, `Component` or array of them.
-2. `attributes` - object whose keys are attribute names and values is attribute values.
-3. `listeners` - an object with methods. Name of the method must be like name of type of event: *click*, *keyup* and so on. It accepts raw `event` object.
+### Template
 
-```javascript
-const footer: HTMLElement = footer(
-  button(
-    'Click me) I am a cool button!',
-    { style: 'margin: 0;' },
-    {
-      click(event) {
-        console.log('Clicked')
-      },
-    }
-  ),
-  {
-    class: 'footer',
-    style: 'padding: 15px; background-color: #cecece;',
-  },
-)
-```
-
-Some functions such as `wbr(...)` does not accept `children` object. See [empty elements](https://developer.mozilla.org/en-US/docs/Glossary/empty_element):
+Templates are wrote as html in template literals (similar to **JSX**) using `html`
+function (exported from framework).
 
 ```javascript
-const wbr: HTMLElement = wbr(
-  { /* some attributes */ },
-  // Wbr also does not accept listeners object.
-)
+const html = html`<p>Hello world!</p>`
 ```
 
-For information about such classes see [edelweiss.js](./flow-typed/edelweiss.js) types definition in *flow-typed* directory.
+You should pass valid HTML to `html`. But for convenience there is special syntax for
+event listeners and boolean attributes.
+
+1. In order to attach event listener to element you can define `@eventName` attribute
+to element. Note `@` followed by `eventName`(*click*, *input*, *change* etc.). The value
+of the attribute must be function, that accepts native *event* object, or object with
+`handleEvent(event)` method. Otherwise an error will be thrown.
+
+> Note that if you call *this* inside such funtion, in production you can receive `undefined` behavior [more detailed here](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/this).
+
+```javascript
+function handleClick(event) {
+  console.log('Clicked!')
+}
+const button = html`
+  <button @click=${handleclick}>Click me</button>
+`
+```
+
+2. For defining attributes that do not have special values (truthy or falsy attributes:
+`required`, `disabled`, `controls` etc.), you can append `?` to name of that attribute
+and give him *true* of *false* value. 
+
+> Actually that attribute can accept not only boolean values, but all truthy and
+falcy values. While `boolean` is recommended.
+
+```javascript
+function mustBeButtonDisabled() {
+  // some calculation here
+  return false
+}
+const button = html`
+  <button class="disabled" ?disabled=${mustBeButtonDisabled()}>Click me</button>
+`
+
+const nextButton = html`
+  <button class="disabled" ?disabled=${false}>Click me</button>
+`
+
+// You can define it as regular attribute.
+const thirdButton = html`
+  <button class="disabled" disabled>Click me</button>
+`
+```
+
+As children of the elements you pass values of types:
+
+* `string`
+* `Component`
+* array of them
+
+```javascript
+function spans() {
+  return strings.map(str => html`<span>${str}</span>`)
+}
+
+const template = html`
+  ${new MyComponent()}
+  <button class="disabled" ?disabled=${mustBeButtonDisabled()}>
+    ${spans()}
+  </button>
+`
+```
 
 ### Component
 
 If you create template that can be used in two or more places of your site you can group it in plain function that will returns them or define *component*.
 
-It can be achieved by creating class that extends `Component` class. You must override `build()` method that can returns `HTMLElement`, `string`, another `Component` or array of them.
-Also you can override `beforeBuild()` method that invokes before `build()` method and `afterBuild()` that invokes after `build()`. You can use them for getting data for your view or other tasks that need to be finished before or after rendering.
+It can be achieved by creating class that extends `Component` class. You must override `template()` method that returns value of type `string`.
+Also you can override `beforeBuild()` method that invokes before `template()` method and `afterBuild()` that invokes after `template()`. You can use them for getting data for your view or other tasks that need to be finished before or after rendering.
 
 ```javascript
 class MyComponent extends Component {
@@ -75,8 +114,8 @@ class MyComponent extends Component {
     // Some useful work
   }
 
-  build() {
-    return h1('Hello world!', { class: 'title' })
+  template() {
+    return html`<p>Hello</p>`
   }
 
   afterBuild() {
@@ -100,8 +139,8 @@ class MyComponent extends Component {
     })
   }
 
-  build() {
-    return h1('Hello world!', { class: 'title' })
+  template() {
+    return html`<p>Hello</p>`
   }
 }
 ```
@@ -127,7 +166,7 @@ You must set up `Router` with routes. Route is a plain object:
 type Route = {
   path: string | RegExp,
   container: string,
-  view: () => ElementChildren, // string | HTMLElement | Component | (string | HTMLElement | Component)[],
+  view: () => string | Component | (string | Component)[]
 }
 ```
 

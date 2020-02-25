@@ -1,22 +1,33 @@
 // @flow
 
-import { uid } from './utils/uid.mjs'
-import { diff, convertToDom } from './utils/dom.mjs'
-
-import type { ElementChildren } from './elements/element_function.mjs'
+import Component from './component/component.mjs'
+import { diff, normalizeHTML, attachEvents } from './utils/dom.mjs'
+import { eventListenersMap } from './template/template.mjs'
 
 /**
  * Render [ENode] node or nodes and its derivate nodes as element or elements.
  */
-export function render(to: string, nodes: ElementChildren): void {
+export function render(to: string, nodes: string | Component | (string | Component)[]): void {
   const toElement = document.querySelector(to)
 
   if (toElement) {
     const newToElement = toElement.cloneNode(false)
 
-    newToElement.dataset.rid = toElement.dataset.rid || `${uid()}`
+    const template = document.createElement('template')
+    template.innerHTML = normalizeHTML(nodes)
 
-    newToElement.append(...convertToDom(nodes))
+    const children = Array.from(template.content.children)
+
+    children.forEach(child => {
+      document.adoptNode(child)
+
+      attachEvents(child)
+
+      newToElement.append(child)
+    })
+
+    // Clear events cash
+    eventListenersMap.clear()
 
     toElement.hasChildNodes()
       ? diff(toElement, newToElement)

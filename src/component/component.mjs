@@ -21,21 +21,22 @@ export default class Component {
     }
   }
 
-  /** Executes before component builds. */
+  // Executes before building of component.
   beforeBuild(): void {}
 
-  /** Must be overridden by child class. */
-  build(): string | HTMLElement | (string | HTMLElement | Component)[] {
+  template(): string {
     return ''
   }
 
-  /** Executes after component is builded. */
+  /**
+   * Executes after component is builded, but not inserted into document.
+   */
   afterBuild(): void {}
 
-  _createNodes(): string | HTMLElement | (string | HTMLElement | Component)[] {
+  _createNodes(): string {
     this.beforeBuild()
 
-    const buildedComponent = this.build()
+    const buildedComponent = this.template()
 
     this.afterBuild()
 
