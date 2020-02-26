@@ -61,7 +61,7 @@ const button = html`
 and give him *true* of *false* value. 
 
 > Actually that attribute can accept not only boolean values, but all truthy and
-falcy values. While `boolean` is recommended.
+falsy values. Though `boolean` is recommended.
 
 ```javascript
 function mustBeButtonDisabled() {
@@ -79,6 +79,18 @@ const nextButton = html`
 // You can define it as regular attribute.
 const thirdButton = html`
   <button class="disabled" disabled>Click me</button>
+`
+```
+
+Regular attributes can be defined as all above. They do not need special syntax.
+But all inserted values must be type of `string` or coerce to it.
+Also you can omit `"` and `'` around attribute value (not recommended). 
+
+```javascript
+const button = html`
+  <button class="${isDisabled ? 'disabled' : ''}" disabled>Click me</button>
+  <!-- or -->
+  <button class=${isDisabled ? 'disabled' : ''} disabled>Click me</button>
 `
 ```
 
@@ -106,7 +118,9 @@ const template = html`
 If you create template that can be used in two or more places of your site you can group it in plain function that will returns them or define *component*.
 
 It can be achieved by creating class that extends `Component` class. You must override `template()` method that returns value of type `string`.
-Also you can override `beforeBuild()` method that invokes before `template()` method and `afterBuild()` that invokes after `template()`. You can use them for getting data for your view or other tasks that need to be finished before or after rendering.
+Also you can override `beforeBuild()` method that invokes before `template()` method and `afterBuild()` that invokes after `template()`. You can use them for getting data for your view or other tasks that need to be finished before or after building template.
+
+> Note that while `beforeBuild()` and `afterBuild()` methods are executing template is not inserted into DOM, so you can't access elements that `template()` method returns.
 
 ```javascript
 class MyComponent extends Component {
