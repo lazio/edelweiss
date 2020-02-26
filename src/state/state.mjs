@@ -11,5 +11,16 @@ export function createState<T: { [string]: any }>(object: T) {
 
       return true
     },
+    deleteProperty(target, property) {
+      if (property in target) {
+        delete target[property]
+
+        Router.reload()
+
+        return true
+      } else {
+        return false
+      }
+    },
   })
 }

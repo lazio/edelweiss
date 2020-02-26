@@ -1,4 +1,10 @@
-# 0.7.0
+# 0.7.1
+
+- Add trap for `delete` operator to **state**.
+- Update README.
+- Update devDependencies.
+
+## 0.7.0
 
 - Completely rewrite template part of framework. Now instead of separate functions
 (`a(...)`, `div(...)`) templates are created as template literals (html function).

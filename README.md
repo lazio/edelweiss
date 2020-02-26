@@ -226,7 +226,18 @@ const state = createState({ clicks: 0 })
 
 const clicks = state.clicks
 
-state.clicks++ // Nodes that depends from this property will be rerendered
+state.clicks++ // Elements that depends from this property will be rerendered
+```
+
+> Object that returned by `createState()` function is fully reactive and can also be modified with other properties than was defined on initialization. You can add more properties and even delete them and all these changes will be reactive.
+
+```javascript
+const state = createState({ clicks: 0 })
+
+// This is reactive
+delete state.clicks
+// This is reactive too (setting new variable)
+state.clicks = 0
 ```
 
 ### I18n
@@ -267,7 +278,7 @@ I18n.add(
       }
     },
   },
-  // initial is optional
+  // initial is optional. From example: will be "uk"
 )
 ```
 
