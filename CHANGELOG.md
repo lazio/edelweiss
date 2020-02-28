@@ -1,4 +1,9 @@
-# 0.7.2
+# 0.7.3
+
+- Add support for [`trustedTypes`](https://github.com/w3c/webappsec-trusted-types).
+- Simplify internal `render()` function.
+
+## 0.7.2
 
 - Add possibility to pass variables to `I18n.translate()` method.
 - Update README.

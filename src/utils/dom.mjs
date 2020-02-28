@@ -14,7 +14,11 @@ export function diff(oldNode: HTMLElement, newNode: HTMLElement) {
           const oChildren = Array.from(oldNode.children)
           const nChildren = Array.from(newNode.children)
 
-          for (let i = 0; i < Math.max(oChildren.length, nChildren.length); i++) {
+          for (
+            let i = 0;
+            i < Math.max(oChildren.length, nChildren.length);
+            i++
+          ) {
             const oNode = oChildren[i]
             const nNode = nChildren[i]
 
@@ -47,32 +51,26 @@ export function diff(oldNode: HTMLElement, newNode: HTMLElement) {
 function diffAttributes(oldNode: HTMLElement, newNode: HTMLElement) {
   if (oldNode.attributes.length !== newNode.attributes.length) {
     // Remove exessive attributes
-    Array.prototype.forEach.call(
-      oldNode.attributes,
-      ({ name }) => {
-        if (!newNode.hasAttribute(name)) {
-          oldNode.removeAttribute(name)
-        }
+    Array.prototype.forEach.call(oldNode.attributes, ({ name }) => {
+      if (!newNode.hasAttribute(name)) {
+        oldNode.removeAttribute(name)
       }
-    )
+    })
   }
 
   // Add missing attributes and update changed
-  Array.prototype.forEach.call(
-    newNode.attributes,
-    ({ name, value }) => {
-      oldNode.setAttribute(name, value)
-    }
-  )
+  Array.prototype.forEach.call(newNode.attributes, ({ name, value }) => {
+    oldNode.setAttribute(name, value)
+  })
 }
 
-export function normalizeHTML(nodes: string | Component | (string | Component)[]): string {
+export function normalizeHTML(
+  nodes: string | Component | (string | Component)[]
+): string {
   if (Array.isArray(nodes)) {
     return nodes.reduce((prev, current) => prev + normalizeHTML(current), '')
   } else {
-    return nodes instanceof Component
-      ? nodes._createNodes()
-      : nodes
+    return nodes instanceof Component ? nodes._createNodes() : nodes
   }
 }
 
