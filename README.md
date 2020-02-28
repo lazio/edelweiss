@@ -264,7 +264,7 @@ const en = {
 And then provide variable `name`:
 
 ```javascript
-I18n.translate('title', { name: 'Peter' }) // Output will be "Hello, Peter!"
+I18n.translate('greeting', { name: 'Peter' }) // Output will be "Hello, Peter!"
 ```
 
 You may have many variables inside one text.
@@ -274,7 +274,7 @@ const en = {
   greeting: 'Hello, ${name} ${surname}!'
 }
 
-I18n.translate('title', { name: 'Peter', surname: 'Dal' }) // Output will be "Hello, Peter Dal!"
+I18n.translate('greeting', { name: 'Peter', surname: 'Dal' }) // Output will be "Hello, Peter Dal!"
 ```
 
 3. `add(languages: I18nLanguagesSet, initial?: string)` - add languages set to `I18n` object. `initial` is a optional tag that, if provided, will be used ad initial language on the site. If it is omitted first language in set will be used.
