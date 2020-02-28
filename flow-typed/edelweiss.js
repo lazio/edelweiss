@@ -24,7 +24,7 @@ declare module '/node_modules/@prostory/edelweiss/dist/index.mjs' {
 
     static add(languages: I18nLanguagesSet, initial?: string): void;
     static setLanguage(tag: string): void;
-    static translate(path: string): string;
+    static translate(path: string, variables?: { [string]: string }): string;
     static get languagesTags(): string[];
   }
 

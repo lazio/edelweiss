@@ -36,7 +36,7 @@ export default class I18n {
     return Object.keys(I18n._languages)
   }
 
-  static translate(path: string): string {
+  static translate(path: string, variables?: { [string]: string }): string {
     const splitted = path.split('.')
     let maybeText = I18n._languages[I18n.currentLanguage]
 
@@ -52,6 +52,22 @@ export default class I18n {
       Check "path" - it must point to plain text in object hierarchy.`)
     }
 
+    if (variables) {
+      for (const key in variables) {
+        maybeText = insertVariables(maybeText, key, variables[key])
+      }
+    }
+
     return maybeText
+  }
+}
+
+// Inserts variable into text if it has any. Otherwise returns original text
+function insertVariables(text: string, variableName: string, variableValue: string): string {
+  if (text.search(`\\$\\{${variableName}\\}`) !== -1) {
+    const replacedText = text.replace(`\${${variableName}}`, variableValue)
+    return insertVariables(replacedText, variableName, variableValue)
+  } else {
+    return text
   }
 }

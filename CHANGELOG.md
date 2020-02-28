@@ -1,4 +1,9 @@
-# 0.7.1
+# 0.7.2
+
+- Add possibility to pass variables to `I18n.translate()` method.
+- Update README.
+
+## 0.7.1
 
 - Add trap for `delete` operator to **state**.
 - Update README.

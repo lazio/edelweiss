@@ -247,11 +247,34 @@ Framework has `I18n` class for internationalization purposes.
 `I18n` has three static methods:
 
 1. `setLanguage(tag: string)` - change language on site. Reactively changes language on site.
-2. `translate(path: string): string` - returns translated text for current language. **path** is string
-  that provide path to text as object keys limited by dot.
+2. `translate(path: string, variables?: { [string]: string }): string` - returns translated text for current language. **path** is string that provide path to text as object keys limited by dot and optional **variables** is object that pass variables into translated text.
 
 ```javascript
 I18n.translate('home.menu.about')
+```
+
+For defining place for variable you must type `${variableName}` in translation object.
+
+```javascript
+const en = {
+  greeting: 'Hello, ${name}!'
+}
+```
+
+And then provide variable `name`:
+
+```javascript
+I18n.translate('title', { name: 'Peter' }) // Output will be "Hello, Peter!"
+```
+
+You may have many variables inside one text.
+
+```javascript
+const en = {
+  greeting: 'Hello, ${name} ${surname}!'
+}
+
+I18n.translate('title', { name: 'Peter', surname: 'Dal' }) // Output will be "Hello, Peter Dal!"
 ```
 
 3. `add(languages: I18nLanguagesSet, initial?: string)` - add languages set to `I18n` object. `initial` is a optional tag that, if provided, will be used ad initial language on the site. If it is omitted first language in set will be used.
