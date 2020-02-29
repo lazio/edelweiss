@@ -1,4 +1,10 @@
-# 0.7.4
+# 0.7.5
+
+- Remove exessive code from `Router.back()` and `Router.forward()` methods.
+- Add ability to navigate through browser's *back* and *forward* buttons.
+- Add *options* optional parameter to `Router.to()` method.
+
+## 0.7.4
 
 - Fix diffing DOM when child of element is *textContent*. Now if it still the same -
 *textContnent* of old element is not replaced.

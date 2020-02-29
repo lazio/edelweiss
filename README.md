@@ -24,7 +24,7 @@ Importing from framework:
 import { Router } from '/path/to/@prostory/edelweiss/dist/index.mjs'
 ```
 
-> Note that in current time you cannot import any package like you do with `require()`. You must provide absolute path from root of your project (site's root). It can be fixed by [import maps](https://github.com/WICG/import-maps), but is is not standard yet. Also only **.mjs** files can be imported. (See [ES modules: A cartoon deep-dive](https://hacks.mozilla.org/2018/03/es-modules-a-cartoon-deep-dive/))
+> Note that in current time you cannot import any package like you do with `require()`. You must provide absolute path from root of your project (site's root). It can be fixed by [import maps](https://github.com/WICG/import-maps), but it is not standard yet. Also only **.mjs** files can be imported. (See [ES modules: A cartoon deep-dive](https://hacks.mozilla.org/2018/03/es-modules-a-cartoon-deep-dive/))
 
 This small framework does not use virtual DOM, but work with browser's DOM. 
 
@@ -206,7 +206,7 @@ Router.add([
 
 `Router` have five static methods:
 
-1. `to(path: string)` - Renders needed page.
+1. `to(path: string, options?: { willStateChange?: boolean })` - Renders needed page. In some rare situations **window.history** does not need to be updated. In such cases provide object with `willStateChange` property setted to `false` as second parameter.
 2. `reload()` - Reloads current page.
 3. `back()` - return to previous page. 
 4. `forward()` - forwards to next page if it is in history.

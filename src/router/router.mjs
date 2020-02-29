@@ -12,16 +12,11 @@ export type Route = {
 
 export default class Router {
   static _routes: Route[] | void
-  static _history: string[] | void
-  static _currentStateIndex: number | void
   static current: Route | void
 
   static add(routes: Route | Route[]) {
     if (!Router._routes) {
       Router._routes = []
-    }
-    if (!Router._history) {
-      Router._history = []
     }
 
     Array.isArray(routes)
@@ -29,7 +24,16 @@ export default class Router {
       : Router._routes.push(routes)
   }
 
-  static to(path: string): void {
+  static to(
+    path: string,
+    options?: {
+      /**
+       * Determine whether navigating to route must update "window.history" or not.
+       * By default this method updates "window.history".
+       */
+      willStateChange?: boolean,
+    } = {}
+  ): void {
     if (!Router._routes) {
       throw new Error(`You cannot navigate to ${path} because you didn't define any routes!
       At first call "Router.add(...)".`)
@@ -51,13 +55,16 @@ export default class Router {
         Router.current = route
         render(route.container, route.view())
 
-        Router._history
-          ? Router._history.push(path)
-          : (Router._history = [path])
-        // $FlowFixMe
-        Router._currentStateIndex = Router._history.length - 1
-
-        window.history.pushState({ path, container: route.container }, '', path)
+        if (
+          typeof options.willStateChange === 'undefined' ||
+          options.willStateChange
+        ) {
+          window.history.pushState(
+            { path, container: route.container },
+            '',
+            path
+          )
+        }
       } else {
         throw new Error(
           `On the page is no element that matches ${route.container} selector!`
@@ -79,57 +86,24 @@ export default class Router {
   }
 
   static back() {
-    if (typeof Router._currentStateIndex !== 'undefined') {
-      if (Router._currentStateIndex > 0) {
-        if (Router._history) {
-          if (Router._history.length > 1) {
-            Router._currentStateIndex--
-            const path = Router._history[Router._currentStateIndex]
-            Router.to(path)
-          } else {
-            console.info(
-              'You cannot return to previous page, because you opened one page only.'
-            )
-          }
-        } else {
-          console.error(
-            "You cannot return to previous page - you didn't navigate to any pages yet."
-          )
-        }
-      } else {
-        console.info('You are on first visited page.')
-      }
-    } else {
-      console.error(
-        "You cannot return to previous page, because you didn't navigate to pages yet."
-      )
-    }
+    window.history.back()
   }
 
   static forward() {
-    if (typeof Router._currentStateIndex !== 'undefined') {
-      if (Router._history) {
-        if (Router._currentStateIndex < Router._history.length - 1) {
-          Router._currentStateIndex++
-          const path = Router._history[Router._currentStateIndex]
-          Router.to(path)
-        } else {
-          console.info(
-            'You cannot navigate to next page, because you are on the last opened page.'
-          )
-        }
-      } else {
-        console.error(
-          "You cannot navigate to next page - you didn't navigate to any pages yet."
-        )
-      }
-    } else {
-      console.error(
-        "You cannot navigate to next page, because you didn't navigate to pages yet."
-      )
-    }
+    window.history.forward()
   }
 }
+
+/**
+ * Triggering navigating via browser's buttons and "Router.back()", "Router.forward()".
+ */
+window.addEventListener(
+  'popstate',
+  (event: { state: { path: string, container: string } }) => {
+    const { path } = event.state
+    Router.to(path, { willStateChange: false })
+  }
+)
 
 function regexpifyString(regexp: string): string {
   let normalizedRegExp = regexp

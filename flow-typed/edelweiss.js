@@ -13,7 +13,9 @@ declare module '/node_modules/@prostory/edelweiss/dist/index.mjs' {
     static +current: Route | void;
 
     static add(routes: Route | Route[]): void;
-    static to(path: string): void;
+    static to(path: string, options?: {
+      willStateChange?: boolean
+    }): void;
     static reload(): void;
     static back(): void;
     static forward(): void;

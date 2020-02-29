@@ -27,7 +27,7 @@ export function html(parts: string[], ...variables: []) {
 
     /** Variable may be:
      *
-     * * "string" type (is strongly recommended)
+     * * "string" type
      * * plain "Array"
      * * plain "function"
      * * plain object
