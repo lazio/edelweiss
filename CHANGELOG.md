@@ -1,4 +1,8 @@
-# 0.7.5
+# 0.7.6
+
+- Fix checking of the type of variable that are used by elements diffing.
+
+## 0.7.5
 
 - Remove exessive code from `Router.back()` and `Router.forward()` methods.
 - Add ability to navigate through browser's *back* and *forward* buttons.

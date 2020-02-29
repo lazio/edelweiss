@@ -57,8 +57,6 @@ export function html(parts: string[], ...variables: []) {
       const eventListener = eventListenerRegExp.exec(current)
       if (eventListener) {
         if (
-          typeof stringifiedVariable === 'string' ||
-          typeof stringifiedVariable === 'boolean' ||
           (typeof stringifiedVariable !== 'function' &&
             !stringifiedVariable.handleEvent)
         ) {
