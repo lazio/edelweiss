@@ -9,36 +9,30 @@ export function diff(oldNode: HTMLElement, newNode: HTMLElement) {
     if (oldNode.tagName === newNode.tagName) {
       diffAttributes(oldNode, newNode)
 
-      if (newNode.hasChildNodes()) {
-        if (newNode.children.length > 0) {
-          const oChildren = Array.from(oldNode.children)
-          const nChildren = Array.from(newNode.children)
+      if (newNode.childElementCount > 0) {
+        const oChildren = Array.from(oldNode.children)
+        const nChildren = Array.from(newNode.children)
 
-          for (
-            let i = 0;
-            i < Math.max(oChildren.length, nChildren.length);
-            i++
-          ) {
-            const oNode = oChildren[i]
-            const nNode = nChildren[i]
+        for (let i = 0; i < Math.max(oChildren.length, nChildren.length); i++) {
+          const oNode = oChildren[i]
+          const nNode = nChildren[i]
 
-            if (oNode) {
-              if (nNode) {
-                diff(oNode, nNode)
-              } else {
-                oNode.remove()
-              }
-            } else if (nNode) {
-              oldNode.append(nNode)
+          if (oNode) {
+            if (nNode) {
+              diff(oNode, nNode)
+            } else {
+              oNode.remove()
             }
+          } else if (nNode) {
+            oldNode.append(nNode)
           }
-        } else if (newNode.textContent) {
+        }
+      } else if (newNode.textContent) {
+        if (oldNode.textContent !== newNode.textContent) {
           oldNode.textContent = newNode.textContent
-        } else {
-          oldNode.innerHTML = '' // Script will probably never be here
         }
       } else {
-        oldNode.replaceWith(newNode)
+        oldNode.replaceWith(newNode) // Script will probably never be here
       }
     } else {
       oldNode.replaceWith(newNode)
@@ -48,6 +42,10 @@ export function diff(oldNode: HTMLElement, newNode: HTMLElement) {
   }
 }
 
+/**
+ * Determines attribute that is outdated and update or remove it.
+ * Attributes may be in inexact order, so we need go twice on them.
+ */
 function diffAttributes(oldNode: HTMLElement, newNode: HTMLElement) {
   if (oldNode.attributes.length !== newNode.attributes.length) {
     // Remove exessive attributes
@@ -85,6 +83,20 @@ export function attachEvents(element: HTMLElement | string) {
           const [listener] = Object.entries(eventListener)
           // $FlowFixMe
           element.addEventListener(listener[0], listener[1])
+
+          /**
+           * "data-event-id{number}" attribute is no more useful, so
+           * we can remove it.
+           *
+           * "eventNumber" will be always type of number and greater or eaual,
+           * than zero because if script is here, so event listener exists and element
+           * has "data-event-id{number}" attribute.
+           * First result is matched substring.
+           */
+          const eventNumber = key.match(/[\d]+/)
+          if (eventNumber) {
+            element.removeAttribute(`data-event-id${eventNumber[0]}`)
+          }
         }
       }
     }

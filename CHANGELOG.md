@@ -1,4 +1,9 @@
-# 0.7.3
+# 0.7.4
+
+- Fix diffing DOM when child of element is *textContent*. Now if it still the same -
+*textContnent* of old element is not replaced.
+
+## 0.7.3
 
 - Add support for [`trustedTypes`](https://github.com/w3c/webappsec-trusted-types).
 - Simplify internal `render()` function.

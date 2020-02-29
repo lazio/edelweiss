@@ -25,7 +25,7 @@ const edelweissPolicy = window.trustedTypes.createPolicy('edelweiss', {
 })
 
 /**
- * Render [ENode] node or nodes and its derivate nodes as element or elements.
+ * Render templates on the page.
  */
 export function render(
   to: string,

@@ -30,7 +30,7 @@ declare module '/node_modules/@prostory/edelweiss/dist/index.mjs' {
 
   declare export function createState<T: { [string]: any }>(object: T): T
 
-  declare export function html(parts: string[], ...variables: []): string;
+  declare export function html(parts: string[], ...variables: any[]): string;
 
   declare export type Styles = { [string]: number | string } | string
 
