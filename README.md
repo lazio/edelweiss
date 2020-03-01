@@ -52,7 +52,7 @@ function handleClick(event) {
   console.log('Clicked!')
 }
 const button = html`
-  <button @click=${handleclick}>Click me</button>
+  <button @click=${handleClick}>Click me</button>
 `
 ```
 
@@ -277,7 +277,7 @@ const en = {
 I18n.translate('greeting', { name: 'Peter', surname: 'Dal' }) // Output will be "Hello, Peter Dal!"
 ```
 
-3. `add(languages: I18nLanguagesSet, initial?: string)` - add languages set to `I18n` object. `initial` is a optional tag that, if provided, will be used ad initial language on the site. If it is omitted first language in set will be used.
+3. `add(languages: I18nLanguagesSet, initial?: string)` - add languages set to `I18n` object. `initial` is a optional tag that, if provided, will be used as initial language on the site. If it is omitted first language in set will be used.
 
 ```javascript
 I18n.add(
