@@ -2,8 +2,11 @@
 
 import Component from '../component/component.mjs'
 
-import { eventListenerRegExp, booleanAttributeRegExp } from '../utils/regexps.mjs'
+import { eventListenerRegExp, booleanAttributeRegExp, styleAttributeRegExp } from '../utils/regexps.mjs'
 import { uid } from '../utils/uid.mjs'
+import { normalizeStyles } from '../utils/styles.mjs'
+
+import type { Styles } from '../utils/styles.mjs'
 
 /**
  * Holds all listeners that will be attached to element.
@@ -39,6 +42,7 @@ export function html(parts: string[], ...variables: []) {
       | Component
       | ((...args: []) => void)
       | { handleEvent: (event: Event) => void }
+      | Styles
       | []
       | boolean
       | void = variables[index]
@@ -90,6 +94,23 @@ export function html(parts: string[], ...variables: []) {
           : current.replace(booleanAttribute[0], '')
 
         return (previous || '') + current
+      }
+
+      // Handle style attribute
+      if (styleAttributeRegExp.test(current)) {
+        if (
+          typeof stringifiedVariable === 'string' ||
+          (typeof stringifiedVariable === 'object' &&
+          !stringifiedVariable.handleEvent)
+        ) {
+          stringifiedVariable = normalizeStyles(stringifiedVariable)
+        } else {
+          throw new Error('Styles that passed to "style" attribute must be valid CSS string ' +
+            'or plain object, where keys are valid CSS properties and values have "number" or "string" type. ' +
+            'Given ->\n' +
+            // $FlowFixMe
+            `"${stringifiedVariable}"`)
+        }
       }
 
       // Regular attributes

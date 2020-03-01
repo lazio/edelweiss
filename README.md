@@ -94,6 +94,26 @@ const button = html`
 `
 ```
 
+`style` attribute can get string value of valid CSS or object which *keys* are valid
+CSS properties and *values* are valid CSS values.
+
+```javascript
+const button = html`
+  <!-- Style's values can be type of "string" or "number". -->
+  const styles = {
+    'background-color': 'red',
+    width: '100%',
+    color: 'white',
+    'z-index': 1
+  }
+  <button style="${styles}">Click me</button>
+  <!-- or -->
+
+  const styles = 'background-color: red; width: 100%; color: white;'
+  <button style=${styles}>Click me</button>
+`
+```
+
 As children of the elements you pass values of types:
 
 * `string`

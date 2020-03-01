@@ -1,4 +1,9 @@
-# 0.7.6
+# 0.7.7
+
+- Add ability to pass styles as object to *style* attribute.
+- Fix typos in README.
+
+## 0.7.6
 
 - Fix checking of the type of variable that are used by elements diffing.
 
