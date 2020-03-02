@@ -98,19 +98,26 @@ const button = html`
 CSS properties and *values* are valid CSS values.
 
 ```javascript
+// Style's values can be type of "string" or "number".
+const styles = {
+  'background-color': 'red',
+  width: '100%',
+  color: 'white',
+  'z-index': 1
+}
 const button = html`
-  <!-- Style's values can be type of "string" or "number". -->
-  const styles = {
-    'background-color': 'red',
-    width: '100%',
-    color: 'white',
-    'z-index': 1
-  }
   <button style="${styles}">Click me</button>
-  <!-- or -->
+`
 
-  const styles = 'background-color: red; width: 100%; color: white;'
-  <button style=${styles}>Click me</button>
+// or
+const styles2 = 'background-color: red; width: 100%; color: white;'
+const button2 = html`
+  <button style="${styles2}">Click me</button>
+`
+
+// or
+const button3 = html`
+  <button style="background-color: red; width: 100%; color: white;">Click me</button>
 `
 ```
 
