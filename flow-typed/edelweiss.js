@@ -4,9 +4,9 @@ declare module '/node_modules/@prostory/edelweiss/dist/index.mjs' {
   declare export class Component {
     constructor(options?: ComponentOptions): Component;
 
-    beforeBuild(): void;
-    template(): string;
-    afterBuild(): void;
+    beforeBuild(): Promise<void>;
+    template(): Promise<string>;
+    afterBuild(): Promise<void>;
   }
 
   declare export class Router {
@@ -32,7 +32,7 @@ declare module '/node_modules/@prostory/edelweiss/dist/index.mjs' {
 
   declare export function createState<T: { [string]: any }>(object: T): T
 
-  declare export function html(parts: string[], ...variables: any[]): string;
+  declare export function html(parts: string[], ...variables: any[]): Promise<string>;
 
   declare export type Styles = { [string]: number | string } | string
 

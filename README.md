@@ -30,11 +30,11 @@ This small framework does not use virtual DOM, but work with browser's DOM.
 
 ### Template
 
-Templates are wrote as html in template literals (similar to **JSX**) using `html`
+Templates are writed as html in template literals (similar to **JSX**) using `html`
 function (exported from framework).
 
 ```javascript
-const html = html`<p>Hello world!</p>`
+const paragraph: Promise<string> = html`<p>Hello world!</p>`
 ```
 
 You should pass valid HTML to `html`. But for convenience there is special syntax for
@@ -51,7 +51,7 @@ of the attribute must be function, that accepts native *event* object, or object
 function handleClick(event) {
   console.log('Clicked!')
 }
-const button = html`
+const button: Promise<string> = html`
   <button @click=${handleClick}>Click me</button>
 `
 ```
@@ -68,16 +68,16 @@ function mustBeButtonDisabled() {
   // some calculation here
   return false
 }
-const button = html`
+const button: Promise<string> = html`
   <button class="disabled" ?disabled=${mustBeButtonDisabled()}>Click me</button>
 `
 
-const nextButton = html`
+const nextButton: Promise<string> = html`
   <button class="disabled" ?disabled=${false}>Click me</button>
 `
 
 // You can define it as regular attribute.
-const thirdButton = html`
+const thirdButton: Promise<string> = html`
   <button class="disabled" disabled>Click me</button>
 `
 ```
@@ -87,7 +87,7 @@ But all inserted values must be type of `string` or coerce to it.
 Also you can omit `"` and `'` around attribute value (not recommended). 
 
 ```javascript
-const button = html`
+const button: Promise<string> = html`
   <button class="${isDisabled ? 'disabled' : ''}" disabled>Click me</button>
   <!-- or -->
   <button class=${isDisabled ? 'disabled' : ''} disabled>Click me</button>
@@ -105,18 +105,18 @@ const styles = {
   color: 'white',
   'z-index': 1
 }
-const button = html`
+const button: Promise<string> = html`
   <button style="${styles}">Click me</button>
 `
 
 // or
 const styles2 = 'background-color: red; width: 100%; color: white;'
-const button2 = html`
+const button2: Promise<string> = html`
   <button style="${styles2}">Click me</button>
 `
 
 // or
-const button3 = html`
+const button3: Promise<string> = html`
   <button style="background-color: red; width: 100%; color: white;">Click me</button>
 `
 ```
@@ -128,38 +128,41 @@ As children of the elements you pass values of types:
 * array of them
 
 ```javascript
-function spans() {
+function spans(): Array<Promise<string>> {
   return strings.map(str => html`<span>${str}</span>`)
 }
 
-const template = html`
-  ${new MyComponent()}
+const template: Promise<string> = html`
+  ${new MyComponent()} <!-- Note we do not await for Component -->
   <button class="disabled" ?disabled=${mustBeButtonDisabled()}>
-    ${spans()}
+    ${spans()} <!-- Note we do not await for Array<Promise<string>> -->
   </button>
 `
 ```
 
+As you can see `html()` funtion returns *Promise*, but you should not handle returning value itself. `html()` handles it for you. Think of it like function returns `string`.
+
 ### Component
 
-If you create template that can be used in two or more places of your site you can group it in plain function that will returns them or define *component*.
+If you create template that can be used in two or more places of your site you can group it in plain function that will returns them or define *Component*.
 
-It can be achieved by creating class that extends `Component` class. You must override `template()` method that returns value of type `string`.
-Also you can override `beforeBuild()` method that invokes before `template()` method and `afterBuild()` that invokes after `template()`. You can use them for getting data for your view or other tasks that need to be finished before or after building template.
+It can be achieved by creating class that extends `Component` class. You must override `template()` method that returns value of type `Promise<string>`.
+Also you can override `async beforeBuild()` method that invokes before `async template()` method and `async afterBuild()` that invokes after `async template()`. You can use them for getting data for your view or other tasks that need to be finished before or after building template.
+All methods is asyncrounous so you can accomplish asyncrounous operation (like `fetch`ing for some data) in rendering order without creating additional asyncrounous functions.
 
-> Note that while `beforeBuild()` and `afterBuild()` methods are executing template is not inserted into DOM, so you can't access elements that `template()` method returns.
+> Note that while `beforeBuild()` and `afterBuild()` methods are executing when template is not inserted into DOM, so you can't access elements that `template()` method returns.
 
 ```javascript
 class MyComponent extends Component {
-  beforeBuild() {
+  async beforeBuild() {
     // Some useful work
   }
 
-  template() {
+  async template() {
     return html`<p>Hello</p>`
   }
 
-  afterBuild() {
+  async afterBuild() {
     // Some useful work
   }
 }

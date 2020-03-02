@@ -22,23 +22,23 @@ export default class Component {
   }
 
   // Executes before building of component.
-  beforeBuild(): void {}
+  async beforeBuild(): Promise<void> {}
 
-  template(): string {
+  async template(): Promise<string> {
     return ''
   }
 
   /**
    * Executes after component is builded, but not inserted into document.
    */
-  afterBuild(): void {}
+  async afterBuild(): Promise<void> {}
 
-  _createNodes(): string {
-    this.beforeBuild()
+  async _createNodes(): Promise<string> {
+    await this.beforeBuild()
 
-    const buildedComponent = this.template()
+    const buildedComponent = await this.template()
 
-    this.afterBuild()
+    await this.afterBuild()
 
     return buildedComponent
   }

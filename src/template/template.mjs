@@ -2,7 +2,11 @@
 
 import Component from '../component/component.mjs'
 
-import { eventListenerRegExp, booleanAttributeRegExp, styleAttributeRegExp } from '../utils/regexps.mjs'
+import {
+  eventListenerRegExp,
+  booleanAttributeRegExp,
+  styleAttributeRegExp,
+} from '../utils/regexps.mjs'
 import { uid } from '../utils/uid.mjs'
 import { normalizeStyles } from '../utils/styles.mjs'
 
@@ -12,17 +16,21 @@ import type { Styles } from '../utils/styles.mjs'
  * Holds all listeners that will be attached to element.
  * Elements are marked with event ids.
  */
-export const eventListenersMap = new Map<string, {
+export const eventListenersMap = new Map<
+  string,
+  {
     // Name of the event: event listener
     // eslint-disable-next-line func-call-spacing
-    [string]: ((event: Event) => void) | { handleEvent: (event: Event) => void },
-  }>()
+    [string]: ((event: Event) => void)
+      | { handleEvent: (event: Event) => void },
+  }
+>()
 
-export function html(parts: string[], ...variables: []) {
+export async function html(parts: string[], ...variables: []) {
   // Count of @event attributes of one element in template
   let eventsInElement = 0
 
-  const result = parts.reduce((previous, current, index) => {
+  const result = parts.reduce(async (previous, current, index) => {
     // Element tag end so we can set "eventsInElement" to zero
     if (current.search(/[^-]>/) !== -1) {
       eventsInElement = 0
@@ -43,26 +51,38 @@ export function html(parts: string[], ...variables: []) {
       | ((...args: []) => void)
       | { handleEvent: (event: Event) => void }
       | Styles
-      | []
+      | Array<string | Promise<string>>
       | boolean
+      | Promise<string>
       | void = variables[index]
 
     if (variable !== undefined && variable !== null) {
       // Gets template from Component
       let stringifiedVariable =
-        variable instanceof Component ? variable.template() : variable
+        variable instanceof Component ? await variable._createNodes() : variable
 
-      // Prevent from inseting commas into template
-      stringifiedVariable = Array.isArray(stringifiedVariable)
-        ? stringifiedVariable.join('')
-        : stringifiedVariable
+      /**
+       * Variable may be a Promise, so we must wait for resolving it and then
+       * return resilt. Also we prevent from inseting commas into template.
+       */
+      if (Array.isArray(stringifiedVariable)) {
+        stringifiedVariable = (await Promise.all(stringifiedVariable)).join('')
+      }
+
+      /**
+       * If variable is Promise we wait when it will be fulfilled.
+       */
+      stringifiedVariable =
+        stringifiedVariable instanceof Promise
+          ? await stringifiedVariable
+          : stringifiedVariable
 
       // Handle @event listener if there is any.
       const eventListener = eventListenerRegExp.exec(current)
       if (eventListener) {
         if (
-          (typeof stringifiedVariable !== 'function' &&
-            !stringifiedVariable.handleEvent)
+          typeof stringifiedVariable !== 'function' &&
+          !stringifiedVariable.handleEvent
         ) {
           throw new TypeError(`Event listener must be type of "function" or object with
           "handleEvent" method, but given "${typeof stringifiedVariable}".`)
@@ -77,7 +97,7 @@ export function html(parts: string[], ...variables: []) {
           eventListener[0],
           `data-event-id${eventsInElement++}=`
         )
-        return (previous || '') + current + eventId
+        return ((await previous) || '') + current + eventId
       }
 
       // Handle ?attribute
@@ -93,7 +113,7 @@ export function html(parts: string[], ...variables: []) {
           // Remove value if falsy
           : current.replace(booleanAttribute[0], '')
 
-        return (previous || '') + current
+        return ((await previous) || '') + current
       }
 
       // Handle style attribute
@@ -101,24 +121,26 @@ export function html(parts: string[], ...variables: []) {
         if (
           typeof stringifiedVariable === 'string' ||
           (typeof stringifiedVariable === 'object' &&
-          !stringifiedVariable.handleEvent)
+            !stringifiedVariable.handleEvent)
         ) {
           stringifiedVariable = normalizeStyles(stringifiedVariable)
         } else {
-          throw new Error('Styles that passed to "style" attribute must be valid CSS string ' +
-            'or plain object, where keys are valid CSS properties and values have "number" or "string" type. ' +
-            'Given ->\n' +
-            // $FlowFixMe
-            `"${stringifiedVariable}"`)
+          throw new Error(
+            'Styles that passed to "style" attribute must be valid CSS string ' +
+              'or plain object, where keys are valid CSS properties and values have "number" or "string" type. ' +
+              'Given ->\n' +
+              // $FlowFixMe
+              `"${stringifiedVariable}"`
+          )
         }
       }
 
       // Regular attributes
       // $FlowFixMe - need to be improved.
-      return (previous || '') + current + stringifiedVariable
+      return ((await previous) || '') + current + stringifiedVariable
     } else {
       // End of template
-      return (previous || '') + current
+      return ((await previous) || '') + current
     }
   }, '')
 

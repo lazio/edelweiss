@@ -62,11 +62,11 @@ function diffAttributes(oldNode: HTMLElement, newNode: HTMLElement) {
   })
 }
 
-export function normalizeHTML(
+export async function normalizeHTML(
   nodes: string | Component | (string | Component)[]
-): string {
+): Promise<string> {
   if (Array.isArray(nodes)) {
-    return nodes.reduce((prev, current) => prev + normalizeHTML(current), '')
+    return nodes.reduce(async (prev, current) => await prev + await normalizeHTML(current), '')
   } else {
     return nodes instanceof Component ? nodes._createNodes() : nodes
   }

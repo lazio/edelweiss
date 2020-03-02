@@ -1,4 +1,10 @@
-# 0.7.7
+# 0.8.0
+
+- Fix bug with `Component` in `html()` function - it did not execute `beforeBuild()` and `afterBuild()` methods.
+- Make `html`, `template()`, `beforeBuild()` and `afterBuild()` asyncronous. This is not breaking change - code from **0.7.5** will work without changes.
+- Update README.
+
+## 0.7.7
 
 - Add ability to pass styles as object to *style* attribute.
 - Fix typos in README.

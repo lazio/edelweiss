@@ -27,16 +27,16 @@ const edelweissPolicy = window.trustedTypes.createPolicy('edelweiss', {
 /**
  * Render templates on the page.
  */
-export function render(
+export async function render(
   to: string,
   nodes: string | Component | (string | Component)[]
-): void {
+): Promise<void> {
   const toElement = document.querySelector(to)
 
   if (toElement) {
     const newToElement = toElement.cloneNode(false)
 
-    newToElement.innerHTML = edelweissPolicy.createHTML(normalizeHTML(nodes))
+    newToElement.innerHTML = edelweissPolicy.createHTML(await normalizeHTML(nodes))
 
     Array.from(newToElement.children).forEach(attachEvents)
 
