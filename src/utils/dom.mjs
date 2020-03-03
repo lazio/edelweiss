@@ -66,7 +66,10 @@ export async function normalizeHTML(
   nodes: string | Component | (string | Component)[]
 ): Promise<string> {
   if (Array.isArray(nodes)) {
-    return nodes.reduce(async (prev, current) => await prev + await normalizeHTML(current), '')
+    return nodes.reduce(
+      async (prev, current) => (await prev) + (await normalizeHTML(current)),
+      ''
+    )
   } else {
     return nodes instanceof Component ? nodes._createNodes() : nodes
   }
