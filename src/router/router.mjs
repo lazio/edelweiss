@@ -4,6 +4,10 @@ import type Component from '../component/component.mjs'
 
 import { render } from '../render.mjs'
 
+export type RouteInfo = {
+  parameters: ?RegExp$matchResult,
+}
+
 export type Route = {
   path: string | RegExp,
   container: string,
@@ -12,7 +16,7 @@ export type Route = {
 
 export default class Router {
   static _routes: Route[] | void
-  static current: Route | void
+  static current: (Route & RouteInfo) | void
 
   static add(routes: Route | Route[]) {
     if (!Router._routes) {
@@ -39,8 +43,13 @@ export default class Router {
       At first call "Router.add(...)".`)
     }
 
+    /**
+     * We need to store regexp of path in order to get captured groups if
+     * there will be ones.
+     */
+    let pathRegExp = null
     const route = Router._routes.find(r => {
-      const pathRegExp =
+      pathRegExp =
         typeof r.path === 'string'
           ? new RegExp(regexpifyString(r.path))
           : r.path
@@ -48,11 +57,25 @@ export default class Router {
       return pathRegExp.test(path)
     })
 
-    if (route) {
+    if (route && pathRegExp) {
       const toContainer = document.querySelector(route.container)
 
       if (toContainer) {
-        Router.current = route
+        /**
+         * If match exists in path, then result is array, where first item is
+         * the whole matched string.
+         * If parameters exist in path (they must be surrounded by brackets), then
+         * second item and go on to end of array are parameters.
+         *
+         * For more info: [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/exec)
+         */
+        const pathMatch = pathRegExp.exec(path)
+
+        Router.current = {
+          ...route,
+          parameters: pathMatch,
+        }
+
         render(route.container, route.view())
 
         if (
@@ -107,6 +130,14 @@ window.addEventListener(
 
 function regexpifyString(regexp: string): string {
   let normalizedRegExp = regexp
+
+  /**
+   * We check if path contains "/" - they all must be escaped.
+   */
+  if (/[^\\]\//g.test(normalizedRegExp)) {
+    const parts = normalizedRegExp.split('/')
+    normalizedRegExp = parts.join('\\/')
+  }
 
   if (!normalizedRegExp.startsWith('^')) {
     normalizedRegExp = `^${normalizedRegExp}`

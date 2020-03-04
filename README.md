@@ -214,7 +214,7 @@ type Route = {
 }
 ```
 
-1. `path` - path of the page that will be visible in browser's search box.
+1. `path` - path of the page that will be visible in browser's search box. If you defines path as `RegExp` always insert start (**^**) and end (**$**) symbols. If path will be type of *string* you can not do this.
 2. `container` - selector of element with which nodes will be replaced.
 3. `view` - function that returns nodes that need to be rendered.
 
@@ -242,11 +242,32 @@ Router.add([
 4. `forward()` - forwards to next page if it is in history.
 5. `add(routes: Route | Route[])` - add routes to `Router`. May be called many times.
 
-Also it has static `current` field that contains information about current route (it is `Route` object).
+Also it has static `current` field that contains information about current route (it contains all fields from `Route` object and field `parameters` that contains matched path variables).
+
+In order to define path variable, you must define *path* in `Route` object as `RegExp` and needed part of path enclose in brackets:
+
+```javascript
+const path: Route = {
+  path: /^\/root(\/[\w]+)$/,
+  container: '.page',
+  view() {
+    return new RootComponent()
+  }
+}
+```
+
+Then you can get value of captured group (path variable) in `Route.current.parameters`.
+
+```javascript
+// Example: path === "/root/asdf"
+Router.current.parameters // Will be ["/root/asdf", "/asdf"]
+```
+
+> Actually **parameters** is result of `RegExp.exec` method, so variables will start from index *1*. And index *0* is path itself. [RegExp.exec at MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/exec).
 
 ### State
 
-Every site need to have state.
+Every site need to have a state.
 For creating it use `createState()` function. It accepts object with properties that need to be reactive.
 
 Function returns `state` object that has properties from parameter's object. You can use that object to get or to update properties like in plain objects.

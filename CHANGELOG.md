@@ -1,4 +1,9 @@
-# 0.8.0
+# 0.8.1
+
+- To `Router.current` field is added property *parameters* that contains path parameters if there will be ones.
+- Update README.
+
+## 0.8.0
 
 - Fix bug with `Component` in `html()` function - it did not execute `beforeBuild()` and `afterBuild()` methods.
 - Make `html`, `template()`, `beforeBuild()` and `afterBuild()` asyncronous. This is not breaking change - code from **0.7.5** will work without changes.

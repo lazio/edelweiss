@@ -10,7 +10,7 @@ declare module '/node_modules/@prostory/edelweiss/dist/index.mjs' {
   }
 
   declare export class Router {
-    static +current: Route | void;
+    static +current: (Route & RouteInfo) | void;
 
     static add(routes: Route | Route[]): void;
     static to(path: string, options?: {
@@ -40,6 +40,10 @@ declare module '/node_modules/@prostory/edelweiss/dist/index.mjs' {
     path: string | RegExp,
     container: string,
     view: () => string | Component | (string | Component)[],
+  }
+
+  declare export type RouteInfo = {
+    parameters: ?RegExp$matchResult,
   }
 
   declare type CssDeclaration =
