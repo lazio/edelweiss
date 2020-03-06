@@ -16,8 +16,7 @@ export function normalizeStyles(styles: Styles): string {
 }
 
 /**
- * @param {string} relativeTo - path of the file relative to which
- * css file will be searched.
+ * Loads CSS file by adding <link> to <head>.
  */
 export function loadCSS(declaration: CssDeclaration): void {
   const normalizedPath = buildCssPath(declaration)
