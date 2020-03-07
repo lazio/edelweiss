@@ -3,11 +3,11 @@
 import Router from '../router/router.mjs'
 
 export type I18nLanguage = {
-  [string]: string | { [string]: I18nLanguage }
+  [string]: string | { [string]: I18nLanguage },
 }
 
 export type I18nLanguagesSet = {
-  [string]: I18nLanguage
+  [string]: I18nLanguage,
 }
 
 /**
@@ -59,6 +59,10 @@ export default class I18n {
         let maybeText = _languages[_currentLanguage]
 
         splitted.forEach(part => {
+          /**
+           * Check for all possible incorrect values, so this method will not
+           * interrupt site flow.
+           */
           if (typeof maybeText !== 'string') {
             if (maybeText === undefined || maybeText === null) {
               console.error(`Path "${path}" does not match any translation!
@@ -67,6 +71,17 @@ export default class I18n {
             } else if (Array.isArray(maybeText)) {
               console.error(`Array type is not allowed as translate value!
               Given "[${maybeText.join(', ')}]" for path: "${path}"`)
+              maybeText = ''
+            } else if (typeof maybeText === 'function') {
+              console.error(`Function type is not allowed as translate value!
+              Given "${maybeText}" for path: "${path}"`)
+              maybeText = ''
+            } else if (
+              typeof maybeText === 'number' ||
+              typeof maybeText === 'boolean'
+            ) {
+              console.error(`Number or boolean type is not allowed as translate value!
+              Given "${typeof maybeText}: ${maybeText}" for path: "${path}"`)
               maybeText = ''
             } else {
               maybeText = maybeText[part]
@@ -102,7 +117,11 @@ export default class I18n {
 }
 
 // Inserts variable into text if it has any. Otherwise returns original text
-function insertVariables(text: string, variableName: string, variableValue: string): string {
+function insertVariables(
+  text: string,
+  variableName: string,
+  variableValue: string
+): string {
   if (text.search(`\\$\\{${variableName}\\}`) !== -1) {
     const replacedText = text.replace(`\${${variableName}}`, variableValue)
     return insertVariables(replacedText, variableName, variableValue)

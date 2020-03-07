@@ -17,7 +17,7 @@ export type Route = {
 /**
  * Holds all routes that user pass to "Router.add()".
  */
-const _routes: Route[] = []
+const _routes: Map<string | RegExp, Route> = new Map()
 /**
  * Holds current route.
  */
@@ -30,8 +30,8 @@ export default class Router {
 
   static add(routes: Route | Route[]) {
     Array.isArray(routes)
-      ? _routes.push(...routes)
-      : _routes.push(routes)
+      ? routes.forEach(route => _routes.set(route.path, route))
+      : _routes.set(routes.path, routes)
   }
 
   static to(
@@ -44,7 +44,7 @@ export default class Router {
       willStateChange?: boolean,
     } = {}
   ): void {
-    if (_routes.length === 0) {
+    if (_routes.size === 0) {
       throw new Error(`You cannot navigate to ${path} because you didn't define any routes!
       At first call "Router.add(...)".`)
     }
@@ -54,14 +54,21 @@ export default class Router {
      * there will be ones.
      */
     let pathRegExp = null
-    const route = _routes.find(r => {
-      pathRegExp =
-        typeof r.path === 'string'
-          ? new RegExp(regexpifyString(r.path))
-          : r.path
+    let route = null
 
-      return pathRegExp.test(path)
-    })
+    for (const [key, value] of _routes.entries()) {
+      if (!route) {
+        pathRegExp = typeof key === 'string'
+          ? new RegExp(regexpifyString(key))
+          : key
+
+        if (pathRegExp.test(path)) {
+          route = value
+        }
+      } else {
+        break
+      }
+    }
 
     if (route && pathRegExp) {
       const toContainer = document.querySelector(route.container)
@@ -105,8 +112,8 @@ export default class Router {
   }
 
   static reload(): void {
-    if (Router.current) {
-      const { path, container, view } = Router.current
+    if (_current) {
+      const { path, container, view } = _current
       render(container, view())
       window.history.replaceState({ path, container }, '', path)
     } else {

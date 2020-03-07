@@ -1,4 +1,9 @@
-# 0.8.2
+# 0.8.3
+
+- Add type checking for translated value in `I18n.translate()`.
+- Small changes in `Router` class (new *routes* store).
+
+## 0.8.2
 
 > This version fix bug with class properies in **0.8.1** version!
 
