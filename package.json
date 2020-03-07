@@ -1,6 +1,6 @@
 {
   "name": "@prostory/edelweiss",
-  "version": "0.8.3",
+  "version": "0.8.4",
   "description": "ES module small framework that builds HTML from JS.",
   "keywords": [
     "Edelweiss",
@@ -16,7 +16,7 @@
     "watch": "gulp",
     "build": "npm run clean; gulp minimize",
     "release": "npm run build; npm publish --access public",
-    "test": "mocha --recursive"
+    "test": "npm run build; mocha --recursive"
   },
   "author": "Kapelianovych Yevhen",
   "license": "MIT",

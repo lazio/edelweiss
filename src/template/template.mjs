@@ -121,7 +121,10 @@ export async function html(parts: string[], ...variables: []) {
         if (
           typeof stringifiedVariable === 'string' ||
           (typeof stringifiedVariable === 'object' &&
-            !stringifiedVariable.handleEvent)
+            !stringifiedVariable.handleEvent &&
+            Object.values(stringifiedVariable).every(
+              value => typeof value === 'string' || typeof value === 'number'
+            ))
         ) {
           stringifiedVariable = normalizeStyles(stringifiedVariable)
         } else {

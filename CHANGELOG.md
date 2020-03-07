@@ -1,4 +1,10 @@
-# 0.8.3
+# 0.8.4
+
+- Write more tests.
+- Add more type checking of type of variable that passed to `html()` function.
+- Update README.
+
+## 0.8.3
 
 - Add type checking for translated value in `I18n.translate()`.
 - Small changes in `Router` class (new *routes* store).

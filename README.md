@@ -26,7 +26,8 @@ import { Router } from '/path/to/@prostory/edelweiss/dist/index.mjs'
 
 > Note that in current time you cannot import any package like you do with `require()`. You must provide absolute path from root of your project (site's root). It can be fixed by [import maps](https://github.com/WICG/import-maps), but it is not standard yet. Also only **.mjs** files can be imported. (See [ES modules: A cartoon deep-dive](https://hacks.mozilla.org/2018/03/es-modules-a-cartoon-deep-dive/))
 
-This small framework does not use virtual DOM, but work with browser's DOM. 
+In current stage it works only in browser, but not on server (SSR is not designed yet).
+This small framework work with browser's DOM as close as possible (it has Virtual DOM). 
 
 ### Template
 
