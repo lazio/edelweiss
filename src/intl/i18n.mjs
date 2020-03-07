@@ -10,55 +10,94 @@ export type I18nLanguagesSet = {
   [string]: I18nLanguage
 }
 
+/**
+ * Holds all languages files that pass to I18n by "I18n.add()".
+ */
+const _languages: I18nLanguagesSet = {}
+/**
+ * Holds current language tag.
+ */
+let _currentLanguage: string | void
+
 export default class I18n {
-  static _languages: I18nLanguagesSet
-  static currentLanguage: string
+  static get currentLanguage() {
+    return _currentLanguage
+  }
+
+  static get languagesTags(): string[] {
+    return Object.keys(_languages)
+  }
 
   static add(languages: I18nLanguagesSet, initial?: string) {
-    I18n._languages = languages
+    for (const lang in languages) {
+      // Do not override language file if it is already exists
+      if (!(lang in _languages)) {
+        _languages[lang] = languages[lang]
+      }
+    }
 
-    const tmp = Object.entries(languages)
-    I18n.currentLanguage = initial || tmp[0][0]
+    const tmp = Object.keys(languages)
+    _currentLanguage = initial || tmp[0]
   }
 
   static setLanguage(tag: string) {
-    const translation = I18n._languages[tag]
+    const translation = _languages[tag]
 
     if (!translation) {
       console.error(`You do not have translation for ${tag} language!`)
     } else {
-      I18n.currentLanguage = tag
+      _currentLanguage = tag
       Router.reload()
     }
   }
 
-  static get languagesTags(): string[] {
-    return Object.keys(I18n._languages)
-  }
-
   static translate(path: string, variables?: { [string]: string }): string {
-    const splitted = path.split('.')
-    let maybeText = I18n._languages[I18n.currentLanguage]
+    if (_currentLanguage) {
+      const splitted = path.split('.')
 
-    splitted.forEach(part => {
-      if (typeof maybeText !== 'string') {
-        maybeText = maybeText[part]
+      if (_currentLanguage in _languages) {
+        let maybeText = _languages[_currentLanguage]
+
+        splitted.forEach(part => {
+          if (typeof maybeText !== 'string') {
+            if (maybeText === undefined || maybeText === null) {
+              console.error(`Path "${path}" does not match any translation!
+              Check "path" - it must point to plain text in object hierarchy.`)
+              maybeText = ''
+            } else if (Array.isArray(maybeText)) {
+              console.error(`Array type is not allowed as translate value!
+              Given "[${maybeText.join(', ')}]" for path: "${path}"`)
+              maybeText = ''
+            } else {
+              maybeText = maybeText[part]
+            }
+          }
+        })
+
+        if (typeof maybeText !== 'string') {
+          maybeText = ''
+          console.error(`Path "${path}" does not match any translation!
+          Check "path" parameter - it must point to plain text in object hierarchy.`)
+        }
+
+        if (variables) {
+          for (const key in variables) {
+            maybeText = insertVariables(maybeText, key, variables[key])
+          }
+        }
+
+        return maybeText
+      } else {
+        console.error(`You does not set "${_currentLanguage}" language file,
+        so empty translate for "${path}" is returned.`)
+        return ''
       }
-    })
-
-    if (typeof maybeText !== 'string') {
-      maybeText = ''
-      console.error(`Path ${path} does not match any translation!
-      Check "path" - it must point to plain text in object hierarchy.`)
+    } else {
+      console.error(`You does not add languages to "I18n"("I18n.add(...)")
+      or does not set language through "I18n.setLanguage(...)",
+      so empty translate for "${path}" is returned.`)
+      return ''
     }
-
-    if (variables) {
-      for (const key in variables) {
-        maybeText = insertVariables(maybeText, key, variables[key])
-      }
-    }
-
-    return maybeText
   }
 }
 

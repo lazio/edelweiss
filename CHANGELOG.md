@@ -1,4 +1,14 @@
-# 0.8.1
+# 0.8.2
+
+> This version fix bug with class properies in **0.8.1** version!
+
+- Make `Router.current` as getter.
+- Add `I18n.currentLanguage` getter.
+- Handle error when current language is unset.
+- Handle error when *path* passed to `I18n.translate` points to `null`, `undefined` and `Array`.
+- Update typing and README.
+
+## 0.8.1
 
 - To `Router.current` field is added property *parameters* that contains path parameters if there will be ones.
 - Update README.

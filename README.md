@@ -242,7 +242,7 @@ Router.add([
 4. `forward()` - forwards to next page if it is in history.
 5. `add(routes: Route | Route[])` - add routes to `Router`. May be called many times.
 
-Also it has static `current` field that contains information about current route (it contains all fields from `Route` object and field `parameters` that contains matched path variables).
+Also it has static getter `current` that returns information about current route (it returns all fields from `Route` object and field `parameters` that contains matched path variables).
 
 In order to define path variable, you must define *path* in `Route` object as `RegExp` and needed part of path enclose in brackets:
 
@@ -356,12 +356,14 @@ I18n.add(
 )
 ```
 
-`I18n` has one static getter:
+`I18n` has two static getters:
 
 1. `languagesTags: string[]` -  returns all tags for languages, that you set to `I18n.add` method.
+2. `currentLanguage: string | void` - returns tag of current language or `undefined` if there is not setted any.
 
 ```javascript
 I18n.languagesTags // returns ['uk', 'en']
+I18n.currentLanguage // 'uk'
 ```
 
 ## Warning

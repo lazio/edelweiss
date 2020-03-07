@@ -14,18 +14,24 @@ export type Route = {
   view: () => string | Component | (string | Component)[],
 }
 
+/**
+ * Holds all routes that user pass to "Router.add()".
+ */
+const _routes: Route[] = []
+/**
+ * Holds current route.
+ */
+let _current: (Route & RouteInfo) | void
+
 export default class Router {
-  static _routes: Route[] | void
-  static current: (Route & RouteInfo) | void
+  static get current() {
+    return _current
+  }
 
   static add(routes: Route | Route[]) {
-    if (!Router._routes) {
-      Router._routes = []
-    }
-
     Array.isArray(routes)
-      ? Router._routes.push(...routes)
-      : Router._routes.push(routes)
+      ? _routes.push(...routes)
+      : _routes.push(routes)
   }
 
   static to(
@@ -38,7 +44,7 @@ export default class Router {
       willStateChange?: boolean,
     } = {}
   ): void {
-    if (!Router._routes) {
+    if (_routes.length === 0) {
       throw new Error(`You cannot navigate to ${path} because you didn't define any routes!
       At first call "Router.add(...)".`)
     }
@@ -48,7 +54,7 @@ export default class Router {
      * there will be ones.
      */
     let pathRegExp = null
-    const route = Router._routes.find(r => {
+    const route = _routes.find(r => {
       pathRegExp =
         typeof r.path === 'string'
           ? new RegExp(regexpifyString(r.path))
@@ -71,7 +77,7 @@ export default class Router {
          */
         const pathMatch = pathRegExp.exec(path)
 
-        Router.current = {
+        _current = {
           ...route,
           parameters: pathMatch,
         }

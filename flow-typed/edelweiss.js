@@ -10,7 +10,7 @@ declare module '/node_modules/@prostory/edelweiss/dist/index.mjs' {
   }
 
   declare export class Router {
-    static +current: (Route & RouteInfo) | void;
+    static get current(): (Route & RouteInfo) | void;
 
     static add(routes: Route | Route[]): void;
     static to(path: string, options?: {
@@ -22,12 +22,12 @@ declare module '/node_modules/@prostory/edelweiss/dist/index.mjs' {
   }
 
   declare export class I18n {
-    static +currentLanguage: string;
+    static get currentLanguage(): string | void;
+    static get languagesTags(): string[];
 
     static add(languages: I18nLanguagesSet, initial?: string): void;
     static setLanguage(tag: string): void;
     static translate(path: string, variables?: { [string]: string }): string;
-    static get languagesTags(): string[];
   }
 
   declare export function createState<T: { [string]: any }>(object: T): T
