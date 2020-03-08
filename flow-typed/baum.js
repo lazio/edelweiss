@@ -18,6 +18,8 @@ declare module '/node_modules/@prostory/baum/dist/index.mjs' {
     toNotEqual: (expected: mixed) => void,
     toThrow: (expectedError?: Error) => void,
     toNotThrow: () => void,
+    toMatch: (expected: string | RegExp) => void,
+    toNotMatch: (expected: string | RegExp) => void,
     toBeResolved: () => Promise<ExpectChecks>,
     toBeRejected: (expectedError?: Error) => Promise<void>,
   }

@@ -5,8 +5,7 @@
 	},
 	"extends": [
 		"standard",
-		"plugin:flowtype/recommended",
-		"plugin:mocha/recommended"
+		"plugin:flowtype/recommended"
 	],
 	"globals": {
 		"Atomics": "readonly",
@@ -18,8 +17,7 @@
 		"sourceType": "module"
 	},
 	"plugins": [
-		"flowtype",
-		"mocha"
+		"flowtype"
 	],
 	"rules": {
 		"space-before-function-paren": [
