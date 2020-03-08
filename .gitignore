@@ -1,6 +1,7 @@
+.DS_Store
+.nyc_output/
 node_modules/
 dist/
 coverage/
-.DS_Store
 
 package-lock.json

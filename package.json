@@ -16,7 +16,8 @@
     "watch": "gulp",
     "build": "npm run clean; gulp minimize",
     "release": "npm run build; npm publish --access public",
-    "test": "npm run build; mocha --recursive"
+    "test": "mocha --recursive",
+    "coverage": "nyc npm test"
   },
   "author": "Kapelianovych Yevhen",
   "license": "MIT",
@@ -34,7 +35,8 @@
     "gulp": "^4.0.2",
     "gulp-flow-remove-types2": "^1.1.1",
     "gulp-uglify-es": "^2.0.0",
-    "mocha": "^7.1.0"
+    "mocha": "^7.1.0",
+    "nyc": "^15.0.0"
   },
   "dependencies": {}
 }

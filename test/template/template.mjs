@@ -32,7 +32,7 @@ describe('Test template of "edelweiss"', function () {
       }
     }
 
-    assert.doesNotThrow(async () => { await html`<div>${new TestComponent()}</div>` })
+    assert.doesNotReject(async () => { await html`<div>${new TestComponent()}</div>` })
 
     const value = await html`<div>${new TestComponent()}</div>`
     assert.strictEqual(value, '<div><p>Component</p></div>')
