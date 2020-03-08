@@ -3,5 +3,6 @@
 node_modules/
 dist/
 coverage/
+certs/
 
 package-lock.json

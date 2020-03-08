@@ -12,31 +12,30 @@
     "url": "https://github.com/YevhenKap/edelweiss"
   },
   "scripts": {
+    "certificates": "openssl req -x509 -newkey rsa:2048 -nodes -sha256 -subj '/CN=localhost' -keyout certs/localhost-privkey.pem -out certs/localhost-cert.pem",
     "clean": "rm -r dist/*",
     "watch": "gulp",
     "build": "npm run clean; gulp minimize",
     "release": "npm run build; npm publish --access public",
-    "test": "mocha --recursive",
-    "coverage": "nyc npm test"
+    "test": "node dev_server.mjs"
   },
   "author": "Kapelianovych Yevhen",
   "license": "MIT",
   "devDependencies": {
+    "@prostory/baum": "^0.1.0",
+    "@prostory/mountain": "^0.1.5",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.8.0",
     "eslint-config-standard": "^14.1.0",
     "eslint-plugin-flowtype": "^4.5.3",
     "eslint-plugin-import": "^2.20.1",
-    "eslint-plugin-mocha": "^6.3.0",
     "eslint-plugin-node": "^11.0.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "flow-bin": "^0.120.1",
     "gulp": "^4.0.2",
     "gulp-flow-remove-types2": "^1.1.1",
-    "gulp-uglify-es": "^2.0.0",
-    "mocha": "^7.1.0",
-    "nyc": "^15.0.0"
+    "gulp-uglify-es": "^2.0.0"
   },
   "dependencies": {}
 }

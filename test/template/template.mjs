@@ -1,91 +1,89 @@
+/* eslint-disable import/no-absolute-path */
 /* eslint-disable no-undef */
-import assert from 'assert'
+// @flow
+
+import { group, test, expect } from '/node_modules/@prostory/baum/dist/index.mjs'
 
 import { html } from '../../dist/template/template.mjs'
 import Component from '../../dist/component/component.mjs'
 
-describe('Test template of "edelweiss"', function () {
-  it('html() must return Promise<string>', async function () {
+group('Test template of "edelweiss"', async () => {
+  test('html() must return Promise<string>', async () => {
     const value = await html`<p></p>`
-    assert.strictEqual(typeof value, 'string')
+    expect(typeof value).toEqual('string')
   })
 
-  it('html() must insert string variable and return Promise<string>', async function () {
+  test('html() must insert string variable and return Promise<string>', async () => {
     const value = await html`<p>${'child'}</p>`
-    assert.strictEqual(value, '<p>child</p>')
+    expect(value).toEqual('<p>child</p>')
   })
 
-  it('html() must return Promise<string> without coerced variable if its value is undefined', async function () {
+  test('html() must return Promise<string> without coerced variable if its value is undefined', async () => {
     const value = await html`<p>${undefined}</p>`
-    assert.strictEqual(value, '<p></p>')
+    expect(value).toEqual('<p></p>')
   })
 
-  it('html() must return Promise<string> without coerced variable if its value is null', async function () {
+  test('html() must return Promise<string> without coerced variable if its value is null', async () => {
     const value = await html`<p>${null}</p>`
-    assert.strictEqual(value, '<p></p>')
+    expect(value).toEqual('<p></p>')
   })
 
-  it('html() must return Promise<string> with inserted "Component" into it.', async function () {
+  test('html() must return Promise<string> with inserted "Component" into test.', async () => {
     class TestComponent extends Component {
       template() {
         return html`<p>Component</p>`
       }
     }
 
-    assert.doesNotReject(async () => { await html`<div>${new TestComponent()}</div>` })
+    await expect(html`<div>${new TestComponent()}</div>`).toBeResolved()
 
     const value = await html`<div>${new TestComponent()}</div>`
-    assert.strictEqual(value, '<div><p>Component</p></div>')
+    expect(value).toEqual('<div><p>Component</p></div>')
   })
 
-  it('html() must return Promise<string> with inserted "Array<string>" into it', async function () {
+  test('html() must return Promise<string> with inserted "Array<string>" into test', async () => {
     const array = [
       '<p>1</p>',
       '<p>2</p>'
     ]
-    const value = await html`<p>${array}</p>`
-    assert.strictEqual(value, '<p><p>1</p><p>2</p></p>')
+
+    ;(await expect(html`<p>${array}</p>`).toBeResolved()).toEqual('<p><p>1</p><p>2</p></p>')
   })
 
-  it('html() must return Promise<string> with inserted "Promise<string>" into it', async function () {
+  test('html() must return Promise<string> with inserted "Promise<string>" into test', async () => {
     const child = html`<span>Child</span>`
-    const value = await html`<p>${child}</p>`
-    assert.strictEqual(value, '<p><span>Child</span></p>')
+    ;(await expect(html`<p>${child}</p>`).toBeResolved()).toEqual('<p><span>Child</span></p>')
   })
 
-  it('html() must return Promise<string> with boolean attribute', async function () {
+  test('html() must return Promise<string> with boolean attribute', async () => {
     const valueFalsy = await html`<button ?disable=${false}>child</button>`
-    assert.strictEqual(valueFalsy, '<button >child</button>')
+    expect(valueFalsy).toEqual('<button >child</button>')
 
     const valueTruthy = await html`<button ?disable=${true}>child</button>`
-    assert.strictEqual(valueTruthy, '<button disable>child</button>')
+    expect(valueTruthy).toEqual('<button disable>child</button>')
   })
 
-  it('html() must return Promise<string> with style attribute and variable as object', async function () {
+  test('html() must return Promise<string> with style attribute and variable as object', async () => {
     const styles = {
       opacity: 0,
       display: 'block'
     }
     const value = await html`<button style="${styles}">child</button>`
-    assert.strictEqual(value, '<button style="opacity:0;display:block">child</button>')
+    expect(value).toEqual('<button style="opacity:0;display:block">child</button>')
   })
 
-  it('html() must rejects with style attribute and variable as invalid object', function () {
+  test('html() must rejects with style attribute and variable as invalid object', async () => {
     const styles = {
       opacity() {},
       display: 'block'
     }
 
-    assert.rejects(async () => {
-      await html`<button style="${styles}">child</button>`
-    })
+    await expect(html`<button style="${styles}">child</button>`).toBeRejected()
   })
 
-  it('html() must rejects with style attribute and variable as invalid type (function)', function () {
+  test('html() must rejects with style attribute and variable as invalid type (function)', async () => {
     const styles = () => {}
 
-    assert.rejects(async () => {
-      await html`<button style="${styles}">child</button>`
-    })
+    await expect(html`<button style="${styles}">child</button>`).toBeRejected()
   })
 })

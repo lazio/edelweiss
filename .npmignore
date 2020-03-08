@@ -4,9 +4,13 @@ src/
 test/
 coverage/
 .nyc_output/
+certs/
 
 .eslintrc.json
 .flowconfig
 .prettierrc.json
 gulpfile.js
 package-lock.json
+index.html
+dev_server.mjs
+CHANGELOG.md
