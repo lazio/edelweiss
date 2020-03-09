@@ -1,4 +1,8 @@
-# 0.8.4
+# 0.8.5
+
+- Add property `Router.container` and make `container` property in route object optional.
+
+## 0.8.4
 
 - Write more tests.
 - Add more type checking of type of variable that passed to `html()` function.

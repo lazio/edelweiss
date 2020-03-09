@@ -10,12 +10,22 @@ declare module '/node_modules/@prostory/edelweiss/dist/index.mjs' {
   }
 
   declare export class Router {
-    static get current(): (Route & RouteInfo) | void;
+    static get current(): {
+      path: string | RegExp,
+      container?: string,
+      view: () => string | Component | (string | Component)[],
+      parameters: ?RegExp$matchResult,
+    } | void;
+    static get container(): string | void;
+    static set container(value: string): void;
 
     static add(routes: Route | Route[]): void;
-    static to(path: string, options?: {
-      willStateChange?: boolean
-    }): void;
+    static to(
+      path: string,
+      options?: {
+        willStateChange?: boolean,
+      }
+    ): void;
     static reload(): void;
     static back(): void;
     static forward(): void;
@@ -32,13 +42,16 @@ declare module '/node_modules/@prostory/edelweiss/dist/index.mjs' {
 
   declare export function createState<T: { [string]: any }>(object: T): T
 
-  declare export function html(parts: string[], ...variables: any[]): Promise<string>;
+  declare export function html(
+    parts: string[],
+    ...variables: mixed[]
+  ): Promise<string>
 
   declare export type Styles = { [string]: number | string } | string
 
   declare export type Route = {
     path: string | RegExp,
-    container: string,
+    container?: string,
     view: () => string | Component | (string | Component)[],
   }
 

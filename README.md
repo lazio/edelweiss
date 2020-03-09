@@ -192,7 +192,7 @@ class MyComponent extends Component {
 
 ### Router
 
-It is used for navigating through site and rendering. It interacts with browser's *History* API and, based on path of the page, renders needed nodes. `Router` has only static methods and static readable `current` field.
+It is used for navigating through site and rendering. It interacts with browser's *History* API and, based on path of the page, renders needed nodes. `Router` has only static methods and static fields.
 
 ```javascript
 import { Router } from '/path/to/@prostory/edelweiss/dist/index.mjs'
@@ -210,13 +210,13 @@ You must set up `Router` with routes. Route is a plain object:
 ```javascript
 type Route = {
   path: string | RegExp,
-  container: string,
+  container?: string,
   view: () => string | Component | (string | Component)[]
 }
 ```
 
 1. `path` - path of the page that will be visible in browser's search box. If you defines path as `RegExp` always insert start (**^**) and end (**$**) symbols. If path will be type of *string* you can not do this.
-2. `container` - selector of element with which nodes will be replaced.
+2. `container` - selector of element with which nodes will be replaced. You can not provide it. In this case you must define global `Route.container`.
 3. `view` - function that returns nodes that need to be rendered.
 
 ```javascript
@@ -265,6 +265,14 @@ Router.current.parameters // Will be ["/root/asdf", "/asdf"]
 ```
 
 > Actually **parameters** is result of `RegExp.exec` method, so variables will start from index *1*. And index *0* is path itself. [RegExp.exec at MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/exec).
+
+If your routes have the same container you may define global container and omit `container` property in `Route` object:
+
+```javascript
+Router.container = '.page' // You can read and write this property
+```
+
+If both global and local containers will be defined, local's one will be used.
 
 ### State
 

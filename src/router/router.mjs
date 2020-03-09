@@ -10,7 +10,7 @@ export type RouteInfo = {
 
 export type Route = {
   path: string | RegExp,
-  container: string,
+  container?: string,
   view: () => string | Component | (string | Component)[],
 }
 
@@ -21,11 +21,29 @@ const _routes: Map<string | RegExp, Route> = new Map()
 /**
  * Holds current route.
  */
-let _current: (Route & RouteInfo) | void
+let _current: {
+  path: string | RegExp,
+  container?: string,
+  view: () => string | Component | (string | Component)[],
+  parameters: ?RegExp$matchResult,
+} | void
+/**
+ * Container for elements from all routes.
+ * If all routes will have the same container, then this variable may be set and used.
+ */
+let _pageContainer: string | void
 
 export default class Router {
   static get current() {
     return _current
+  }
+
+  static get container() {
+    return _pageContainer
+  }
+
+  static set container(value: string) {
+    _pageContainer = value
   }
 
   static add(routes: Route | Route[]) {
@@ -58,9 +76,8 @@ export default class Router {
 
     for (const [key, value] of _routes.entries()) {
       if (!route) {
-        pathRegExp = typeof key === 'string'
-          ? new RegExp(regexpifyString(key))
-          : key
+        pathRegExp =
+          typeof key === 'string' ? new RegExp(regexpifyString(key)) : key
 
         if (pathRegExp.test(path)) {
           route = value
@@ -71,40 +88,43 @@ export default class Router {
     }
 
     if (route && pathRegExp) {
-      const toContainer = document.querySelector(route.container)
+      const container = route.container || _pageContainer
 
-      if (toContainer) {
-        /**
-         * If match exists in path, then result is array, where first item is
-         * the whole matched string.
-         * If parameters exist in path (they must be surrounded by brackets), then
-         * second item and go on to end of array are parameters.
-         *
-         * For more info: [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/exec)
-         */
-        const pathMatch = pathRegExp.exec(path)
+      if (container) {
+        const toContainer = document.querySelector(container)
 
-        _current = {
-          ...route,
-          parameters: pathMatch,
-        }
+        if (toContainer) {
+          /**
+           * If match exists in path, then result is array, where first item is
+           * the whole matched string.
+           * If parameters exist in path (they must be surrounded by brackets), then
+           * second item and go on to end of array are parameters.
+           *
+           * For more info: [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/exec)
+           */
+          const pathMatch = pathRegExp.exec(path)
 
-        render(route.container, route.view())
+          _current = {
+            ...route,
+            parameters: pathMatch,
+          }
 
-        if (
-          typeof options.willStateChange === 'undefined' ||
-          options.willStateChange
-        ) {
-          window.history.pushState(
-            { path, container: route.container },
-            '',
-            path
+          render(container, route.view())
+
+          if (
+            typeof options.willStateChange === 'undefined' ||
+            options.willStateChange
+          ) {
+            window.history.pushState({ path, container }, '', path)
+          }
+        } else {
+          throw new Error(
+            `On the page is no element that matches ${container} selector!`
           )
         }
       } else {
-        throw new Error(
-          `On the page is no element that matches ${route.container} selector!`
-        )
+        throw new Error(`You does not set container for route: ${path}.
+        No local(in Route) and no global(in Router.container) container defined.`)
       }
     } else {
       throw new Error(`No route is specified for path: ${path}!`)
@@ -114,8 +134,19 @@ export default class Router {
   static reload(): void {
     if (_current) {
       const { path, container, view } = _current
-      render(container, view())
-      window.history.replaceState({ path, container }, '', path)
+      const currentContainer = container || _pageContainer
+
+      if (currentContainer) {
+        render(currentContainer, view())
+        window.history.replaceState(
+          { path, container: currentContainer },
+          '',
+          path
+        )
+      } else {
+        throw new Error(`You do not set container for route: ${path.toString()}.
+        No local(in Route) and no global(in Router.container) container defined.`)
+      }
     } else {
       console.error("Nothing to reload - you didn't navigate to any pages yet.")
     }
