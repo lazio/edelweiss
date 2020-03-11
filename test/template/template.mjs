@@ -11,12 +11,12 @@ import {
 import { html } from '../../dist/template/template.mjs'
 import Component from '../../dist/component/component.mjs'
 
-group('Test template of "edelweiss"', async () => {
+group('Test template of "edelweiss"', () => {
   test('html() must return Promise<string>', async () => {
-    const value = await html`
+    const value = html`
       <p></p>
     `
-    expect(typeof value).toEqual('string')
+    ;(await expect(value).toBeResolved()).isString()
   })
 
   test('html() must insert string variable and return Promise<string>', async () => {
@@ -90,7 +90,7 @@ group('Test template of "edelweiss"', async () => {
     const valueFalsy = await html`
       <button ?disable=${false}>child</button>
     `
-    expect(valueFalsy).toMatch('<button >child</button>')
+    expect(valueFalsy).toMatch('<button[\\s]*>child</button>')
 
     const valueTruthy = await html`
       <button ?disable=${true}>child</button>
@@ -132,5 +132,13 @@ group('Test template of "edelweiss"', async () => {
         <button style="${styles}">child</button>
       `
     ).toBeRejected()
+  })
+
+  test(`html() must set to an element "data-event-id[number]" attribute 
+  if event handler is passed to element`, async () => {
+    const button = await html`
+        <button @click=${(event) => {}}>child</button>
+      `
+    expect(button).toMatch(/<button data-event-id[\d]=[\d]+>child<\/button>/)
   })
 })

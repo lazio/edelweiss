@@ -17,12 +17,12 @@
     "watch": "gulp",
     "build": "npm run clean; gulp minimize",
     "release": "npm run build; npm publish --access public",
-    "test": "node dev_server.mjs"
+    "test:browser": "node dev_server.mjs"
   },
   "author": "Kapelianovych Yevhen",
   "license": "MIT",
   "devDependencies": {
-    "@prostory/baum": "^0.2.0",
+    "@prostory/baum": "^0.3.1",
     "@prostory/mountain": "^0.1.5",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.8.0",
