@@ -14,8 +14,8 @@ declare module '/node_modules/@prostory/edelweiss/dist/index.mjs' {
       path: string | RegExp,
       container?: string,
       view: () => string | Component | (string | Component)[],
-      parameters: ?RegExp$matchResult,
-    } | void;
+      parameters?: ?RegExp$matchResult,
+    };
     static get container(): string | void;
     static set container(value: string): void;
 
@@ -56,7 +56,7 @@ declare module '/node_modules/@prostory/edelweiss/dist/index.mjs' {
   }
 
   declare export type RouteInfo = {
-    parameters: ?RegExp$matchResult,
+    parameters?: ?RegExp$matchResult,
   }
 
   declare type CssDeclaration =

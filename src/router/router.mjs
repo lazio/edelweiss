@@ -5,7 +5,7 @@ import type Component from '../component/component.mjs'
 import { render } from '../render.mjs'
 
 export type RouteInfo = {
-  parameters: ?RegExp$matchResult,
+  parameters?: ?RegExp$matchResult,
 }
 
 export type Route = {
@@ -25,8 +25,13 @@ let _current: {
   path: string | RegExp,
   container?: string,
   view: () => string | Component | (string | Component)[],
-  parameters: ?RegExp$matchResult,
-} | void
+  parameters?: ?RegExp$matchResult,
+} = {
+  path: '',
+  view() {
+    return ''
+  },
+}
 /**
  * Container for elements from all routes.
  * If all routes will have the same container, then this variable may be set and used.
@@ -132,23 +137,22 @@ export default class Router {
   }
 
   static reload(): void {
-    if (_current) {
+    /**
+     * This property equals to empty string if user did not navigate to pages and invokes
+     * this methods before first "Router.to".
+     */
+    if (typeof _current.path === 'string' && _current.path.length === 0) {
+      console.error("Nothing to reload - you didn't navigate to any pages yet.")
+    } else {
       const { path, container, view } = _current
       const currentContainer = container || _pageContainer
 
       if (currentContainer) {
         render(currentContainer, view())
-        window.history.replaceState(
-          { path, container: currentContainer },
-          '',
-          path
-        )
       } else {
         throw new Error(`You do not set container for route: ${path.toString()}.
         No local(in Route) and no global(in Router.container) container defined.`)
       }
-    } else {
-      console.error("Nothing to reload - you didn't navigate to any pages yet.")
     }
   }
 

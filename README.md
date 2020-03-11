@@ -243,7 +243,7 @@ Router.add([
 4. `forward()` - forwards to next page if it is in history.
 5. `add(routes: Route | Route[])` - add routes to `Router`. May be called many times.
 
-Also it has static getter `current` that returns information about current route (it returns all fields from `Route` object and field `parameters` that contains matched path variables).
+Also it has static getter `current` that returns information about current route (it returns all fields from `Route` object and field `parameters` that contains matched path variables, if they was defined in `Route.path`).
 
 In order to define path variable, you must define *path* in `Route` object as `RegExp` and needed part of path enclose in brackets:
 

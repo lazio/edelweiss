@@ -1,4 +1,9 @@
-# 0.8.5
+# 0.8.6
+
+- Make `Router.current` *non void* parameter.
+- Remove replacing `window.history.state` on reloading current window (state did not change so it is unnesessary action).
+
+## 0.8.5
 
 - Add property `Router.container` and make `container` property in route object optional.
 
