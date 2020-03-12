@@ -1,4 +1,10 @@
-# 0.8.6
+# 0.8.7
+
+- Remove unnesessary attribute regexp.
+- Make `Router.to` and `Router.reload` asyncrounous.
+- Write tests for `Router`.
+
+## 0.8.6
 
 - Make `Router.current` *non void* parameter.
 - Remove replacing `window.history.state` on reloading current window (state did not change so it is unnesessary action).

@@ -25,8 +25,8 @@ declare module '/node_modules/@prostory/edelweiss/dist/index.mjs' {
       options?: {
         willStateChange?: boolean,
       }
-    ): void;
-    static reload(): void;
+    ): Promise<void>;
+    static reload(): Promise<void>;
     static back(): void;
     static forward(): void;
   }

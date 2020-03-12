@@ -1,5 +1,4 @@
 /* eslint-disable import/no-absolute-path */
-/* eslint-disable no-undef */
 // @flow
 
 import {
@@ -8,8 +7,7 @@ import {
   expect,
 } from '/node_modules/@prostory/baum/dist/index.mjs'
 
-import { html } from '../../dist/template/template.mjs'
-import Component from '../../dist/component/component.mjs'
+import { html, Component } from '../../dist/index.mjs'
 
 group('Test template of "edelweiss"', () => {
   test('html() must return Promise<string>', async () => {
@@ -124,14 +122,16 @@ group('Test template of "edelweiss"', () => {
     ).toBeRejected()
   })
 
-  test('html() must rejects with style attribute and variable as invalid type (function)', async () => {
-    const styles = () => {}
+  test('html() must add styles to style element with some styles', async () => {
+    const styles = {
+      opacity: 0,
+      'font-size': '1rem'
+    }
 
-    await expect(
-      html`
-        <button style="${styles}">child</button>
+    const button = await html`
+        <button style='width: 20px; ${styles}'>child</button>
       `
-    ).toBeRejected()
+    expect(button).toMatch(/<button style='width: 20px; opacity:0;font-size:1rem;?'>child<\/button>/)
   })
 
   test(`html() must set to an element "data-event-id[number]" attribute 
@@ -140,5 +140,12 @@ group('Test template of "edelweiss"', () => {
         <button @click=${(event) => {}}>child</button>
       `
     expect(button).toMatch(/<button data-event-id[\d]=[\d]+>child<\/button>/)
+  })
+
+  test('html() must add value to other values of element attribute', async () => {
+    const button = await html`
+        <button class='some-class ${'other-class'}'>child</button>
+      `
+    expect(button).toMatch(/<button class='some-class other-class'>child<\/button>/)
   })
 })

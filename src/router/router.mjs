@@ -57,7 +57,7 @@ export default class Router {
       : _routes.set(routes.path, routes)
   }
 
-  static to(
+  static async to(
     path: string,
     options?: {
       /**
@@ -66,7 +66,7 @@ export default class Router {
        */
       willStateChange?: boolean,
     } = {}
-  ): void {
+  ): Promise<void> {
     if (_routes.size === 0) {
       throw new Error(`You cannot navigate to ${path} because you didn't define any routes!
       At first call "Router.add(...)".`)
@@ -114,7 +114,7 @@ export default class Router {
             parameters: pathMatch,
           }
 
-          render(container, route.view())
+          await render(container, route.view())
 
           if (
             typeof options.willStateChange === 'undefined' ||
@@ -136,19 +136,19 @@ export default class Router {
     }
   }
 
-  static reload(): void {
+  static async reload(): Promise<void> {
     /**
      * This property equals to empty string if user did not navigate to pages and invokes
      * this methods before first "Router.to".
      */
     if (typeof _current.path === 'string' && _current.path.length === 0) {
-      console.error("Nothing to reload - you didn't navigate to any pages yet.")
+      throw new Error("Nothing to reload - you didn't navigate to any pages yet.")
     } else {
       const { path, container, view } = _current
       const currentContainer = container || _pageContainer
 
       if (currentContainer) {
-        render(currentContainer, view())
+        await render(currentContainer, view())
       } else {
         throw new Error(`You do not set container for route: ${path.toString()}.
         No local(in Route) and no global(in Router.container) container defined.`)
