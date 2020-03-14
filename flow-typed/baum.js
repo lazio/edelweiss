@@ -16,41 +16,34 @@ declare module '/node_modules/@prostory/baum/dist/index.mjs' {
 
   declare export function expect(given: mixed): ExpectChecks
 
-  declare type ExpectChecks = {
+  declare type ExpectRightChecks = {
     toEqual: (expected: mixed) => void,
-    toNotEqual: (expected: mixed) => void,
     toThrow: (expectedError?: Error) => void,
-    toNotThrow: () => void,
     toMatch: (expected: string | RegExp) => void,
-    toNotMatch: (expected: string | RegExp) => void,
-    isNumber: () => void,
-    isNotNumber: () => void,
-    isString: () => void,
-    isNotString: () => void,
-    isNaN: () => void,
-    isNotNaN: () => void,
-    isBoolean: () => void,
-    isNotBoolean: () => void,
-    isArray: () => void,
-    isNotArray: () => void,
-    isSet: () => void,
-    isNotSet: () => void,
-    isWeakSet: () => void,
-    isNotWeakSet: () => void,
-    isMap: () => void,
-    isNotMap: () => void,
-    isWeakMap: () => void,
-    isNotWeakMap: () => void,
-    isNull: () => void,
-    isNotNull: () => void,
-    isUndefined: () => void,
-    isNotUndefined: () => void,
-    isFunction: () => void,
-    isNotFunction: () => void,
-    isPromise: () => void,
-    isNotPromise: () => void,
-    isPlainObject: () => void,
-    isNotPlainObject: () => void,
+    toBe: (
+      type: 'string'
+        | 'number'
+        | 'NaN'
+        | 'boolean'
+        | 'null'
+        | 'undefined'
+        | 'function'
+        | 'PlainObject'
+        | 'Set'
+        | 'Map'
+        | 'RegExp'
+        | 'WeakMap'
+        | 'WeakSet'
+        | 'Promise'
+        | 'Array'
+    ) => void,
+  }
+
+  declare type ExpectChecks = {
+    ...ExpectRightChecks,
+    not: {
+      ...ExpectRightChecks,
+    },
     toBeResolved: () => Promise<ExpectChecks>,
     toBeRejected: (expectedError?: Error) => Promise<void>,
   }

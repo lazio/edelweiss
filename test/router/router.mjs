@@ -37,6 +37,13 @@ group('Test "Router"', () => {
         return 'Test'
       },
     },
+    {
+      path: '/not-found',
+      container: '.no-element',
+      view() {
+        return 'No such element'
+      },
+    },
   ])
 
   test('"Router.to" must update "window.location", "window.history"', async () => {
@@ -64,5 +71,9 @@ group('Test "Router"', () => {
       const child = container.innerText
       expect(child).toMatch('Test')
     }
+  })
+
+  test('"Router.to" must throw an error if container is not exist', async () => {
+    await expect(Router.to('/not-found')).toBeRejected()
   })
 })

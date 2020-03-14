@@ -14,7 +14,7 @@ group('Test template of "edelweiss"', () => {
     const value = html`
       <p></p>
     `
-    ;(await expect(value).toBeResolved()).isString()
+    ;(await expect(value).toBeResolved()).toBe('string')
   })
 
   test('html() must insert string variable and return Promise<string>', async () => {
