@@ -89,7 +89,7 @@ export async function html(parts: string[], ...variables: []) {
         }
 
         const eventId = uid()
-        eventListenersMap.set(`${eventId}`, {
+        eventListenersMap.set(eventId, {
           [eventListener[1]]: stringifiedVariable,
         })
 
