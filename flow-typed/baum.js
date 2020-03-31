@@ -37,6 +37,7 @@ declare module '/node_modules/@prostory/baum/dist/index.mjs' {
         | 'Promise'
         | 'Array'
     ) => void,
+    toBeTruthy: () => void,
   }
 
   declare type ExpectChecks = {

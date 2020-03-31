@@ -1,28 +1,9 @@
 // @flow
 
 import Component from './component/component.mjs'
-import { diff, normalizeHTML, attachEvents } from './utils/dom.mjs'
 import { eventListenersMap } from './template/template.mjs'
-
-// Polyfill for trusted types
-if (typeof window.trustedTypes === 'undefined') {
-  window.trustedTypes = {
-    createPolicy(
-      name: string,
-      rules: {| createHTML: (text: string) => string |}
-    ) {
-      return rules
-    },
-  }
-}
-
-// Policy of "edelweiss" framework for preventing XSS vulnerability.
-// More info [here](https://github.com/w3c/webappsec-trusted-types)
-const edelweissPolicy = window.trustedTypes.createPolicy('edelweiss', {
-  createHTML(text: string) {
-    return text
-  },
-})
+import { diff, normalizeHTML, attachEvents } from './utils/dom.mjs'
+import { edelweissPolicy } from './utils/trusted_types.mjs'
 
 /**
  * Render templates on the page.

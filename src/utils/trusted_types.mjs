@@ -12,7 +12,7 @@ if (isBrowser()) {
     window.trustedTypes = {
       createPolicy(
         name: string,
-        rules: {| createHTML: (text: string) => string |}
+        rules: Policy
       ) {
         return rules
       },

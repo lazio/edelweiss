@@ -143,6 +143,22 @@ const template: Promise<string> = html`
 
 As you can see `html()` funtion returns *Promise*, but you should not handle returning value itself. `html()` handles it for you. Think of it like function returns `string`.
 
+#### Custom elements
+
+If you want use custom elements, you can define them by `customElement()` function:
+
+  1. `tag: string` - name of the tag of custom element. Must be in **kebab-case**. [Name must contain dash.](https://stackoverflow.com/questions/22545621/do-custom-elements-require-a-dash-in-their-name)
+  2. `constructor: Class<Element>` - A class object that defines the behaviour of the element.
+  3. `extend?: string` - specifies the built-in element your element inherits from if any. *Optional*.
+
+Function define new custom element if page doesn't have it already. [You can read about custom elements here.](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements)
+
+```javascript
+class MyP extends HTMLParagraphElement {}
+
+customElement('my-p', MyP, 'p')
+```
+
 ### Component
 
 If you create template that can be used in two or more places of your site you can group it in plain function that will returns them or define *Component*.

@@ -47,6 +47,12 @@ declare module '/node_modules/@prostory/edelweiss/dist/index.mjs' {
     ...variables: mixed[]
   ): Promise<string>
 
+  declare export function customElement(
+    tag: string,
+    constructor: Class<Element>,
+    extend?: string
+  ): void
+
   declare export type Styles = { [string]: number | string } | string
 
   declare export type Route = {

@@ -1,4 +1,9 @@
-# 0.8.7
+# 0.9.0
+
+- Add `customElement()` function.
+- Remove duplicate of *TrustedTypes* definition.
+
+## 0.8.7
 
 - Remove unnesessary attribute regexp.
 - Make `Router.to` and `Router.reload` asyncrounous.
