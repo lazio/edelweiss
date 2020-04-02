@@ -1,11 +1,9 @@
 // @flow
 
-import type { CssDeclaration } from '../utils/styles.mjs'
-
 import { loadCSS } from '../utils/styles.mjs'
 
 type ComponentOptions = {
-  css?: CssDeclaration | CssDeclaration[],
+  css?: string | string[],
 }
 
 /**

@@ -53,6 +53,8 @@ declare module '/node_modules/@prostory/edelweiss/dist/index.mjs' {
     extend?: string
   ): void
 
+  declare export function registerCss(css: string | string[]): void
+
   declare export type Styles = { [string]: number | string } | string
 
   declare export type Route = {
@@ -65,12 +67,8 @@ declare module '/node_modules/@prostory/edelweiss/dist/index.mjs' {
     parameters?: ?RegExp$matchResult,
   }
 
-  declare type CssDeclaration =
-    | string
-    | { relativeTo: string, cssFilePath: string }
-
   declare type ComponentOptions = {
-    css?: CssDeclaration | CssDeclaration[],
+    css?: string | string[],
   }
 
   declare type I18nLanguage = string | { [string]: I18nLanguage }

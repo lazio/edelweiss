@@ -1,6 +1,6 @@
 {
   "name": "@prostory/edelweiss",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "ES module small framework that builds HTML from JS.",
   "keywords": [
     "Edelweiss",
