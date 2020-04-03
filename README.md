@@ -157,6 +157,7 @@ Function define new custom element if page doesn't have it already. [You can rea
 class MyP extends HTMLParagraphElement {}
 
 customElement('my-p', MyP, 'p')
+// Now you can use "my-p" tag as regular tags.
 ```
 
 ### Component
@@ -185,18 +186,15 @@ class MyComponent extends Component {
 }
 ```
 
-Also you can pass into `Component`'s constructor (not override!) object with `css` property that can be `string` (absolute path to css file that are associated with this component) or object that describes relative path to css file and contains `relativeTo` property (path to file or dir relative to which css file will be searched) and `cssFilePath` - relative path of css file to file or dir that specified in `relativeTo` property.
-
-> Note: for specifying path to css file that is in the same directory you must provide object. It is not convinient so will be changed.
+Also you can pass into `Component`'s constructor (not override!) object with `css` property that can be `string` (name of css file that are associated with this component) or array of them.
 
 ```javascript
 class MyComponent extends Component {
   constructor() {
     super({
-      css: {
-        relativeTo: import.meta.url, // If file is in the same directory
-        cssFilePath: './styles.css'
-      }
+      // This css file starts loading after creation of [MyComponent] instance.
+      // You may omit .css extension.
+      css: 'my_component.css' // or array of stylesheets
     })
   }
 
@@ -205,6 +203,22 @@ class MyComponent extends Component {
   }
 }
 ```
+
+### Styles
+
+By convention all styles must be set to */public/styles* directory. You can do it manually or if you use any build system, then customize it to output stylesheets to this directory.
+
+> It is temporary and will be changed to use arbitrary folder.
+
+For loading stylesheets into the page, you must register it at first. Use `registerCss(name: string | string[])` function.
+
+```javascript
+registerCss('header') // Note that you may not provide extension
+// or
+registerCss('main.css')
+```
+
+> This function is not load stylesheet immediately, but register is to be loaded on next rendering step (any of the page that you defined).
 
 ### Router
 

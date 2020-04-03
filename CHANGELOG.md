@@ -1,4 +1,9 @@
-# 0.9.0
+# 0.10.0
+
+- Add `registerCss()` function.
+- Change mechanism of style loading. **Breaking changes!**: `Component`'s constructor accepts now object with *css*'s value of type *string* or *string[]*. Values must be **names** of css files with or without extension.
+
+## 0.9.0
 
 - Add `customElement()` function.
 - Remove duplicate of *TrustedTypes* definition.
