@@ -16,6 +16,14 @@ ES modules are supported by almost all modern browser from 2017-2018 year.
 
 [More info at caniuse.](https://caniuse.com/#search=es%20modules)
 
+## Installation
+
+```sh
+npm i @prostory/edelweiss
+```
+
+For easier creation of `edelweiss` powered apps, use *Edelweiss CLI*. More info about using CLI [here](https://github.com/YevhenKap/edelweiss-cli).
+
 ## Dig in
 
 Importing from framework:
