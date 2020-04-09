@@ -7,14 +7,30 @@ declare module '/node_modules/@prostory/baum/dist/index.mjs' {
     toString(): string;
   }
 
-  declare export function group(title: string, fn: () => void): void
+  declare export function group(
+    groupTitle: string,
+    fn: () => TestObject[],
+    hooks?: TestHooks,
+  ): Promise<void>
 
   declare export function test(
     title: string,
     fn: () => Promise<void> | void
-  ): void
+  ): TestObject
 
   declare export function expect(given: mixed): ExpectChecks
+
+  declare type TestObject = {|
+    title: string,
+    fn: () => Promise<void> | void
+  |}
+
+  declare type TestHooks = {
+    beforeAll?: () => void,
+    afterAll?: () => void,
+    beforeEach?: () => void,
+    afterEach?: () => void,
+  }
 
   declare type ExpectRightChecks = {
     toEqual: (expected: mixed) => void,
@@ -47,5 +63,10 @@ declare module '/node_modules/@prostory/baum/dist/index.mjs' {
     },
     toBeResolved: () => Promise<ExpectChecks>,
     toBeRejected: (expectedError?: Error) => Promise<void>,
+  }
+
+  declare type TestResult = {
+    test: string,
+    passed: true | BaumError,
   }
 }
