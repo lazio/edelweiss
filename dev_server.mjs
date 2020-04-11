@@ -1,19 +1,19 @@
-import { Server, Route, Handler } from '@prostory/mountain'
+import { Server, Router } from '@prostory/mountain'
 import fs from 'fs'
 
-const mainRoute = new Route({
+const mainRoute = {
   path: '/',
   method: 'get',
   notFound: true,
   handle(req, { send }) {
     send({
       type: 'file',
-      data: '/index.html'
+      data: './index.html'
     })
   }
-})
+}
 
-const otherRoute = new Route({
+const otherRoute = {
   path: /^(\/[\d\w\W]+)+.mjs$/,
   method: 'get',
   handle(req, { send }) {
@@ -22,16 +22,14 @@ const otherRoute = new Route({
       data: req.headers[':path']
     })
   }
-})
+}
 
 const s = new Server({
   key: fs.readFileSync('certs/localhost-privkey.pem'),
   cert: fs.readFileSync('certs/localhost-cert.pem'),
-  rootDir: import.meta.url,
-  timeout: 1000
 })
 
-s.onRequest(new Handler([
+s.onRequest(new Router([
   mainRoute,
   otherRoute
 ]).set())
