@@ -8,9 +8,9 @@ const mainRoute = {
   handle(req, { send }) {
     send({
       type: 'file',
-      data: './index.html'
+      data: './index.html',
     })
-  }
+  },
 }
 
 const otherRoute = {
@@ -19,9 +19,9 @@ const otherRoute = {
   handle(req, { send }) {
     send({
       type: 'file',
-      data: req.headers[':path']
+      data: req.headers[':path'],
     })
-  }
+  },
 }
 
 const s = new Server({
@@ -29,15 +29,16 @@ const s = new Server({
   cert: fs.readFileSync('certs/localhost-cert.pem'),
 })
 
-s.onRequest(new Router([
-  mainRoute,
-  otherRoute
-]).set())
+s.onRequest(new Router([mainRoute, otherRoute]).set())
 
-s.onUnknownProtocol((s) => console.warn(`Unknown protocol
-${s}`))
+s.onUnknownProtocol((s) =>
+  console.warn(`Unknown protocol
+${s}`)
+)
 s.onError((error) => {
   console.error(`Error occured in request.
   ${error}`)
 })
-s.listen(5555, 'localhost', () => { console.log(`Listening on port ${5555}...`) })
+s.listen(5555, 'localhost', () => {
+  console.log(`Listening on port ${5555}...`)
+})
