@@ -1,4 +1,9 @@
-# 0.10.1
+# 0.10.2
+
+- Use `Reflect` in `createState` function.
+- Change `lang` attribute in `<html>` on `I18n.setLanguage` method.
+
+## 0.10.1
 
 - Remove unnecessary and buggy `isBrowser` and `isServer`.
 

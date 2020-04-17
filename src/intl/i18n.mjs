@@ -46,6 +46,13 @@ export default class I18n {
     if (!translation) {
       console.error(`You do not have translation for ${tag} language!`)
     } else {
+      /**
+       * Change lang attribute of html element.
+       * https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/lang
+       */
+      if (document.documentElement) {
+        document.documentElement.setAttribute('lang', tag)
+      }
       _currentLanguage = tag
       Router.reload()
     }
