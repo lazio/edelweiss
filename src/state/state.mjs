@@ -2,22 +2,26 @@
 
 import Router from '../router/router.mjs'
 
-export function createState<T: { [string]: any }>(object: T) {
+export function createState<T: { [string]: mixed }>(object: T) {
   return new Proxy<T>(object, {
-    set(target, property, value) {
-      target[property] = value
+    set(target, property, value, receiver) {
+      const isSuccessful = Reflect.set(target, property, value, receiver)
 
-      Router.reload()
+      if (isSuccessful) {
+        Router.reload()
+      }
 
-      return true
+      return isSuccessful
     },
     deleteProperty(target, property) {
       if (property in target) {
-        delete target[property]
+        const isSuccessful = Reflect.deleteProperty(target, property)
 
-        Router.reload()
+        if (isSuccessful) {
+          Router.reload()
+        }
 
-        return true
+        return isSuccessful
       } else {
         return false
       }

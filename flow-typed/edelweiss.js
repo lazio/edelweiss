@@ -40,7 +40,7 @@ declare module '/node_modules/@prostory/edelweiss/dist/index.mjs' {
     static translate(path: string, variables?: { [string]: string }): string;
   }
 
-  declare export function createState<T: { [string]: any }>(object: T): T
+  declare export function createState<T: { [string]: mixed }>(object: T): T
 
   declare export function html(
     parts: string[],

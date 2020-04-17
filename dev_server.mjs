@@ -29,7 +29,7 @@ const s = new Server({
   cert: fs.readFileSync('certs/localhost-cert.pem'),
 })
 
-s.onRequest(new Router([mainRoute, otherRoute]).set())
+s.onRequest(new Router([mainRoute, otherRoute]).deliver())
 
 s.onUnknownProtocol((s) =>
   console.warn(`Unknown protocol
