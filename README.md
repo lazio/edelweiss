@@ -194,16 +194,12 @@ class MyComponent extends Component {
 }
 ```
 
-Also you can pass into `Component`'s constructor (not override!) object with `css` property that can be `string` (name of css file that are associated with this component) or array of them.
+For binding styles to concrete `Component` (they will be loaded to page right before first `Component` rendering) define `styles` method and return css file name or array of css file names from it.
 
 ```javascript
 class MyComponent extends Component {
-  constructor() {
-    super({
-      // This css file starts loading after creation of [MyComponent] instance.
-      // You may omit .css extension.
-      css: 'my_component.css' // or array of stylesheets
-    })
+  styles() {
+    return 'my_component.css' // or array of stylesheets
   }
 
   template() {

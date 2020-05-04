@@ -1,15 +1,13 @@
 // @flow
 
 import Component from '../component/component.mjs'
-
-import {
-  eventListenerRegExp,
-  booleanAttributeRegExp,
-  styleAttributeRegExp,
-} from '../utils/regexps.mjs'
 import { uid } from '../utils/uid.mjs'
 import { normalizeStyles } from '../utils/styles.mjs'
-
+import {
+  eventListenerRegExp,
+  styleAttributeRegExp,
+  booleanAttributeRegExp,
+} from '../utils/regexps.mjs'
 import type { Styles } from '../utils/styles.mjs'
 
 /**

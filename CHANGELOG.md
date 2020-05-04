@@ -1,4 +1,10 @@
-# 0.10.2
+# 0.10.3
+
+- **Breaking changes!**: remove ability to load styles is `Component`'s constructor.
+- Add `styles` method to `Component` class.
+- Sort imports on name length.
+
+## 0.10.2
 
 - Use `Reflect` in `createState` function.
 - Change `lang` attribute in `<html>` on `I18n.setLanguage` method.

@@ -2,21 +2,16 @@
 
 import { loadCSS } from '../utils/styles.mjs'
 
-type ComponentOptions = {
-  css?: string | string[],
-}
-
 /**
  * Class that must be used to describe components of the page or page itself.
  * Can be replaced by plain function.
  */
 export default class Component {
-  constructor(options?: ComponentOptions = {}) {
-    const { css } = options
-
-    if (css) {
-      Array.isArray(css) ? css.forEach(loadCSS) : loadCSS(css)
-    }
+  /**
+   * Executes always before component is building.
+   */
+  styles(): string | string[] {
+    return ''
   }
 
   // Executes before building of component.
@@ -32,10 +27,15 @@ export default class Component {
   async afterBuild(): Promise<void> {}
 
   async _createNodes(): Promise<string> {
+    const maybeCssPaths = this.styles()
+    if (maybeCssPaths.length > 0) {
+      Array.isArray(maybeCssPaths)
+        ? maybeCssPaths.forEach(loadCSS)
+        : loadCSS(maybeCssPaths)
+    }
+
     await this.beforeBuild()
-
     const buildedComponent = await this.template()
-
     await this.afterBuild()
 
     return buildedComponent

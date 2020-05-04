@@ -1,8 +1,7 @@
 // @flow
 
-import type Component from '../component/component.mjs'
-
 import { render } from '../render.mjs'
+import type Component from '../component/component.mjs'
 
 export type RouteInfo = {
   parameters?: ?RegExp$matchResult,
