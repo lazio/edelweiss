@@ -2,8 +2,7 @@
 
 declare module '/node_modules/@prostory/edelweiss/dist/index.mjs' {
   declare export class Component {
-    constructor(options?: ComponentOptions): Component;
-
+    styles(): string | string[];
     beforeBuild(): Promise<void>;
     template(): Promise<string>;
     afterBuild(): Promise<void>;
@@ -65,10 +64,6 @@ declare module '/node_modules/@prostory/edelweiss/dist/index.mjs' {
 
   declare export type RouteInfo = {
     parameters?: ?RegExp$matchResult,
-  }
-
-  declare type ComponentOptions = {
-    css?: string | string[],
   }
 
   declare type I18nLanguage = string | { [string]: I18nLanguage }

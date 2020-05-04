@@ -39,5 +39,44 @@ group('Test "Component"', () => {
         'Test TestComponent'
       )
     }),
+
+    test('Component.afterBuild() invokes after template is builded', async () => {
+      class TestComponent extends Component {
+        beforeBuild() {
+          this.name = 'TestComponent'
+        }
+
+        afterBuild() {
+          this.name = 'TestComponent2'
+        }
+
+        template() {
+          return html`Test ${this.name}`
+        }
+      }
+
+      const component = new TestComponent()
+      await component._createNodes()
+      // afterBuild rewrites name field that was defined by beforeBuild method.
+      expect(component.name).toEqual('TestComponent2')
+    }),
+
+    test('Styles are added to page after Component is rendered', async () => {
+      class TestComponent extends Component {
+        styles() {
+          return 'no_exists.css'
+        }
+
+        template() {
+          return html`Test styles`
+        }
+      }
+
+      const component = new TestComponent()
+      await component._createNodes()
+      if (document.documentElement) {
+        expect(document.documentElement.innerHTML).toMatch(/\bno_exists.css\b/)
+      }
+    }),
   ]
 })
