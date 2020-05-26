@@ -59,7 +59,9 @@ declare module '/node_modules/@prostory/edelweiss/dist/index.mjs' {
   declare export type Route = {
     path: string | RegExp,
     container?: string,
+    before?: () => Promise<void>,
     view: () => string | Component | (string | Component)[],
+    after?: () => Promise<void>,
   }
 
   declare export type RouteInfo = {

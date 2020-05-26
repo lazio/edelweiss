@@ -9,11 +9,11 @@ import { registerCss } from './css.mjs'
 import { customElement } from './template/custom_element.mjs'
 
 export {
-  createState,
+  html,
+  I18n,
   Router,
   Component,
-  I18n,
-  html,
+  registerCss,
+  createState,
   customElement,
-  registerCss
 }

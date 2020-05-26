@@ -1,11 +1,11 @@
 // @flow
 
 import Component from './component/component.mjs'
+import { loadCSS } from './utils/styles.mjs'
+import { stylePaths } from './css.mjs'
+import { edelweissPolicy } from './utils/trusted_types.mjs'
 import { eventListenersMap } from './template/template.mjs'
 import { diff, normalizeHTML, attachEvents } from './utils/dom.mjs'
-import { loadCSS } from './utils/styles.mjs'
-import { edelweissPolicy } from './utils/trusted_types.mjs'
-import { stylePaths } from './css.mjs'
 
 /**
  * Render templates on the page.
