@@ -245,13 +245,19 @@ You must set up `Router` with routes. Route is a plain object:
 type Route = {
   path: string | RegExp,
   container?: string,
-  view: () => string | Component | (string | Component)[]
+  before?: () => Promise<void>,
+  view: () => string | Component | (string | Component)[],
+  after?: () => Promise<void>,
 }
 ```
 
 1. `path` - path of the page that will be visible in browser's search box. If you defines path as `RegExp` always insert start (**^**) and end (**$**) symbols. If path will be type of *string* you can not do this.
 2. `container` - selector of element with which nodes will be replaced. You can not provide it. In this case you must define global `Route.container`.
 3. `view` - function that returns nodes that need to be rendered.
+4. `before` - hook that invokes before rendering route in which hook is defined. If exists, invokes on every moving to this route. Does not invokes on reloading page.
+5. `after` - hook that invokes after rendering route is finished in which hook is defined. If exists, invokes on every moving to this route. Does not invokes on reloading page.
+
+> Does not set changes to state in route hooks. This may lead to infinite rendering route.
 
 ```javascript
 Router.add([

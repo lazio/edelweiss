@@ -1,4 +1,8 @@
-# 0.10.3
+# [0.11.0] - 2020-05-26
+### Added
+- `before` and `after` hooks to routes.
+
+## 0.10.3
 
 - **Breaking changes!**: remove ability to load styles is `Component`'s constructor.
 - Add `styles` method to `Component` class.

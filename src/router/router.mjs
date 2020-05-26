@@ -10,7 +10,9 @@ export type RouteInfo = {
 export type Route = {
   path: string | RegExp,
   container?: string,
+  before?: () => Promise<void>,
   view: () => string | Component | (string | Component)[],
+  after?: () => Promise<void>,
 }
 
 /**
@@ -23,7 +25,9 @@ const _routes: Map<string | RegExp, Route> = new Map()
 let _current: {
   path: string | RegExp,
   container?: string,
+  before?: () => Promise<void>,
   view: () => string | Component | (string | Component)[],
+  after?: () => Promise<void>,
   parameters?: ?RegExp$matchResult,
 } = {
   path: '',
@@ -52,7 +56,7 @@ export default class Router {
 
   static add(routes: Route | Route[]) {
     Array.isArray(routes)
-      ? routes.forEach(route => _routes.set(route.path, route))
+      ? routes.forEach((route) => _routes.set(route.path, route))
       : _routes.set(routes.path, routes)
   }
 
@@ -112,6 +116,11 @@ export default class Router {
             parameters: pathMatch,
           }
 
+          // Before route render hook
+          if (route.before) {
+            await route.before()
+          }
+
           await render(container, route.view())
 
           if (
@@ -119,6 +128,11 @@ export default class Router {
             options.willStateChange
           ) {
             window.history.pushState({ path, container }, '', path)
+          }
+
+          // After route render hook
+          if (route.after) {
+            await route.after()
           }
         } else {
           throw new Error(
@@ -140,7 +154,9 @@ export default class Router {
      * this methods before first "Router.to".
      */
     if (typeof _current.path === 'string' && _current.path.length === 0) {
-      throw new Error("Nothing to reload - you didn't navigate to any pages yet.")
+      throw new Error(
+        "Nothing to reload - you didn't navigate to any pages yet."
+      )
     } else {
       const { path, container, view } = _current
       const currentContainer = container || _pageContainer
