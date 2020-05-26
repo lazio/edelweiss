@@ -85,9 +85,8 @@ export default class Router {
 
         if (pathRegExp.test(path)) {
           route = value
+          break
         }
-      } else {
-        break
       }
     }
 
