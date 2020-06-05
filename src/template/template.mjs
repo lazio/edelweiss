@@ -3,8 +3,10 @@
 import Component from '../component/component.mjs'
 import { uid } from '../utils/uid.mjs'
 import { normalizeStyles } from '../utils/styles.mjs'
+import { registerCustomElement } from './custom_element.mjs'
 import {
   eventListenerRegExp,
+  customElementRegExp,
   styleAttributeRegExp,
   booleanAttributeRegExp,
 } from '../utils/regexps.mjs'
@@ -46,6 +48,7 @@ export async function html(parts: string[], ...variables: []) {
      */
     const variable: string
       | Component
+      | Class<Element>
       | ((...args: []) => void)
       | { handleEvent: (event: Event) => void }
       | Styles
@@ -121,7 +124,7 @@ export async function html(parts: string[], ...variables: []) {
           (typeof stringifiedVariable === 'object' &&
             !stringifiedVariable.handleEvent &&
             Object.values(stringifiedVariable).every(
-              value => typeof value === 'string' || typeof value === 'number'
+              (value) => typeof value === 'string' || typeof value === 'number'
             ))
         ) {
           stringifiedVariable = normalizeStyles(stringifiedVariable)
@@ -130,6 +133,30 @@ export async function html(parts: string[], ...variables: []) {
             'Styles that passed to "style" attribute must be valid CSS string ' +
               'or plain object, where keys are valid CSS properties and values have "number" or "string" type. ' +
               'Given ->\n' +
+              // $FlowFixMe
+              `"${stringifiedVariable}"`
+          )
+        }
+      }
+
+      // Handle custom element in html
+      const customElementMatch = customElementRegExp.exec(current)
+      if (customElementMatch) {
+        // eslint-disable-next-line no-prototype-builtins
+        if (Element.isPrototypeOf(stringifiedVariable)) {
+          // $FlowFixMe - we already check for Class.
+          registerCustomElement(customElementMatch, stringifiedVariable)
+          return (
+            (await previous) +
+            current.replace(
+              customElementRegExp,
+              // Get rid of hyphens as start or end symbol of tag name.
+              `<${customElementMatch[1]}`.replace(/^<-(.+)-$/, '<$1')
+            )
+          )
+        } else {
+          throw new Error(
+            `You must pass a class constructor to custom element ${customElementMatch[1]}. But given ->` +
               // $FlowFixMe
               `"${stringifiedVariable}"`
           )
