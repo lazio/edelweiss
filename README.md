@@ -153,19 +153,29 @@ As you can see `html()` funtion returns *Promise*, but you should not handle ret
 
 #### Custom elements
 
-If you want use custom elements, you can define them by `customElement()` function:
+For using custom elements you may write it as regular tags, but with some rules:
+1. After tag you type "`=`" sign followed by element constructor (**No `"` or `'` symbols!**).
+2. If custom element extend some included element (e.g. `HTMLDivElement`), after tag name you may
+define `extend` clause by adding double colon ("`:`") and name of the extended tag, otherwise
+omit it.
 
-  1. `tag: string` - name of the tag of custom element. Must be in **kebab-case**. [Name must contain dash.](https://stackoverflow.com/questions/22545621/do-custom-elements-require-a-dash-in-their-name)
-  2. `constructor: Class<Element>` - A class object that defines the behaviour of the element.
-  3. `extend?: string` - specifies the built-in element your element inherits from if any. *Optional*.
+> Name of the tag of custom element must be in **kebab-case**. [Name must contain dash.](https://stackoverflow.com/questions/22545621/do-custom-elements-require-a-dash-in-their-name)
 
-Function define new custom element if page doesn't have it already. [You can read about custom elements here.](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements)
+> [Detailed about custom elements here.](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements)
+
 
 ```javascript
+// With extending built-in element
 class MyP extends HTMLParagraphElement {}
 
-customElement('my-p', MyP, 'p')
-// Now you can use "my-p" tag as regular tags.
+// name-of-the-custom-tag:name-of-the-extended-tag=${constructor}
+const text = html`<long-list:p=${MyP}></long-list>` // Note that after "=" does not follow " or ' and after constructor.
+
+// Without extending built-in element
+class SomeElement extends HTMLElement {}
+
+// name-of-the-custom-tag=${constructor}
+const text = html`<long-list=${SomeElement}></long-list>` // Note that after "=" does not follow " or ' and after constructor.
 ```
 
 ### Component

@@ -38,3 +38,10 @@ export function customElement(
     )
   }
 }
+
+export function registerCustomElement(match: RegExp$matchResult, constructor: Class<Element>) {
+  const customName = match[1]
+  // Name of the standart tag starts from ":", so we must get rid of it.
+  const extendNativeName: string | void = match[2] ? match[2].slice(1) : undefined
+  customElement(customName, constructor, extendNativeName)
+}

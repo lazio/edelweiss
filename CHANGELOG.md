@@ -1,4 +1,11 @@
-# [0.11.0] - 2020-05-26
+# [0.12.0] - 2020-06-6
+### Added
+- Creating custom element directly from `html` template.
+
+### Deprecated
+- Using `customElement` directly. In next version this function will not be exported from library.
+
+## [0.11.0] - 2020-05-26
 ### Added
 - `before` and `after` hooks to routes.
 

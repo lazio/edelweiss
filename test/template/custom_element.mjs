@@ -50,5 +50,16 @@ group('Test custom element creation', () => {
         customElement('my-p', MyP)
       }).not.toThrow()
     }),
+
+    test('Defining custom element from template', async () => {
+      class MyP extends HTMLParagraphElement {}
+
+      const text = await html`<long-list:p=${MyP}></long-list>`
+      expect(text).toMatch('<long-list></long-list>')
+    }),
+
+    test('Defining custom element from template without constructor lead to an error.', () => {
+      expect(html`<long-list=${false}></long-list>`).toBeRejected()
+    }),
   ]
 })
