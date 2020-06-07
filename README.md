@@ -153,7 +153,7 @@ As you can see `html()` funtion returns *Promise*, but you should not handle ret
 
 #### Custom elements
 
-For using custom elements you may write it as regular tags, but with some rules:
+For defining custom elements you may write it as regular tags, but with some rules (`element definition`):
 1. After tag you type "`=`" sign followed by element constructor (**No `"` or `'` symbols!**).
 2. If custom element extend some included element (e.g. `HTMLDivElement`), after tag name you may
 define `extend` clause by adding double colon ("`:`") and name of the extended tag, otherwise
@@ -176,6 +176,20 @@ class SomeElement extends HTMLElement {}
 
 // name-of-the-custom-tag=${constructor}
 const text = html`<long-list=${SomeElement}></long-list>` // Note that after "=" does not follow " or ' and after constructor.
+```
+
+Write `element definition` rule only once for certain custom element and on next using write as regular HTML element.
+Element definition `can be` or `can not be` in first using of custom element. But it **should be** in template, which has first using of certain *custom element*.
+
+```javascript
+// This template first use <custom-p> custom element.
+// Element definition contains second occurrence of <custom-p>
+html`
+  <custom-p class="custom-p">Hello</custom-p>
+  <custom-p:p=${class extends HTMLParagraphElement {}}>I am custom element</custom-p>
+  <custom-p class="custom-p">I am next custom element</custom-p>
+  <custom-p class="custom-p">I am last custom element in this template</custom-p>
+`
 ```
 
 ### Component
