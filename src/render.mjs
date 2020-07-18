@@ -12,7 +12,7 @@ import { diff, normalizeHTML, attachEvents } from './utils/dom.mjs'
  */
 export async function render(
   to: string,
-  nodes: string | Component | (string | Component)[]
+  nodes: string | Component | Promise<string> | (string | Component | Promise<string>)[]
 ): Promise<void> {
   const toElement = document.querySelector(to)
 

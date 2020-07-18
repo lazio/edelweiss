@@ -21,7 +21,7 @@ export const eventListenersMap = new Map<
   {
     // Name of the event: event listener
     // eslint-disable-next-line func-call-spacing
-    [string]: ((event: Event) => void)
+    [key: string]: ((event: Event) => void)
       | { handleEvent: (event: Event) => void },
   }
 >()

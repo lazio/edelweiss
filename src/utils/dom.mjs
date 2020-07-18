@@ -63,7 +63,10 @@ function diffAttributes(oldNode: HTMLElement, newNode: HTMLElement) {
 }
 
 export async function normalizeHTML(
-  nodes: string | Component | (string | Component)[]
+  nodes: string
+    | Component
+    | Promise<string>
+    | (string | Component | Promise<string>)[]
 ): Promise<string> {
   if (Array.isArray(nodes)) {
     return nodes.reduce(
@@ -71,7 +74,11 @@ export async function normalizeHTML(
       ''
     )
   } else {
-    return nodes instanceof Component ? nodes._createNodes() : nodes
+    return nodes instanceof Component
+      ? nodes._createNodes()
+      : nodes instanceof Promise
+      ? await nodes
+      : nodes
   }
 }
 
