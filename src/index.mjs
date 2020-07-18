@@ -6,7 +6,6 @@ import Component from './component/component.mjs'
 import { html } from './template/template.mjs'
 import { createState } from './state/state.mjs'
 import { registerCss } from './css.mjs'
-import { customElement } from './template/custom_element.mjs'
 
 export {
   html,
@@ -15,5 +14,4 @@ export {
   Component,
   registerCss,
   createState,
-  customElement,
 }

@@ -2,15 +2,11 @@ flow-typed/
 node_modules/
 src/
 test/
-coverage/
-.nyc_output/
-certs/
 
 .eslintrc.json
 .flowconfig
 .prettierrc.json
-gulpfile.js
+rollup.config.mjs
 package-lock.json
 index.html
-dev_server.mjs
 CHANGELOG.md

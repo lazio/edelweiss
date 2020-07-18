@@ -11,7 +11,11 @@ export type Route = {
   path: string | RegExp,
   container?: string,
   before?: () => Promise<void>,
-  view: () => string | Component | (string | Component)[],
+  view: () =>
+    | string
+    | Component
+    | Promise<string>
+    | (string | Component | Promise<string>)[],
   after?: () => Promise<void>,
 }
 
@@ -26,7 +30,11 @@ let _current: {
   path: string | RegExp,
   container?: string,
   before?: () => Promise<void>,
-  view: () => string | Component | (string | Component)[],
+  view: () =>
+    | string
+    | Component
+    | Promise<string>
+    | (string | Component | Promise<string>)[],
   after?: () => Promise<void>,
   parameters?: ?RegExp$matchResult,
 } = {
