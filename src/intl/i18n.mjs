@@ -1,5 +1,6 @@
 // @flow
 
+import Maybe from '../utils/algebraic/maybe.mjs'
 import Router from '../router/router.mjs'
 
 export type I18nLanguage = {
@@ -41,21 +42,21 @@ export default class I18n {
   }
 
   static setLanguage(tag: string) {
-    const translation = _languages[tag]
-
-    if (!translation) {
-      console.error(`You do not have translation for ${tag} language!`)
-    } else {
-      /**
-       * Change lang attribute of html element.
-       * https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/lang
-       */
-      if (document.documentElement) {
-        document.documentElement.setAttribute('lang', tag)
-      }
-      _currentLanguage = tag
-      Router.reload()
-    }
+    Maybe.of(_languages[tag])
+      .mapNothing(() =>
+        console.error(`You do not have translation for ${tag} language!`)
+      )
+      .map(() => {
+        /**
+         * Change lang attribute of html element.
+         * https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/lang
+         */
+        Maybe.of(document.documentElement).map((el) =>
+          el.setAttribute('lang', tag)
+        )
+        _currentLanguage = tag
+        Router.reload()
+      })
   }
 
   static translate(path: string, variables?: { [string]: string }): string {
@@ -65,7 +66,7 @@ export default class I18n {
       if (_currentLanguage in _languages) {
         let maybeText = _languages[_currentLanguage]
 
-        splitted.forEach(part => {
+        splitted.forEach((part) => {
           /**
            * Check for all possible incorrect values, so this method will not
            * interrupt site flow.
@@ -129,10 +130,11 @@ function insertVariables(
   variableName: string,
   variableValue: string
 ): string {
-  if (text.search(`\\$\\{${variableName}\\}`) !== -1) {
-    const replacedText = text.replace(`\${${variableName}}`, variableValue)
-    return insertVariables(replacedText, variableName, variableValue)
-  } else {
-    return text
-  }
+  return text.search(`\\$\\{${variableName}\\}`) !== -1
+    ? insertVariables(
+        text.replace(`\${${variableName}}`, variableValue),
+        variableName,
+        variableValue
+      )
+    : text
 }

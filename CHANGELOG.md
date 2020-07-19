@@ -1,4 +1,8 @@
-# [1.0.0-alpha-1] - 2020-07-18
+# [1.0.0-alpha-2] - 2020-07-19
+### Changed
+- Improve inner structure of code.
+
+## [1.0.0-alpha-1] - 2020-07-18
 ### Added
 - Changing bundler from `gulp` to `rollup`.
 - Add CommonJS version of framework.
@@ -9,7 +13,7 @@
 ### Changed
 - `view` in `Route` can now return `Promise<string>` also.
 
-# [0.12.0] - 2020-06-6
+## [0.12.0] - 2020-06-6
 ### Added
 - Creating custom element directly from `html` template.
 

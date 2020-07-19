@@ -1,5 +1,7 @@
 // @flow
 
+import Match from '../utils/algebraic/match.mjs'
+import Maybe from '../utils/algebraic/maybe.mjs'
 import { render } from '../render.mjs'
 import type Component from '../component/component.mjs'
 
@@ -129,7 +131,7 @@ export default class Router {
             await route.before()
           }
 
-          await render(container, route.view())
+          render(container, route.view())
 
           if (
             typeof options.willStateChange === 'undefined' ||
@@ -156,26 +158,31 @@ export default class Router {
     }
   }
 
-  static async reload(): Promise<void> {
-    /**
-     * This property equals to empty string if user did not navigate to pages and invokes
-     * this methods before first "Router.to".
-     */
-    if (typeof _current.path === 'string' && _current.path.length === 0) {
-      throw new Error(
-        "Nothing to reload - you didn't navigate to any pages yet."
+  static reload(): void {
+    Match.of(_current)
+      /**
+       * This property equals to empty string if user did not navigate to pages and invokes
+       * this methods before first "Router.to".
+       */
+      .on(
+        ({ path }) => typeof path === 'string' && path.length === 0,
+        () => {
+          throw new Error(
+            "Nothing to reload - you didn't navigate to any pages yet."
+          )
+        }
       )
-    } else {
-      const { path, container, view } = _current
-      const currentContainer = container || _pageContainer
-
-      if (currentContainer) {
-        await render(currentContainer, view())
-      } else {
-        throw new Error(`You do not set container for route: ${path.toString()}.
+      .otherwise(({ path, container, view }) => {
+        Maybe.of(container || _pageContainer)
+          .map((currentContainer) => {
+            render(currentContainer, view())
+            return currentContainer
+          })
+          .mapNothing(() => {
+            throw new Error(`You do not set container for route: ${path.toString()}.
         No local(in Route) and no global(in Router.container) container defined.`)
-      }
-    }
+          })
+      })
   }
 
   static back() {
@@ -193,28 +200,29 @@ export default class Router {
 window.addEventListener(
   'popstate',
   (event: { state: { path: string, container: string } }) => {
-    const { path } = event.state
-    Router.to(path, { willStateChange: false })
+    Router.to(event.state.path, { willStateChange: false })
   }
 )
 
 function regexpifyString(regexp: string): string {
-  let normalizedRegExp = regexp
-
-  /**
-   * We check if path contains "/" - they all must be escaped.
-   */
-  if (/[^\\]\//g.test(normalizedRegExp)) {
-    const parts = normalizedRegExp.split('/')
-    normalizedRegExp = parts.join('\\/')
-  }
-
-  if (!normalizedRegExp.startsWith('^')) {
-    normalizedRegExp = `^${normalizedRegExp}`
-  }
-  if (!normalizedRegExp.endsWith('$')) {
-    normalizedRegExp = `${normalizedRegExp}$`
-  }
-
-  return normalizedRegExp
+  return (
+    Match.of(regexp)
+      .multi(true)
+      /**
+       * We check if path contains "/" - they all must be escaped.
+       */
+      .on(
+        (re) => /[^\\]\//g.test(re),
+        (normalizedRegExp) => normalizedRegExp.split('/').join('\\/')
+      )
+      .on(
+        (normalizedRegExp) => !normalizedRegExp.startsWith('^'),
+        (normalizedRegExp) => `^${normalizedRegExp}`
+      )
+      .on(
+        (normalizedRegExp) => !normalizedRegExp.endsWith('$'),
+        (normalizedRegExp) => `${normalizedRegExp}$`
+      )
+      .extract()
+  )
 }
