@@ -29,7 +29,7 @@ declare module '@prostory/edelweiss' {
 
     static add(languages: I18nLanguagesSet, initial?: string): void;
     static setLanguage(tag: string): void;
-    static translate(path: string, variables?: { [key: string]: string }): string;
+    static translate(path: string, variables?: { [key: string]: string } = {}): string;
   }
 
   declare export function createState<T = {}>(object: T): T;

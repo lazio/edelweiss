@@ -1,14 +1,15 @@
 // @flow
 
+import Match from '../utils/algebraic/match.mjs'
 import Maybe from '../utils/algebraic/maybe.mjs'
 import Router from '../router/router.mjs'
 
 export type I18nLanguage = {
-  [string]: string | { [string]: I18nLanguage },
+  [key: string]: string | { [key: string]: I18nLanguage },
 }
 
 export type I18nLanguagesSet = {
-  [string]: I18nLanguage,
+  [tag: string]: I18nLanguage,
 }
 
 /**
@@ -30,15 +31,11 @@ export default class I18n {
   }
 
   static add(languages: I18nLanguagesSet, initial?: string) {
-    for (const lang in languages) {
+    Object.keys(languages).forEach((lang, index) => {
+      !_currentLanguage && index === 0 && (_currentLanguage = initial || lang)
       // Do not override language file if it is already exists
-      if (!(lang in _languages)) {
-        _languages[lang] = languages[lang]
-      }
-    }
-
-    const tmp = Object.keys(languages)
-    _currentLanguage = initial || tmp[0]
+      _languages[lang] || (_languages[lang] = languages[lang])
+    })
   }
 
   static setLanguage(tag: string) {
@@ -59,68 +56,92 @@ export default class I18n {
       })
   }
 
-  static translate(path: string, variables?: { [string]: string }): string {
-    if (_currentLanguage) {
-      const splitted = path.split('.')
-
-      if (_currentLanguage in _languages) {
-        let maybeText = _languages[_currentLanguage]
-
-        splitted.forEach((part) => {
-          /**
-           * Check for all possible incorrect values, so this method will not
-           * interrupt site flow.
-           */
-          if (typeof maybeText !== 'string') {
-            if (maybeText === undefined || maybeText === null) {
-              console.error(`Path "${path}" does not match any translation!
+  static translate(
+    path: string,
+    variables?: { [key: string]: string } = {}
+  ): string {
+    return Maybe.of(_currentLanguage)
+      .map((lang) => {
+        return Maybe.of(_languages[lang])
+          .map((maybeText) => {
+            return Object.entries(variables).reduce(
+              (maybeText, [key, value]) => {
+                return typeof maybeText === 'string'
+                  ? // $FlowFixMe
+                    insertVariables(maybeText, key, value)
+                  : ''
+              },
+              path.split('.').reduce((maybeText, part, index, array) => {
+                return typeof maybeText === 'string'
+                  ? maybeText
+                  : /**
+                     * Check for all possible incorrect values, so this method will not
+                     * interrupt site flow.
+                     */
+                    Match.of(maybeText[part])
+                      .on(
+                        (next) => next === undefined || next === null,
+                        () => {
+                          console.error(`Path "${path}" does not match any translation!
               Check "path" - it must point to plain text in object hierarchy.`)
-              maybeText = ''
-            } else if (Array.isArray(maybeText)) {
-              console.error(`Array type is not allowed as translate value!
-              Given "[${maybeText.join(', ')}]" for path: "${path}"`)
-              maybeText = ''
-            } else if (typeof maybeText === 'function') {
-              console.error(`Function type is not allowed as translate value!
-              Given "${maybeText}" for path: "${path}"`)
-              maybeText = ''
-            } else if (
-              typeof maybeText === 'number' ||
-              typeof maybeText === 'boolean'
-            ) {
-              console.error(`Number or boolean type is not allowed as translate value!
-              Given "${typeof maybeText}: ${maybeText}" for path: "${path}"`)
-              maybeText = ''
-            } else {
-              maybeText = maybeText[part]
-            }
-          }
-        })
+                          return ''
+                        }
+                      )
+                      .on(
+                        (next) => Array.isArray(next),
+                        (next) => {
+                          console.error(`Array type is not allowed as translate value!
+              Given "[${next.join(', ')}]" for path: "${path}"`)
+                          return ''
+                        }
+                      )
+                      .on(
+                        (next) => next === 'function',
+                        (next) => {
+                          console.error(`Function type is not allowed as translate value!
+              Given "${next}" for path: "${path}"`)
+                          return ''
+                        }
+                      )
 
-        if (typeof maybeText !== 'string') {
-          maybeText = ''
-          console.error(`Path "${path}" does not match any translation!
-          Check "path" parameter - it must point to plain text in object hierarchy.`)
-        }
-
-        if (variables) {
-          for (const key in variables) {
-            maybeText = insertVariables(maybeText, key, variables[key])
-          }
-        }
-
-        return maybeText
-      } else {
-        console.error(`You does not set "${_currentLanguage}" language file,
+                      .on(
+                        (next) =>
+                          typeof maybeText === 'number' ||
+                          typeof maybeText === 'boolean',
+                        (next) => {
+                          console.error(`Number or boolean type is not allowed as translate value!
+              Given "${typeof next}: ${next}" for path: "${path}"`)
+                          return ''
+                        }
+                      )
+                      .on(
+                        (next) =>
+                          typeof next !== 'string' &&
+                          index === array.length - 1,
+                        (next) => {
+                          console.error(`Path "${path}" does not match any translation!
+              Check "path" - it must point to plain text in object hierarchy.`)
+                          return ''
+                        }
+                      )
+                      .extract()
+              }, maybeText)
+            )
+          })
+          .mapNothing(() => {
+            console.error(`You does not set "${lang}" language file,
+            so empty translate for "${path}" is returned.`)
+            return ''
+          })
+          .extract()
+      })
+      .mapNothing(() => {
+        console.error(`You does not add languages to "I18n"("I18n.add(...)")
+        or does not set language through "I18n.setLanguage(...)",
         so empty translate for "${path}" is returned.`)
         return ''
-      }
-    } else {
-      console.error(`You does not add languages to "I18n"("I18n.add(...)")
-      or does not set language through "I18n.setLanguage(...)",
-      so empty translate for "${path}" is returned.`)
-      return ''
-    }
+      })
+      .extract()
   }
 }
 
