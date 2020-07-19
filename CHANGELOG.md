@@ -1,4 +1,11 @@
-# [1.0.0-alpha-2] - 2020-07-19
+# [1.0.0-alpha-3] - 2020-07-20
+### Added
+- TypeScript definition file.
+
+### Changed
+- Improve inner structure of `I18n` class.
+
+## [1.0.0-alpha-2] - 2020-07-19
 ### Changed
 - Improve inner structure of code.
 
