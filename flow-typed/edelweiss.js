@@ -12,7 +12,11 @@ declare module '/node_modules/@prostory/edelweiss/dist/index.mjs' {
     static get current(): {
       path: string | RegExp,
       container?: string,
-      view: () => string | Component | (string | Component)[],
+      view: () =>
+        | string
+        | Component
+        | Promise<string>
+        | (string | Component | Promise<string>)[],
       parameters?: ?RegExp$matchResult,
     };
     static get container(): string | void;
@@ -36,7 +40,15 @@ declare module '/node_modules/@prostory/edelweiss/dist/index.mjs' {
 
     static add(languages: I18nLanguagesSet, initial?: string): void;
     static setLanguage(tag: string): void;
-    static translate(path: string, variables?: { [string]: string }): string;
+    static translate(
+      path: string,
+      variables?: { [key: string]: string }
+    ): string;
+  }
+
+  declare export class Config {
+    static get cssRootFolder(): string;
+    static set cssRootFolder(dir: string): void;
   }
 
   declare export function createState<T: { [string]: mixed }>(object: T): T
@@ -46,21 +58,19 @@ declare module '/node_modules/@prostory/edelweiss/dist/index.mjs' {
     ...variables: mixed[]
   ): Promise<string>
 
-  declare export function customElement(
-    tag: string,
-    constructor: Class<Element>,
-    extend?: string
-  ): void
-
   declare export function registerCss(css: string | string[]): void
 
-  declare export type Styles = { [string]: number | string } | string
+  declare export type Styles = { [key: string]: number | string } | string
 
   declare export type Route = {
     path: string | RegExp,
     container?: string,
     before?: () => Promise<void>,
-    view: () => string | Component | (string | Component)[],
+    view: () =>
+      | string
+      | Component
+      | Promise<string>
+      | (string | Component | Promise<string>)[],
     after?: () => Promise<void>,
   }
 
@@ -68,7 +78,7 @@ declare module '/node_modules/@prostory/edelweiss/dist/index.mjs' {
     parameters?: ?RegExp$matchResult,
   }
 
-  declare type I18nLanguage = string | { [string]: I18nLanguage }
+  declare type I18nLanguage = string | { [key: string]: I18nLanguage }
 
   declare type I18nLanguagesSet = {
     [string]: I18nLanguage,

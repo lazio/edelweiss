@@ -1,38 +1,44 @@
 // @flow
 
-export type Styles = { [string]: number | string } | string
+import Maybe from './algebraic/maybe.mjs'
+import Config from '../config.mjs'
+import { element, createElement } from './functional.mjs'
+
+export type Styles = { [key: string]: number | string } | string
 
 /**
  * Convert object of styles or string in inline CSS. It must be a valid CSS expressions (not camelCase).
  */
 export function normalizeStyles(styles: Styles): string {
-  const stringStyles =
-    typeof styles !== 'string' ? JSON.stringify(styles) : styles
-  return stringStyles.replace(/,(?![\s\d])/g, ';').replace(/[{}"']/g, '')
+  return (typeof styles !== 'string' ? JSON.stringify(styles) : styles)
+    .replace(/,(?![\s\d])/g, ';')
+    .replace(/[{}"']/g, '')
 }
 
 /**
  * Loads CSS file by adding <link> to <head>.
  * [name] is name of the file with or without extension.
- * Bundler must set all styles in /public/styles folder. Otherwise css files will not
- * be loaded.
+ * By default bundler will set all styles in /public/styles/ folder.
  */
 export function loadCSS(name: string): void {
-  const hasNameExtension = /.+\.css$/.test(name)
-  const cssPath = `/public/styles/${name}${hasNameExtension ? '' : '.css'}` // TODO: move to config object
+  const cssPath = `${Config.cssRootFolder}${name}${
+    /.+\.css$/.test(name) ? '' : '.css'
+  }`
 
-  if (document.head) {
-    const oldLinkElement = document.head.querySelector(
-      `link[href="${cssPath}"]`
-    )
-
-    if (!oldLinkElement) {
-      const linkElement = document.createElement('link')
-      linkElement.setAttribute('rel', 'stylesheet')
-      linkElement.setAttribute('href', cssPath)
-
-      // $FlowFixMe - querySelector doesn't change the head element.
-      document.head.append(linkElement)
-    }
-  }
+  Maybe.of(document.head).map((head) => {
+    element(`link[href="${cssPath}"]`, head).mapNothing(() => {
+      head.append(
+        createElement('link')
+          .map((el) => {
+            el.setAttribute('rel', 'stylesheet')
+            return el
+          })
+          .map((el) => {
+            el.setAttribute('href', cssPath)
+            return el
+          })
+          .extract()
+      )
+    })
+  })
 }

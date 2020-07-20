@@ -1,5 +1,6 @@
 // @flow
 
+import Maybe from './utils/algebraic/maybe.mjs'
 import Component from './component/component.mjs'
 import { element } from './utils/functional.mjs'
 import { loadCSS } from './utils/styles.mjs'
@@ -21,25 +22,33 @@ export function render(
 ): void {
   element(to)
     .map(async (toElement) => {
-      const newToElement = toElement.cloneNode(false)
-
-      newToElement.innerHTML = edelweissPolicy.createHTML(
-        await normalizeHTML(nodes)
-      )
-
-      Array.from(newToElement.children).forEach(attachEvents)
-      stylePaths.forEach(loadCSS)
-
-      // Clear events cash
-      eventListenersMap.clear()
-      // Clear paths of styles
-      stylePaths.clear()
-
-      toElement.hasChildNodes()
-        ? diff(toElement, newToElement)
-        : toElement.replaceWith(newToElement)
-
-      return toElement
+      return Maybe.of(toElement.cloneNode(false))
+        .map(async (element) => {
+          element.innerHTML = edelweissPolicy.createHTML(
+            await normalizeHTML(nodes)
+          )
+          return element
+        })
+        .map((element) => {
+          Array.from(element.children).forEach(attachEvents)
+          return element
+        })
+        .map((element) => {
+          stylePaths.forEach(loadCSS)
+          // Clear events cash
+          eventListenersMap.clear()
+          // Clear paths of styles
+          stylePaths.clear()
+          return element
+        })
+        .map((element) => {
+          toElement.hasChildNodes()
+            ? diff(toElement, element)
+            : toElement.replaceWith(element)
+        })
+        .extract()
     })
-    .mapNothing(() => console.warn(`"${to}" element is not exist on the page.`))
+    .mapNothing(() => {
+      throw new Error(`"${to}" element is not exist on the page.`)
+    })
 }

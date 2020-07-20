@@ -240,9 +240,7 @@ class MyComponent extends Component {
 
 ### Styles
 
-By convention all styles must be set to */public/styles* directory. You can do it manually or if you use any build system, then customize it to output stylesheets to this directory.
-
-> It is temporary and will be changed to use arbitrary folder.
+By default all styles must be set to */public/styles* directory. You can change directory - [see `Config`](#Config).
 
 For loading stylesheets into the page, you must register it at first. Use `registerCss(name: string | string[])` function.
 
@@ -445,6 +443,10 @@ I18n.languagesTags // returns ['uk', 'en']
 I18n.currentLanguage // 'uk'
 ```
 
-## Warning
+### Config
 
-Currently library is in beta, so any API may be changed. Always see **CHANGELOG** and **flow-typed** for types.
+For configuration available points of framework use `Config` class.
+It has:
+
+1. `static get cssRootFolder(): string` - returns css root folder.
+2. `static set cssRootFolder(dir: string): void` - change css root folder.

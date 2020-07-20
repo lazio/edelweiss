@@ -30,7 +30,7 @@ export async function html(parts: string[], ...variables: []) {
   // Count of @event attributes of one element in template
   let eventsInElement = 0
 
-  const result = parts.reduce(async (previous, current, index) => {
+  return parts.reduce(async (previous, current, index) => {
     // Element tag end so we can set "eventsInElement" to zero
     if (current.search(/[^-]>/) !== -1) {
       eventsInElement = 0
@@ -171,6 +171,4 @@ export async function html(parts: string[], ...variables: []) {
       return ((await previous) || '') + current
     }
   }, '')
-
-  return result
 }

@@ -32,6 +32,11 @@ declare module '@prostory/edelweiss' {
     static translate(path: string, variables?: { [key: string]: string } = {}): string;
   }
 
+  export class Config {
+    static get cssRootFolder(): string;
+    static set cssRootFolder(dir: string): void;
+  }
+
   declare export function createState<T = {}>(object: T): T;
 
   export function html(

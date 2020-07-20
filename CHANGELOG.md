@@ -1,4 +1,12 @@
-# [1.0.0-alpha-3] - 2020-07-20
+# [1.0.0-alpha-4] - 2020-07-21
+### Added
+- `Config` class with `cssRootFolder` property.
+
+### Changed
+- Add inner methods for creatings DOM elements.
+- Rewrite *styles.mjs* in functional way.
+
+## [1.0.0-alpha-3] - 2020-07-20
 ### Added
 - TypeScript definition file.
 

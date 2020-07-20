@@ -40,9 +40,9 @@ export default class I18n {
 
   static setLanguage(tag: string) {
     Maybe.of(_languages[tag])
-      .mapNothing(() =>
-        console.error(`You do not have translation for ${tag} language!`)
-      )
+      .mapNothing(() => {
+        throw new Error(`You do not have translation for ${tag} language!`)
+      })
       .map(() => {
         /**
          * Change lang attribute of html element.
@@ -65,12 +65,14 @@ export default class I18n {
         return Maybe.of(_languages[lang])
           .map((maybeText) => {
             return Object.entries(variables).reduce(
+              // Replacing variables in translated text.
               (maybeText, [key, value]) => {
                 return typeof maybeText === 'string'
                   ? // $FlowFixMe
                     insertVariables(maybeText, key, value)
                   : ''
               },
+              // Getting text from translation object.
               path.split('.').reduce((maybeText, part, index, array) => {
                 return typeof maybeText === 'string'
                   ? maybeText
@@ -82,25 +84,22 @@ export default class I18n {
                       .on(
                         (next) => next === undefined || next === null,
                         () => {
-                          console.error(`Path "${path}" does not match any translation!
+                          throw new Error(`Path "${path}" does not match any translation!
               Check "path" - it must point to plain text in object hierarchy.`)
-                          return ''
                         }
                       )
                       .on(
                         (next) => Array.isArray(next),
                         (next) => {
-                          console.error(`Array type is not allowed as translate value!
+                          throw new Error(`Array type is not allowed as translate value!
               Given "[${next.join(', ')}]" for path: "${path}"`)
-                          return ''
                         }
                       )
                       .on(
                         (next) => next === 'function',
                         (next) => {
-                          console.error(`Function type is not allowed as translate value!
+                          throw new Error(`Function type is not allowed as translate value!
               Given "${next}" for path: "${path}"`)
-                          return ''
                         }
                       )
 
@@ -109,9 +108,8 @@ export default class I18n {
                           typeof maybeText === 'number' ||
                           typeof maybeText === 'boolean',
                         (next) => {
-                          console.error(`Number or boolean type is not allowed as translate value!
+                          throw new Error(`Number or boolean type is not allowed as translate value!
               Given "${typeof next}: ${next}" for path: "${path}"`)
-                          return ''
                         }
                       )
                       .on(
@@ -119,9 +117,8 @@ export default class I18n {
                           typeof next !== 'string' &&
                           index === array.length - 1,
                         (next) => {
-                          console.error(`Path "${path}" does not match any translation!
+                          throw new Error(`Path "${path}" does not match any translation!
               Check "path" - it must point to plain text in object hierarchy.`)
-                          return ''
                         }
                       )
                       .extract()
@@ -129,17 +126,15 @@ export default class I18n {
             )
           })
           .mapNothing(() => {
-            console.error(`You does not set "${lang}" language file,
+            throw new Error(`You does not set "${lang}" language file,
             so empty translate for "${path}" is returned.`)
-            return ''
           })
           .extract()
       })
       .mapNothing(() => {
-        console.error(`You does not add languages to "I18n"("I18n.add(...)")
+        throw new Error(`You does not add languages to "I18n"("I18n.add(...)")
         or does not set language through "I18n.setLanguage(...)",
         so empty translate for "${path}" is returned.`)
-        return ''
       })
       .extract()
   }
