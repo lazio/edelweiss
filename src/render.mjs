@@ -21,32 +21,32 @@ export function render(
     | (string | Component | Promise<string>)[]
 ): void {
   element(to)
-    .map(async (toElement) => {
-      return Maybe.of(toElement.cloneNode(false))
-        .map(async (element) => {
-          element.innerHTML = edelweissPolicy.createHTML(
-            await normalizeHTML(nodes)
-          )
-          return element
-        })
-        .map((element) => {
-          Array.from(element.children).forEach(attachEvents)
-          return element
-        })
-        .map((element) => {
-          stylePaths.forEach(loadCSS)
-          // Clear events cash
-          eventListenersMap.clear()
-          // Clear paths of styles
-          stylePaths.clear()
-          return element
-        })
-        .map((element) => {
-          toElement.hasChildNodes()
-            ? diff(toElement, element)
-            : toElement.replaceWith(element)
-        })
-        .extract()
+    .map((toElement) => {
+      Maybe.of(toElement.cloneNode(false)).map((element) => {
+        normalizeHTML(nodes)
+          .then((html) => {
+            element.innerHTML = edelweissPolicy.createHTML(html)
+            return element
+          })
+          .then((element) => {
+            Array.from(element.children).forEach(attachEvents)
+            return element
+          })
+          .then((element) => {
+            stylePaths.forEach(loadCSS)
+            // Clear events cash
+            eventListenersMap.clear()
+            // Clear paths of styles
+            stylePaths.clear()
+            return element
+          })
+          .then((element) => {
+            toElement.hasChildNodes()
+              ? diff(toElement, element)
+              : toElement.replaceWith(element)
+          })
+      })
+      return toElement
     })
     .mapNothing(() => {
       throw new Error(`"${to}" element is not exist on the page.`)

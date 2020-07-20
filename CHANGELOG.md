@@ -1,4 +1,8 @@
-# [1.0.0-alpha-4] - 2020-07-21
+# [1.0.0-alpha-5] - 2020-07-20
+### Fixed
+- `render` method - Unhandled Promise rejection error.
+
+## [1.0.0-alpha-4] - 2020-07-20
 ### Added
 - `Config` class with `cssRootFolder` property.
 

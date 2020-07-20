@@ -3,6 +3,7 @@
 import Match from '../utils/algebraic/match.mjs'
 import Maybe from '../utils/algebraic/maybe.mjs'
 import { render } from '../render.mjs'
+import { element } from '../utils/functional.mjs'
 import type Component from '../component/component.mjs'
 
 export type RouteInfo = {
@@ -85,75 +86,64 @@ export default class Router {
       At first call "Router.add(...)".`)
     }
 
-    /**
-     * We need to store regexp of path in order to get captured groups if
-     * there will be ones.
-     */
-    let pathRegExp = null
-    let route = null
+    let routeFound = false
 
-    for (const [key, value] of _routes.entries()) {
-      if (!route) {
-        pathRegExp =
-          typeof key === 'string' ? new RegExp(regexpifyString(key)) : key
+    Array.from(_routes.entries()).forEach(([key, route]) => {
+      const pathRegExp =
+        typeof key === 'string' ? new RegExp(regexpifyString(key)) : key
 
-        if (pathRegExp.test(path)) {
-          route = value
-          break
-        }
-      }
-    }
-
-    if (route && pathRegExp) {
-      const container = route.container || _pageContainer
-
-      if (container) {
-        const toContainer = document.querySelector(container)
-
-        if (toContainer) {
-          /**
-           * If match exists in path, then result is array, where first item is
-           * the whole matched string.
-           * If parameters exist in path (they must be surrounded by brackets), then
-           * second item and go on to end of array are parameters.
-           *
-           * For more info: [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/exec)
-           */
-          const pathMatch = pathRegExp.exec(path)
-
-          _current = {
-            ...route,
-            parameters: pathMatch,
-          }
-
-          // Before route render hook
-          if (route.before) {
-            await route.before()
-          }
-
-          render(container, route.view())
-
-          if (
-            typeof options.willStateChange === 'undefined' ||
-            options.willStateChange
-          ) {
-            window.history.pushState({ path, container }, '', path)
-          }
-
-          // After route render hook
-          if (route.after) {
-            await route.after()
-          }
-        } else {
-          throw new Error(
-            `On the page is no element that matches ${container} selector!`
-          )
-        }
-      } else {
-        throw new Error(`You does not set container for route: ${path}.
+      ;(routeFound = pathRegExp.test(path)) &&
+        Maybe.of(route.container || _pageContainer)
+          .mapNothing(() => {
+            throw new Error(`You does not set container for route: ${path}.
         No local(in Route) and no global(in Router.container) container defined.`)
-      }
-    } else {
+          })
+          .map((container) => {
+            element(container)
+              .mapNothing(() => {
+                throw new Error(
+                  `On the page is no element that matches ${container} selector!`
+                )
+              })
+              .map(async (toContainer) => {
+                /**
+                 * If match exists in path, then result is array, where first item is
+                 * the whole matched string.
+                 * If parameters exist in path (they must be surrounded by brackets), then
+                 * second item and go on to end of array are parameters.
+                 *
+                 * For more info: [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/exec)
+                 */
+                const pathMatch = pathRegExp.exec(path)
+
+                _current = {
+                  ...route,
+                  parameters: pathMatch,
+                }
+
+                // Before route render hook
+                if (route.before) {
+                  await route.before()
+                }
+
+                render(container, route.view())
+
+                if (
+                  typeof options.willStateChange === 'undefined' ||
+                  options.willStateChange
+                ) {
+                  window.history.pushState({ path, container }, '', path)
+                }
+
+                // After route render hook
+                if (route.after) {
+                  await route.after()
+                }
+              })
+          })
+    })
+
+    if (!routeFound) {
       throw new Error(`No route is specified for path: ${path}!`)
     }
   }
