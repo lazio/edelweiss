@@ -1,4 +1,9 @@
-# [1.0.0-alpha-5] - 2020-07-20
+# [1.0.0-alpha-6] - 2020-07-21
+### Changed
+- Remove `customElement` from TS's declaration file.
+- Add ability to add spaces between separators in custom element declaration.
+
+## [1.0.0-alpha-5] - 2020-07-20
 ### Fixed
 - `render` method - Unhandled Promise rejection error.
 

@@ -44,12 +44,6 @@ declare module '@prostory/edelweiss' {
     ...variables: any[]
   ): Promise<string>;
 
-  export function customElement(
-    tag: string,
-    constructor: typeof Element,
-    extend?: string
-  ): void
-
   export function registerCss(css: string | string[]): void
 
   export type Styles = { [key: string]: number | string } | string
@@ -66,7 +60,7 @@ declare module '@prostory/edelweiss' {
     parameters?: ?RegExpMatchArray,
   }
 
-  export type I18nLanguage = string | { [string]: I18nLanguage }
+  export type I18nLanguage = string | { [key: string]: I18nLanguage }
 
   export type I18nLanguagesSet = {
     [key: string]: I18nLanguage,

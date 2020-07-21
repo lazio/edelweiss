@@ -7,14 +7,14 @@ import {
   expect,
 } from '/node_modules/@prostory/baum/dist/index.mjs'
 
-import { customElement, html } from '../../dist/index.mjs'
+import { registerCustomElement, html } from '../../dist/index.mjs'
 
 group('Test custom element creation', () => {
   return [
     test('Defining custom element', () => {
       class MyP extends HTMLParagraphElement {}
 
-      customElement('my-p', MyP, 'p')
+      registerCustomElement(['my-p', 'p'], MyP)
 
       const myP = customElements.get('my-p')
       expect(myP).toEqual(MyP)
@@ -25,29 +25,29 @@ group('Test custom element creation', () => {
       expect(text).toMatch('<my-p>Test</my-p>')
     }),
 
-    test('"customElement" function throws error if "tag" parameter is not defined', () => {
+    test('"registerCustomElement" function throws error if "tag" parameter is not defined', () => {
       expect(() => {
-        customElement(undefined, class E extends HTMLElement {})
+        registerCustomElement([undefined], class E extends HTMLElement {})
       }).toThrow()
     }),
 
-    test('"customElement" function throws error if "tag" parameter is not type of "string"', () => {
+    test('"registerCustomElement" function throws error if "tag" parameter is not type of "string"', () => {
       expect(() => {
-        customElement({}, class E extends HTMLElement {})
+        registerCustomElement([{}], class E extends HTMLElement {})
       }).toThrow()
     }),
 
-    test('"customElement" function throws error if "constructor" parameter is not defined', () => {
+    test('"registerCustomElement" function throws error if "constructor" parameter is not defined', () => {
       expect(() => {
-        customElement('my-p')
+        registerCustomElement(['my-p'])
       }).toThrow()
     }),
 
-    test('"customElement" function do not throw error if "extend" parameter is not defined', () => {
+    test('"registerCustomElement" function do not throw error if "extend" parameter is not defined', () => {
       class MyP extends HTMLParagraphElement {}
 
       expect(() => {
-        customElement('my-p', MyP)
+        registerCustomElement(['my-p'], MyP)
       }).not.toThrow()
     }),
 
@@ -59,7 +59,7 @@ group('Test custom element creation', () => {
     }),
 
     test('Defining custom element from template without constructor lead to an error.', () => {
-      expect(html`<long-list=${false}></long-list>`).toBeRejected()
+      expect(html`<long-list =${false}></long-list>`).toBeRejected()
     }),
   ]
 })

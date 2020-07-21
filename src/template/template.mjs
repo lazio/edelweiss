@@ -21,7 +21,8 @@ export const eventListenersMap = new Map<
   {
     // Name of the event: event listener
     // eslint-disable-next-line func-call-spacing
-    [key: string]: ((event: Event) => void)
+    [key: string]:
+      | ((event: Event) => void)
       | { handleEvent: (event: Event) => void },
   }
 >()
@@ -46,7 +47,8 @@ export async function html(parts: string[], ...variables: []) {
      *
      * Another values is not handled and cannot stringified properly.
      */
-    const variable: string
+    const variable:
+      | string
       | Component
       | Class<Element>
       | ((...args: []) => void)
@@ -109,10 +111,10 @@ export async function html(parts: string[], ...variables: []) {
          * There are 7 falsy values in JS: [values](https://developer.mozilla.org/en-US/docs/Glossary/Falsy)
          */
         current = stringifiedVariable
-          // Add value if truthy
-          ? current.replace(booleanAttribute[0], booleanAttribute[1])
-          // Remove value if falsy
-          : current.replace(booleanAttribute[0], '')
+          ? // Add value if truthy
+            current.replace(booleanAttribute[0], booleanAttribute[1])
+          : // Remove value if falsy
+            current.replace(booleanAttribute[0], '')
 
         return ((await previous) || '') + current
       }
