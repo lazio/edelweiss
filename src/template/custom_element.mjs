@@ -1,6 +1,6 @@
 // @flow
 
-import Maybe from '../utils/algebraic/maybe.mjs'
+import Maybe from '../utils/monads/maybe.mjs'
 
 export function registerCustomElement(
   match: RegExp$matchResult,

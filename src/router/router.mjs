@@ -1,7 +1,8 @@
 // @flow
 
-import Match from '../utils/algebraic/match.mjs'
-import Maybe from '../utils/algebraic/maybe.mjs'
+import Match from '../utils/monads/match.mjs'
+import Maybe from '../utils/monads/maybe.mjs'
+import { log } from '../logger/logger.mjs'
 import { render } from '../render.mjs'
 import { element } from '../utils/functional.mjs'
 import type Component from '../component/component.mjs'
@@ -82,7 +83,7 @@ export default class Router {
     } = {}
   ): Promise<void> {
     if (_routes.size === 0) {
-      throw new Error(`You cannot navigate to ${path} because you didn't define any routes!
+      log(`You cannot navigate to ${path} because you didn't define any routes!
       At first call "Router.add(...)".`)
     }
 
@@ -95,13 +96,13 @@ export default class Router {
       ;(routeFound = pathRegExp.test(path)) &&
         Maybe.of(route.container || _pageContainer)
           .mapNothing(() => {
-            throw new Error(`You does not set container for route: ${path}.
+            log(`You does not set container for route: ${path}.
         No local(in Route) and no global(in Router.container) container defined.`)
           })
           .map((container) => {
             element(container)
               .mapNothing(() => {
-                throw new Error(
+                log(
                   `On the page is no element that matches ${container} selector!`
                 )
               })
@@ -144,7 +145,7 @@ export default class Router {
     })
 
     if (!routeFound) {
-      throw new Error(`No route is specified for path: ${path}!`)
+      log(`No route is specified for path: ${path}!`)
     }
   }
 
@@ -157,9 +158,7 @@ export default class Router {
       .on(
         ({ path }) => typeof path === 'string' && path.length === 0,
         () => {
-          throw new Error(
-            "Nothing to reload - you didn't navigate to any pages yet."
-          )
+          log("Nothing to reload - you didn't navigate to any pages yet.")
         }
       )
       .otherwise(({ path, container, view }) => {
@@ -169,7 +168,7 @@ export default class Router {
             return currentContainer
           })
           .mapNothing(() => {
-            throw new Error(`You do not set container for route: ${path.toString()}.
+            log(`You do not set container for route: ${path.toString()}.
         No local(in Route) and no global(in Router.container) container defined.`)
           })
       })

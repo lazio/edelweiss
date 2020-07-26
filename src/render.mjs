@@ -1,7 +1,8 @@
 // @flow
 
-import Maybe from './utils/algebraic/maybe.mjs'
+import Maybe from './utils/monads/maybe.mjs'
 import Component from './component/component.mjs'
+import { log } from './logger/logger.mjs'
 import { element } from './utils/functional.mjs'
 import { loadCSS } from './utils/styles.mjs'
 import { stylePaths } from './css.mjs'
@@ -49,6 +50,6 @@ export function render(
       return toElement
     })
     .mapNothing(() => {
-      throw new Error(`"${to}" element is not exist on the page.`)
+      log(`"${to}" element is not exist on the page.`)
     })
 }

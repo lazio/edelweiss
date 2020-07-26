@@ -44,4 +44,9 @@ export default class Maybe<T> {
   extract(): T {
     return this._value
   }
+
+  toString(): string {
+    // $FlowFixMe
+    return `Maybe ( ${this._value} )`
+  }
 }

@@ -1,6 +1,7 @@
 // @flow
 
 import Component from '../component/component.mjs'
+import { log } from '../logger/logger.mjs'
 import { uid } from '../utils/uid.mjs'
 import { normalizeStyles } from '../utils/styles.mjs'
 import { registerCustomElement } from './custom_element.mjs'
@@ -131,12 +132,12 @@ export async function html(parts: string[], ...variables: []) {
         ) {
           stringifiedVariable = normalizeStyles(stringifiedVariable)
         } else {
-          throw new Error(
+          log(
             'Styles that passed to "style" attribute must be valid CSS string ' +
               'or plain object, where keys are valid CSS properties and values have "number" or "string" type. ' +
               'Given ->\n' +
               // $FlowFixMe
-              `"${stringifiedVariable}"`
+              `"${stringifiedVariable}"`,
           )
         }
       }
@@ -157,10 +158,10 @@ export async function html(parts: string[], ...variables: []) {
             )
           )
         } else {
-          throw new Error(
+          log(
             `You must pass a class constructor to custom element ${customElementMatch[1]}. But given ->` +
               // $FlowFixMe
-              `"${stringifiedVariable}"`
+              `"${stringifiedVariable}"`,
           )
         }
       }

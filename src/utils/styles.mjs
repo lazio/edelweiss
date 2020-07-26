@@ -1,7 +1,8 @@
 // @flow
 
-import Maybe from './algebraic/maybe.mjs'
+import Maybe from './monads/maybe.mjs'
 import Config from '../config.mjs'
+import { tap } from './fns/fns.mjs'
 import { element, createElement } from './functional.mjs'
 
 export type Styles = { [key: string]: number | string } | string
@@ -29,14 +30,16 @@ export function loadCSS(name: string): void {
     element(`link[href="${cssPath}"]`, head).mapNothing(() => {
       head.append(
         createElement('link')
-          .map((el) => {
-            el.setAttribute('rel', 'stylesheet')
-            return el
-          })
-          .map((el) => {
-            el.setAttribute('href', cssPath)
-            return el
-          })
+          .map((link) =>
+            tap(link, (el) => {
+              el.setAttribute('rel', 'stylesheet')
+            })
+          )
+          .map((link) =>
+            tap(link, (el) => {
+              el.setAttribute('href', cssPath)
+            })
+          )
           .extract()
       )
     })
