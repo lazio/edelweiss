@@ -1,19 +1,18 @@
-import flow from 'rollup-plugin-flow'
-import { terser } from 'rollup-plugin-terser'
+import typescript from '@rollup/plugin-typescript';
+import { terser } from 'rollup-plugin-terser';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
 
 export default {
-  input: 'src/index.mjs',
+  input: 'src/index.ts',
   output: [
     {
       file: 'dist/index.mjs',
       format: 'es',
-      plugins: [terser()],
     },
     {
       file: 'dist/index.js',
       format: 'cjs',
-      plugins: [terser()],
     },
   ],
-  plugins: [flow()],
-}
+  plugins: [typescript(), terser(), nodeResolve({ browser: true })],
+};

@@ -1,16 +1,20 @@
-// @flow
-
 type Policy = {
-  createHTML: (string) => string,
+  createHTML: (text: string) => string;
+};
+
+declare namespace window {
+  var trustedTypes: {
+    createPolicy: (name: string, rules: Policy) => Policy;
+  };
 }
 
 // Polyfill for trusted types
 if (typeof window.trustedTypes === 'undefined') {
   window.trustedTypes = {
     createPolicy(name: string, rules: Policy) {
-      return rules
+      return rules;
     },
-  }
+  };
 }
 
 // Policy of "edelweiss" framework for preventing XSS vulnerability.
@@ -19,7 +23,7 @@ export const edelweissPolicy: Policy = window.trustedTypes.createPolicy(
   'edelweiss',
   {
     createHTML(text: string) {
-      return text
+      return text;
     },
   }
-)
+);

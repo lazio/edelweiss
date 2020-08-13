@@ -2,10 +2,10 @@
 // @flow
 
 import {
-  group,
   test,
+  group,
   expect,
-} from '/node_modules/@prostory/baum/dist/index.mjs'
+} from '@prostory/baum'
 
 import { Router } from '../../dist/index.mjs'
 
@@ -16,15 +16,15 @@ group('Test "Router"', () => {
       expect(Router.current.view()).toEqual('')
     }),
 
-    test('"Router.to" before "Router.add" must throw and Error', async () => {
-      await expect(Router.to('/')).toBeRejected()
+    test('"Router.to" before "Router.add" must throw and Error', () => {
+      expect(() => Router.to('/')).toThrow()
     }),
 
-    test('"Router.reload" before "Router.add" must throw and Error', async () => {
-      await expect(Router.reload()).toBeRejected()
+    test('"Router.reload" before "Router.add" must throw and Error', () => {
+      expect(() => Router.reload()).toThrow()
     }),
 
-    test('"Router.to" must update "window.location", "window.history"', async () => {
+    test('"Router.to" must use global "container" if there is not local one', () => {
       Router.container = '.page '
       Router.add([
         {
@@ -48,19 +48,7 @@ group('Test "Router"', () => {
         },
       ])
 
-      await Router.to('/test')
-
-      expect(window.location.pathname).toMatch('/test')
-      expect(window.history.state.path).toMatch('/test')
-      expect(window.history.state.container).toMatch('.page')
-
-      await Router.to('/')
-    }),
-
-    test('"Router.to" must use global "container" if there is not local one', async () => {
-      await expect(Router.to('/test')).toBeResolved()
-
-      await Router.to('/')
+      expect(() => Router.to('/test')).not.toThrow()
     }),
 
     test('"Router.to" must update "container" element with children that returns from "Route.view()"', async () => {
@@ -74,8 +62,8 @@ group('Test "Router"', () => {
       }
     }),
 
-    test('"Router.to" must throw an error if container is not exist', async () => {
-      await expect(Router.to('/not-found')).toBeRejected()
+    test('"Router.to" must throw an error if container is not exist', () => {
+      expect(() => Router.to('/not-found')).toThrow()
     }),
   ]
 })

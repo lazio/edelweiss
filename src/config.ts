@@ -1,5 +1,3 @@
-// @flow
-
 let cssRootFolder: string = '/public/styles/'
 
 export default class Config {

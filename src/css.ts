@@ -1,5 +1,3 @@
-// @flow
-
 /**
  * Holds all path of styles that was registered by [registerCss].
  * They will be added to <head> before page rendering.

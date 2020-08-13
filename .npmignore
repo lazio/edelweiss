@@ -2,6 +2,7 @@ flow-typed/
 node_modules/
 src/
 test/
+__test__/
 
 .eslintrc.json
 .flowconfig

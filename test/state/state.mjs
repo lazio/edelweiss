@@ -4,7 +4,7 @@ import {
   group,
   test,
   expect,
-} from '/node_modules/@prostory/baum/dist/index.mjs'
+} from '@prostory/baum'
 
 import { createState } from '../../dist/index.mjs'
 

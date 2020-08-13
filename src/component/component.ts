@@ -1,6 +1,4 @@
-// @flow
-
-import { loadCSS } from '../utils/styles.mjs'
+import { loadCSS } from '../utils/styles';
 
 /**
  * Class that must be used to describe components of the page or page itself.
@@ -11,14 +9,14 @@ export default class Component {
    * Executes always before component is building.
    */
   styles(): string | string[] {
-    return ''
+    return '';
   }
 
   // Executes before building of component.
   async beforeBuild(): Promise<void> {}
 
   async template(): Promise<string> {
-    return ''
+    return '';
   }
 
   /**
@@ -27,17 +25,17 @@ export default class Component {
   async afterBuild(): Promise<void> {}
 
   async _createNodes(): Promise<string> {
-    const maybeCssPaths = this.styles()
+    const maybeCssPaths = this.styles();
     if (maybeCssPaths.length > 0) {
       Array.isArray(maybeCssPaths)
         ? maybeCssPaths.forEach(loadCSS)
-        : loadCSS(maybeCssPaths)
+        : loadCSS(maybeCssPaths);
     }
 
-    await this.beforeBuild()
-    const buildedComponent = await this.template()
-    await this.afterBuild()
+    await this.beforeBuild();
+    const buildedComponent = await this.template();
+    await this.afterBuild();
 
-    return buildedComponent
+    return buildedComponent;
   }
 }

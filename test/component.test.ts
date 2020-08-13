@@ -1,16 +1,6 @@
-/* eslint-disable import/no-absolute-path */
-// @flow
+import { Component, html } from '../src';
 
-import {
-  group,
-  test,
-  expect,
-} from '/node_modules/@prostory/baum/dist/index.mjs'
-
-import { Component, html } from '../../dist/index.mjs'
-
-group('Test "Component"', () => {
-  return [
+describe('Test "Component"', () => {
     test('Component.template() returns Promise<string>', async () => {
       class TestComponent extends Component {
         template() {
@@ -61,7 +51,7 @@ group('Test "Component"', () => {
       expect(component.name).toEqual('TestComponent2')
     }),
 
-    test('Styles are added to page after Component is rendered', async () => {
+    test('Styles are added to page before Component is rendered', async () => {
       class TestComponent extends Component {
         styles() {
           return 'no_exists.css'
@@ -78,5 +68,4 @@ group('Test "Component"', () => {
         expect(document.documentElement.innerHTML).toMatch(/\bno_exists.css\b/)
       }
     }),
-  ]
 })
