@@ -6,8 +6,8 @@
     "Edelweiss",
     "UI framework"
   ],
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
+  "main": "index.js",
+  "module": "index.mjs",
   "repository": {
     "type": "git",
     "url": "https://github.com/YevhenKap/edelweiss"
@@ -20,7 +20,7 @@
     "copy:license": "cp LICENSE dist/",
     "copy:settings": "cp package.json dist/",
     "copy:typings": "cp src/declaration/index.d.ts dist/",
-    "release": "npm run build; npm publish --access public",
+    "release": "npm run build; npm publish dist/ --access public",
     "test": "jest"
   },
   "author": "Kapelianovych Yevhen",
