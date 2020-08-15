@@ -7,7 +7,6 @@ import {
   forEach,
   entries,
   resolve,
-  arrayFrom,
 } from '@fluss/core';
 
 export function diff(oldNode: Element, newNode: Element) {

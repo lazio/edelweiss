@@ -61,8 +61,6 @@ declare module '@prostory/edelweiss' {
    */
   export function registerCss(css: string | string[]): void;
 
-  export type Styles = { [key: string]: number | string } | string;
-
   export type Route = {
     path: string | RegExp;
     container?: string;

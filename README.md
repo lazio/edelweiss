@@ -212,7 +212,7 @@ class MyComponent extends Component {
 
 By default all styles must be set to _/public/styles_ directory. You can change directory - [see `Config`](#Config).
 
-For loading stylesheets into the page, you must register it at first. Use `registerCss(name: string | string[])` function.
+For loading stylesheets into the page, you must register it at first. Use `registerCss(name: string | string[]): void` function.
 
 ```typescript
 registerCss('header'); // Note that you may not provide extension
@@ -379,7 +379,7 @@ const en = {
 I18n.translate('greeting', { name: 'Peter', surname: 'Dal' }); // Output will be "Hello, Peter Dal!"
 ```
 
-3. `add(languages: I18nLanguagesSet, initial?: string)` - add languages set to `I18n` object. `initial` is a optional tag that, if provided, will be used as initial language on the site. If it is omitted first language in set will be used.
+3. `add(languages: I18nLanguagesSet, initial?: string): void` - add languages set to `I18n` object. `initial` is a optional tag that, if provided, will be used as initial language on the site. If it is omitted first language in set will be used.
 
 ```typescript
 I18n.add(
