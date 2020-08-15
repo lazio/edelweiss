@@ -1,7 +1,14 @@
-import { panic } from '../utils/panic';
+import { warn } from '../utils/warn';
 import { render } from '../render';
 import { querySelector } from '@fluss/web';
-import { maybeOf, isNothing, isArray, arrayFrom, forEach } from '@fluss/core';
+import {
+  maybeOf,
+  isArray,
+  forEach,
+  resolve,
+  isNothing,
+  arrayFrom,
+} from '@fluss/core';
 import type Component from '../component/component';
 
 export type RouteInfo = {
@@ -70,8 +77,9 @@ export default class Router {
     } = {}
   ): Promise<void> {
     if (_routes.size === 0) {
-      panic(`You cannot navigate to ${path} because you didn't define any routes!
+      warn(`You cannot navigate to ${path} because you didn't define any routes!
       At first call "Router.add(...)".`);
+      return resolve();
     }
 
     let routeFound: Promise<void> | null | undefined;
@@ -102,7 +110,7 @@ export default class Router {
                 await route.before();
               }
 
-              render(container, route.view());
+              await render(container, route.view());
 
               if (
                 isNothing(options.willStateChange) ||
@@ -113,7 +121,7 @@ export default class Router {
 
               // After route render hook
               if (!isNothing(route.after)) {
-                route.after();
+                await route.after();
               }
             });
           })
@@ -122,17 +130,18 @@ export default class Router {
     });
 
     if (isNothing(routeFound)) {
-      return panic(`No route is specified for path: ${path}!`);
+      warn(`No route is specified for path: ${path}!`);
+      return resolve();
     } else {
       return routeFound;
     }
   }
 
-  static reload(): void {
+  static reload(): Promise<void> {
     const { container, view } = _current;
-    maybeOf(container || _pageContainer).map((currentContainer) => {
-      render(currentContainer, view());
-    });
+    return maybeOf(container || _pageContainer)
+      .map((currentContainer) => render(currentContainer, view()))
+      .extract();
   }
 
   static back() {

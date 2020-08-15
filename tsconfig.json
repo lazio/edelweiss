@@ -4,6 +4,7 @@
     "target": "ES2017",
     "noImplicitAny": true,
     "removeComments": true,
+    "esModuleInterop": true,
     "moduleResolution": "node"
   },
   "include": ["src/**/*"],

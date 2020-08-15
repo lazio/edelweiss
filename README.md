@@ -279,11 +279,11 @@ Router.add([
 
 `Router` have five static methods:
 
-1. `to(path: string, options?: { willStateChange?: boolean })` - Renders needed page. In some rare situations **window.history** does not need to be updated. In such cases provide object with `willStateChange` property setted to `false` as second parameter.
-2. `reload()` - Reloads current page.
-3. `back()` - return to previous page.
-4. `forward()` - forwards to next page if it is in history.
-5. `add(routes: Route | Route[])` - add routes to `Router`. May be called many times.
+1. `to(path: string, options?: { willStateChange?: boolean }): Promise<void>` - Renders needed page. In some rare situations **window.history** does not need to be updated. In such cases provide object with `willStateChange` property setted to `false` as second parameter.
+2. `reload(): Promise<void>` - Reloads current page.
+3. `back(): void` - return to previous page.
+4. `forward(): void` - forwards to next page if it is in history.
+5. `add(routes: Route | Route[]): void` - add routes to `Router`. May be called many times.
 
 Also it has static getter `current` that returns information about current route (it returns all fields from `Route` object and field `parameters` that contains matched path variables, if they was defined in `Route.path`).
 
@@ -348,7 +348,7 @@ Framework has `I18n` class for internationalization purposes.
 
 `I18n` has three static methods:
 
-1. `setLanguage(tag: string)` - change language on site. Reactively changes language on site.
+1. `setLanguage(tag: string): Promise<void>` - change language on site. Reactively changes language on site.
 2. `translate(path: string, variables?: { [string]: string }): string` - returns translated text for current language. **path** is string that provide path to text as object keys limited by dot and optional **variables** is object that pass variables into translated text.
 
 ```typescript
@@ -410,7 +410,7 @@ I18n.add(
 `I18n` has two static getters:
 
 1. `languagesTags: string[]` - returns all tags for languages, that you set to `I18n.add` method.
-2. `currentLanguage: string | void` - returns tag of current language or `undefined` if there is not setted any.
+2. `currentLanguage: string | undefined` - returns tag of current language or `undefined` if there is not setted any.
 
 ```typescript
 I18n.languagesTags; // returns ['uk', 'en']

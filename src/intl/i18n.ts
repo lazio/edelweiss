@@ -1,13 +1,14 @@
 import Router from '../router/router';
+import { warn } from '../utils/warn';
 import {
-  maybeOf,
   keys,
-  forEach,
-  path as pathOf,
   reduce,
+  maybeOf,
+  forEach,
   entries,
+  path as pathOf,
+  isNothing,
 } from '@fluss/core';
-import { panic } from '../utils/panic';
 
 export type I18nLanguage = {
   [key: string]: string | { [key: string]: I18nLanguage };
@@ -24,10 +25,10 @@ const _languages: I18nLanguagesSet = {};
 /**
  * Holds current language tag.
  */
-let _currentLanguage: string = '';
+let _currentLanguage: string | undefined = undefined;
 
 export default class I18n {
-  static get currentLanguage(): string {
+  static get currentLanguage(): string | undefined {
     return _currentLanguage;
   }
 
@@ -37,25 +38,35 @@ export default class I18n {
 
   static add(languages: I18nLanguagesSet, initial?: string): void {
     forEach(keys(languages), (lang, index) => {
-      !_currentLanguage && index === 0 && (_currentLanguage = initial || lang);
+      if (isNothing(_currentLanguage) && index === 0) {
+        _currentLanguage = initial || lang;
+      }
       // Do not override language file if it is already exists
-      _languages[lang] || (_languages[lang] = languages[lang]);
+      if (isNothing(_languages[lang])) {
+        _languages[lang] = languages[lang];
+      }
     });
   }
 
-  static setLanguage(tag: string): void {
-    maybeOf(_languages[tag]).map(() => {
-      /**
-       * Change lang attribute of html element.
-       * https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/lang
-       */
-      document.documentElement.setAttribute('lang', tag);
-      _currentLanguage = tag;
-      Router.reload();
-    });
+  static setLanguage(tag: string): Promise<void> {
+    return maybeOf(_languages[tag])
+      .map(() => {
+        /**
+         * Change lang attribute of html element.
+         * https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/lang
+         */
+        document.documentElement.setAttribute('lang', tag);
+        _currentLanguage = tag;
+
+        return Router.reload();
+      })
+      .extract();
   }
 
-  static translate(path: string, variables: { [key: string]: string } = {}) {
+  static translate(
+    path: string,
+    variables: { [key: string]: string } = {}
+  ): string {
     return maybeOf(_currentLanguage)
       .map((lang) => _languages[lang])
       .chain((translationObjectOrText) =>
@@ -64,8 +75,9 @@ export default class I18n {
       )
       .map((translatedText) => {
         if (typeof translatedText !== 'string') {
-          panic(`Path "${path}" does not match any translation!
+          warn(`Path "${path}" does not match any translation!
           Check "path" - it must point to plain text in object hierarchy.`);
+          return '';
         }
 
         return translatedText;

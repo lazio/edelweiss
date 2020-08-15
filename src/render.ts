@@ -17,31 +17,33 @@ export function render(
     | Component
     | Promise<string>
     | (string | Component | Promise<string>)[]
-): void {
-  querySelector(to).map((toElement) => {
-    const element = toElement.cloneNode(false) as Element;
+): Promise<void> {
+  return querySelector(to)
+    .map((toElement) => {
+      const element = toElement.cloneNode(false) as Element;
 
-    normalizeHTML(nodes)
-      .then((html) => {
-        element.innerHTML = edelweissPolicy.createHTML(html);
-        return element;
-      })
-      .then((element) => {
-        arrayFrom(element.children).forEach(attachEvents);
-        return element;
-      })
-      .then((element) => {
-        stylePaths.forEach(loadCSS);
-        // Clear events cash
-        eventListenersMap.clear();
-        // Clear paths of styles
-        stylePaths.clear();
-        return element;
-      })
-      .then((element) => {
-        toElement.hasChildNodes()
-          ? diff(toElement, element)
-          : toElement.replaceWith(element);
-      });
-  });
+      return normalizeHTML(nodes)
+        .then((html) => {
+          element.innerHTML = edelweissPolicy.createHTML(html);
+          return element;
+        })
+        .then((element) => {
+          arrayFrom(element.children).forEach(attachEvents);
+          return element;
+        })
+        .then((element) => {
+          stylePaths.forEach(loadCSS);
+          // Clear events cash
+          eventListenersMap.clear();
+          // Clear paths of styles
+          stylePaths.clear();
+          return element;
+        })
+        .then((element) => {
+          toElement.hasChildNodes()
+            ? diff(toElement, element)
+            : toElement.replaceWith(element);
+        });
+    })
+    .extract();
 }

@@ -25,17 +25,17 @@ declare module '@prostory/edelweiss' {
         willStateChange?: boolean;
       }
     ): Promise<void>;
-    static reload(): void;
+    static reload(): Promise<void>;
     static back(): void;
     static forward(): void;
   }
 
   export class I18n {
-    static get currentLanguage(): string | void;
+    static get currentLanguage(): string | undefined;
     static get languagesTags(): string[];
 
     static add(languages: I18nLanguagesSet, initial?: string): void;
-    static setLanguage(tag: string): void;
+    static setLanguage(tag: string): Promise<void>;
     static translate(
       path: string,
       variables?: { [key: string]: string }
@@ -51,7 +51,10 @@ declare module '@prostory/edelweiss' {
   export function createState<T extends object = object>(object: T): T;
 
   /** Creates string template that will be evaluated as DOM elements. */
-  export function html(parts: string[], ...variables: any[]): Promise<string>;
+  export function html(
+    parts: TemplateStringsArray,
+    ...variables: Array<any>
+  ): Promise<string>;
 
   /**
    * Registers name of css file to be loaded on next rendering.

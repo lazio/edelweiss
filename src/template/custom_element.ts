@@ -1,14 +1,14 @@
-import { panic } from '../utils/panic';
+import { warn } from '../utils/warn';
 import { alternation } from '@fluss/core';
 
 export function registerCustomElement(
   match: RegExpMatchArray,
   constructor: CustomElementConstructor
-) {
+): void {
   const customNameTag = match[1];
 
   if (!customNameTag || typeof customNameTag !== 'string') {
-    panic(`tag name for custom element must be provided and be type of "string"!
+    return warn(`tag name for custom element must be provided and be type of "string"!
     Tag: ${customNameTag}
     Constructor: ${constructor.toString()}`);
   }

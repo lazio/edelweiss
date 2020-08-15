@@ -120,7 +120,7 @@ export function attachEvents(element: Element) {
     }
 
     if (element.childElementCount > 0) {
-      forEach(arrayFrom(element.children), attachEvents);
+      forEach(element.children, attachEvents);
     }
   }
 }

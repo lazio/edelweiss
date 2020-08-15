@@ -1,6 +1,6 @@
 import Component from '../component/component';
 import { uid } from '../utils/uid';
-import { panic } from '../utils/panic';
+import { warn } from '../utils/warn';
 import { registerCustomElement } from './custom_element';
 import {
   eventListenerRegExp,
@@ -8,8 +8,8 @@ import {
   booleanAttributeRegExp,
 } from '../utils/regexps';
 import {
-  reduce,
   just,
+  reduce,
   maybeOf,
   resolve,
   isArray,
@@ -31,7 +31,10 @@ export const eventListenersMap = new Map<
   }
 >();
 
-export async function html(parts: string[], ...variables: Array<any>) {
+export async function html(
+  parts: TemplateStringsArray,
+  ...variables: Array<any>
+): Promise<string> {
   return reduce(
     parts,
     (previous, current, index) => {
@@ -86,7 +89,7 @@ function formCurrentHTML(
       return maybeOf(matchedElementEventListener)
         .map((eventListener) => {
           if (typeof variable !== 'function' && !variable.handleEvent) {
-            panic(`Event listener must be type of "function" or object with
+            throw new Error(`Event listener must be type of "function" or object with
       "handleEvent" method, but given "${typeof variable}".`);
           }
 
@@ -135,11 +138,12 @@ function formCurrentHTML(
               `<${customElementMatch[1]}`.replace(/^<-(.+)-$/, '<$1')
             );
           } else {
-            return panic<string>(
+            warn(
               `You must pass a class constructor to custom element ${customElementMatch[1]}. But given ->` +
                 // $FlowFixMe
                 `"${variable}"`
             );
+            return '';
           }
         })
         .extract();
