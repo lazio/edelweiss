@@ -1,12 +1,14 @@
 import Component from '../component/component';
 import { eventListenersMap } from '../template/template';
 import { dataEventIdJSRegExp } from './regexps';
+import { hasAttribute, setAttribute } from '@fluss/web';
 import {
   reduce,
   isArray,
   forEach,
   entries,
   resolve,
+  arrayFrom,
 } from '@fluss/core';
 
 export function diff(oldNode: Element, newNode: Element) {
@@ -15,8 +17,8 @@ export function diff(oldNode: Element, newNode: Element) {
       diffAttributes(oldNode, newNode);
 
       if (newNode.childElementCount > 0) {
-        const oChildren = Array.from(oldNode.children);
-        const nChildren = Array.from(newNode.children);
+        const oChildren = arrayFrom(oldNode.children);
+        const nChildren = arrayFrom(newNode.children);
 
         for (let i = 0; i < Math.max(oChildren.length, nChildren.length); i++) {
           const oNode = oChildren[i];
@@ -55,16 +57,16 @@ function diffAttributes(oldNode: Element, newNode: Element) {
   if (oldNode.attributes.length !== newNode.attributes.length) {
     // Remove exessive attributes
     forEach(oldNode.attributes, ({ name }) => {
-      if (!newNode.hasAttribute(name)) {
+      if (!hasAttribute(newNode, name)) {
         oldNode.removeAttribute(name);
       }
     });
   }
 
   // Add missing attributes and update changed
-  forEach(newNode.attributes, ({ name, value }) => {
-    oldNode.setAttribute(name, value);
-  });
+  forEach(newNode.attributes, ({ name, value }) =>
+    setAttribute(oldNode, name, value)
+  );
 }
 
 export async function normalizeHTML(
