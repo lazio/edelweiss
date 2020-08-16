@@ -1,7 +1,14 @@
 import Component from '../component/component';
 import { eventListenersMap } from '../template/template';
 import { dataEventIdJSRegExp } from './regexps';
-import { hasAttribute, setAttribute } from '@fluss/web';
+import {
+  remove,
+  append,
+  replace,
+  hasAttribute,
+  setAttribute,
+  removeAttribute,
+} from '@fluss/web';
 import {
   reduce,
   isArray,
@@ -9,6 +16,7 @@ import {
   entries,
   resolve,
   arrayFrom,
+  isNothing,
 } from '@fluss/core';
 
 export function diff(oldNode: Element, newNode: Element) {
@@ -24,28 +32,24 @@ export function diff(oldNode: Element, newNode: Element) {
           const oNode = oChildren[i];
           const nNode = nChildren[i];
 
-          if (oNode) {
-            if (nNode) {
-              diff(oNode, nNode);
-            } else {
-              oNode.remove();
-            }
-          } else if (nNode) {
-            oldNode.append(nNode);
+          if (!isNothing(oNode)) {
+            isNothing(nNode) ? remove(oNode) : diff(oNode, nNode);
+          } else if (!isNothing(nNode)) {
+            append(oldNode, nNode);
           }
         }
-      } else if (newNode.textContent) {
+      } else if (!isNothing(newNode.textContent)) {
         if (oldNode.textContent !== newNode.textContent) {
           oldNode.textContent = newNode.textContent;
         }
       } else {
-        oldNode.replaceWith(newNode); // Script will probably never be here
+        replace(oldNode, newNode); // Script will probably never be here
       }
     } else {
-      oldNode.replaceWith(newNode);
+      replace(oldNode, newNode);
     }
   } else {
-    oldNode.replaceWith(newNode);
+    replace(oldNode, newNode);
   }
 }
 
@@ -58,7 +62,7 @@ function diffAttributes(oldNode: Element, newNode: Element) {
     // Remove exessive attributes
     forEach(oldNode.attributes, ({ name }) => {
       if (!hasAttribute(newNode, name)) {
-        oldNode.removeAttribute(name);
+        removeAttribute(oldNode, name);
       }
     });
   }
@@ -99,7 +103,7 @@ export function attachEvents(element: Element) {
     for (const key in dataAttributes) {
       if (dataEventIdJSRegExp.test(key)) {
         const eventListener = eventListenersMap.get(dataAttributes[key] || '');
-        if (eventListener) {
+        if (!isNothing(eventListener)) {
           const [listener] = entries(eventListener);
           element.addEventListener(listener[0], listener[1]);
 
@@ -113,8 +117,8 @@ export function attachEvents(element: Element) {
            * First result is matched substring.
            */
           const eventNumber = key.match(/[\d]+/);
-          if (eventNumber) {
-            element.removeAttribute(`data-event-id${eventNumber[0]}`);
+          if (!isNothing(eventNumber)) {
+            removeAttribute(element, `data-event-id${eventNumber[0]}`);
           }
         }
       }

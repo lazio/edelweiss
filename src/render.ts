@@ -2,9 +2,9 @@ import Component from './component/component';
 import { loadCSS } from './utils/styles';
 import { arrayFrom } from '@fluss/core';
 import { stylePaths } from './css';
-import { querySelector } from '@fluss/web';
 import { edelweissPolicy } from './utils/trusted_types';
 import { eventListenersMap } from './template/template';
+import { querySelector, replace } from '@fluss/web';
 import { diff, normalizeHTML, attachEvents } from './utils/dom';
 
 /**
@@ -42,7 +42,7 @@ export function render(
         .then((element) => {
           toElement.hasChildNodes()
             ? diff(toElement, element)
-            : toElement.replaceWith(element);
+            : replace(toElement, element);
         });
     })
     .extract();
