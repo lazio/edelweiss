@@ -1,6 +1,6 @@
 import Config from '../config';
 import { alternation, tap } from '@fluss/core';
-import { querySelector, createElement } from '@fluss/web';
+import { querySelector, createElement, setAttribute, append } from '@fluss/web';
 
 /**
  * Loads CSS file by adding <link> to <head>.
@@ -15,16 +15,17 @@ export function loadCSS(name: string): void {
   alternation(
     () => querySelector(`link[href="${cssPath}"]`, document.head).extract(),
     () => {
-      document.head.append(
+      append(
+        document.head,
         createElement('link')
           .map((link) =>
             tap(link, (el) => {
-              el.setAttribute('rel', 'stylesheet');
+              setAttribute(el, 'rel', 'stylesheet');
             })
           )
           .map((link) =>
             tap(link, (el) => {
-              el.setAttribute('href', cssPath);
+              setAttribute(el, 'href', cssPath);
             })
           )
           .extract()

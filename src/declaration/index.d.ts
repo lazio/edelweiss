@@ -4,7 +4,7 @@ declare module '@prostory/edelweiss' {
    * Can be replaced by plain function.
    */
   export class Component {
-    styles(): string | string[];
+    styles(): string | Array<string>;
     beforeBuild(): Promise<void>;
     template(): Promise<string>;
     afterBuild(): Promise<void>;
@@ -17,7 +17,7 @@ declare module '@prostory/edelweiss' {
     static set container(value: string | undefined);
 
     /** Makes routes known for `Router`.  */
-    static add(routes: Route | Route[]): void;
+    static add(routes: Route | Array<Route>): void;
     /** Navigates to route base on `path`. */
     static to(
       path: string,
@@ -32,7 +32,7 @@ declare module '@prostory/edelweiss' {
 
   export class I18n {
     static get currentLanguage(): string | undefined;
-    static get languagesTags(): string[];
+    static get languagesTags(): Array<string>;
 
     static add(languages: I18nLanguagesSet, initial?: string): void;
     static setLanguage(tag: string): Promise<void>;
@@ -59,7 +59,7 @@ declare module '@prostory/edelweiss' {
   /**
    * Registers name of css file to be loaded on next rendering.
    */
-  export function registerCss(css: string | string[]): void;
+  export function registerCss(css: string | Array<string>): void;
 
   export type Route = {
     path: string | RegExp;
@@ -69,7 +69,7 @@ declare module '@prostory/edelweiss' {
       | string
       | Component
       | Promise<string>
-      | (string | Component | Promise<string>)[];
+      | Array<string | Component | Promise<string>>;
     after?: () => Promise<void>;
   };
 

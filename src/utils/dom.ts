@@ -2,9 +2,9 @@ import Component from '../component/component';
 import { eventListenersMap } from '../template/template';
 import { dataEventIdJSRegExp } from './regexps';
 import {
-  remove,
   append,
-  replace,
+  removeNode,
+  replaceNode,
   hasAttribute,
   setAttribute,
   removeAttribute,
@@ -33,7 +33,7 @@ export function diff(oldNode: Element, newNode: Element) {
           const nNode = nChildren[i];
 
           if (!isNothing(oNode)) {
-            isNothing(nNode) ? remove(oNode) : diff(oNode, nNode);
+            isNothing(nNode) ? removeNode(oNode) : diff(oNode, nNode);
           } else if (!isNothing(nNode)) {
             append(oldNode, nNode);
           }
@@ -43,13 +43,13 @@ export function diff(oldNode: Element, newNode: Element) {
           oldNode.textContent = newNode.textContent;
         }
       } else {
-        replace(oldNode, newNode); // Script will probably never be here
+        replaceNode(oldNode, newNode); // Script will probably never be here
       }
     } else {
-      replace(oldNode, newNode);
+      replaceNode(oldNode, newNode);
     }
   } else {
-    replace(oldNode, newNode);
+    replaceNode(oldNode, newNode);
   }
 }
 

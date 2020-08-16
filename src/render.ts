@@ -4,8 +4,8 @@ import { arrayFrom } from '@fluss/core';
 import { stylePaths } from './css';
 import { edelweissPolicy } from './utils/trusted_types';
 import { eventListenersMap } from './template/template';
-import { querySelector, replace } from '@fluss/web';
 import { diff, normalizeHTML, attachEvents } from './utils/dom';
+import { querySelector, replaceNode, cloneNode } from '@fluss/web';
 
 /**
  * Render templates on the page.
@@ -20,7 +20,7 @@ export function render(
 ): Promise<void> {
   return querySelector(to)
     .map((toElement) => {
-      const element = toElement.cloneNode(false) as Element;
+      const element = cloneNode(toElement) as Element;
 
       return normalizeHTML(nodes)
         .then((html) => {
@@ -42,7 +42,7 @@ export function render(
         .then((element) => {
           toElement.hasChildNodes()
             ? diff(toElement, element)
-            : replace(toElement, element);
+            : replaceNode(toElement, element);
         });
     })
     .extract();

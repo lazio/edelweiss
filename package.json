@@ -37,7 +37,7 @@
     "typescript": "^3.9.7"
   },
   "dependencies": {
-    "@fluss/core": "^0.4.0",
-    "@fluss/web": "^0.1.1"
+    "@fluss/core": "^0.4.1",
+    "@fluss/web": "^0.2.0"
   }
 }

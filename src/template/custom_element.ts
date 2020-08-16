@@ -1,5 +1,5 @@
 import { warn } from '../utils/warn';
-import { alternation } from '@fluss/core';
+import { alternation, isNothing } from '@fluss/core';
 
 export function registerCustomElement(
   match: RegExpMatchArray,
@@ -14,7 +14,7 @@ export function registerCustomElement(
   }
 
   // Name of the standart tag starts from ":", so we must get rid of it.
-  const extendNativeName: string | void = match[2]
+  const extendNativeName: string | undefined = !isNothing(match[2])
     ? match[2].slice(1)
     : undefined;
 
@@ -24,7 +24,7 @@ export function registerCustomElement(
       customElements.define(
         customNameTag,
         constructor,
-        extendNativeName ? { extends: extendNativeName } : undefined
+        !isNothing(extendNativeName) ? { extends: extendNativeName } : undefined
       )
   )();
 }

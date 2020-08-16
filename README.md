@@ -248,7 +248,7 @@ type Route = {
     | string
     | Component
     | Promise<string>
-    | (string | Component | Promise<string>)[];
+    | Array<string | Component | Promise<string>>;
   after?: () => Promise<void>;
 };
 ```
