@@ -210,9 +210,12 @@ class MyComponent extends Component {
 
 ### Styles
 
-By default all styles must be set to _/public/styles_ directory. You can change directory - [see `Config`](#Config).
+Styles can be loaded _immediately_ and _lazingly_.
 
-For loading stylesheets into the page, you must register it at first. Use `registerCss(name: string | string[]): void` function.
+Global stylesheets should be connected directly to `index.html`.
+
+For lazily loading stylesheets into the page, you must register it at first. Use `registerCss(name: string | Array<string>): void` function.
+By default such stylesheets must be set to _/public/styles_ directory. You can change directory - [see `Config`](#Config).
 
 ```typescript
 registerCss('header'); // Note that you may not provide extension
@@ -221,6 +224,8 @@ registerCss('main.css');
 ```
 
 > This function is not load stylesheet immediately, but register is to be loaded on next rendering step (any of the page that you defined).
+
+> If you use [edelweiss-cli](https://github.com/YevhenKap/edelweiss-cli) for bootstrapping app, you can also import css and images directly in js. Same as in `React`. Note that such css and images will be loaded to page _immediately_ on first rendering.
 
 ### Router
 
