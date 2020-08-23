@@ -9,7 +9,7 @@ export class Component {
   afterBuild(): Promise<void>;
 }
 
-/** Does routing of cite. */
+/** Does routing of site. */
 export class Router {
   static get current(): Route & RouteInfo;
   static get container(): string | undefined;
@@ -75,6 +75,10 @@ export type RouteInfo = {
 
 export type I18nLanguage = string | { [key: string]: I18nLanguage };
 
+/**
+ * Describe languages object.
+ * Keys must be language identifiers (by example `en`, `uk`, `fr` etc.).
+ */
 export type I18nLanguagesSet = {
   [key: string]: I18nLanguage;
 };
