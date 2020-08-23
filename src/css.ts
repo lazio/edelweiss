@@ -6,6 +6,6 @@ import { isArray, forEach } from '@fluss/core';
  */
 export const stylePaths = new Set<string>();
 
-export function registerCss(css: string | string[]): void {
+export function registerCss(css: string | Array<string>): void {
   isArray(css) ? forEach(css, stylePaths.add) : stylePaths.add(css);
 }
