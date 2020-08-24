@@ -106,10 +106,11 @@ const button: Promise<string> = html`
 `;
 ```
 
-As children of the elements you pass values of types:
+As children of the elements you can pass values of types:
 
 - `string`
 - `Component`
+- `Promise<string>`
 - array of them
 
 ```typescript
@@ -127,7 +128,7 @@ const template: Promise<string> = html`
 `;
 ```
 
-As you can see `html()` funtion returns _Promise_, but you should not handle returning value itself. `html()` handles it for you. Think of it like function returns `string`.
+As you already saw `html()` funtion returns _Promise_, but you should not handle returning value itself. `html()` handles it for you. Think of it like function returns `string`.
 
 #### Custom elements
 
