@@ -1,6 +1,9 @@
 import { createState, Router } from '../src';
 
-const testState = createState({ clicks: 0 });
+const testState: { clicks: number; deletable?: boolean } = createState({
+  clicks: 0,
+  deletable: true,
+});
 
 describe('Tests for state', () => {
   beforeAll(() => {
@@ -27,7 +30,9 @@ describe('Tests for state', () => {
   });
 
   test('Deleting property from state', () => {
-    delete testState.clicks;
-    expect(testState.clicks).toBe(undefined);
+    if (testState.deletable) {
+      delete testState.deletable;
+    }
+    expect(testState.deletable).toBe(undefined);
   });
 });

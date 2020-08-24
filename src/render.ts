@@ -1,9 +1,9 @@
 import Component from './component/component';
-import { loadCSS } from './utils/styles';
 import { arrayFrom } from '@fluss/core';
-import { stylePaths } from './css';
 import { edelweissPolicy } from './utils/trusted_types';
 import { eventListenersMap } from './template/template';
+import { loadCSS, unloadCSS } from './utils/styles';
+import { stylePaths, stylePathsToRemove } from './css';
 import { diff, normalizeHTML, attachEvents } from './utils/dom';
 import { querySelector, replaceNode, cloneNode } from '@fluss/web';
 
@@ -33,10 +33,12 @@ export function render(
         })
         .then((element) => {
           stylePaths.forEach(loadCSS);
+          stylePathsToRemove.forEach(unloadCSS);
           // Clear events cash
           eventListenersMap.clear();
           // Clear paths of styles
           stylePaths.clear();
+          stylePathsToRemove.clear();
           return element;
         })
         .then((element) => {

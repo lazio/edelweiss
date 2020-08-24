@@ -1,6 +1,16 @@
 import Config from '../config';
 import { alternation, tap } from '@fluss/core';
-import { querySelector, createElement, setAttribute, append } from '@fluss/web';
+import {
+  append,
+  removeNode,
+  setAttribute,
+  querySelector,
+  createElement,
+} from '@fluss/web';
+
+function getCSSPath(name: string): string {
+  return `${Config.cssRootFolder}${name}${/.+\.css$/.test(name) ? '' : '.css'}`;
+}
 
 /**
  * Loads CSS file by adding <link> to <head>.
@@ -8,12 +18,12 @@ import { querySelector, createElement, setAttribute, append } from '@fluss/web';
  * By default bundler will set all styles in /public/styles/ folder.
  */
 export function loadCSS(name: string): void {
-  const cssPath = `${Config.cssRootFolder}${name}${
-    /.+\.css$/.test(name) ? '' : '.css'
-  }`;
-
   alternation(
-    () => querySelector(`link[href="${cssPath}"]`, document.head).extract(),
+    () =>
+      querySelector(
+        `link[href="${getCSSPath(name)}"]`,
+        document.head
+      ).extract(),
     () => {
       append(
         document.head,
@@ -25,7 +35,7 @@ export function loadCSS(name: string): void {
           )
           .map((link) =>
             tap(link, (el) => {
-              setAttribute(el, 'href', cssPath);
+              setAttribute(el, 'href', getCSSPath(name));
             })
           )
           .extract()
@@ -33,4 +43,10 @@ export function loadCSS(name: string): void {
       return document.head;
     }
   )();
+}
+
+export function unloadCSS(name: string): void {
+  querySelector(`link[href="${getCSSPath(name)}"]`, document.head).map(
+    removeNode
+  );
 }

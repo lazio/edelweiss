@@ -1,4 +1,14 @@
-# [1.0.0] - 2020-08-16
+# [1.1.0] - 2020-08-24
+
+### Changed
+
+- `registerCss` funtion now returns function, that allow unregister css.
+
+### Fixed
+
+- `index.d.ts` file now does not contain module declaration.
+
+## [1.0.0] - 2020-08-16
 
 ### Changed
 
