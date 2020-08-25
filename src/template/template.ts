@@ -23,11 +23,7 @@ import {
 export const eventListenersMap = new Map<
   string,
   {
-    // Name of the event: event listener
-    // eslint-disable-next-line func-call-spacing
-    [key: string]:
-      | ((event: Event) => void)
-      | { handleEvent: (event: Event) => void };
+    [eventName: string]: EventListenerOrEventListenerObject;
   }
 >();
 
@@ -45,19 +41,23 @@ export async function html(
             .map((promiseWithVariable) =>
               // Gets template from Component
               promiseWithVariable.then((variable) =>
-                variable instanceof Component
-                  ? variable._createNodes()
-                  : variable
+                buildMaybeComponent(variable)
               )
             )
             .map((promiseWithVariable) =>
               /**
-               * Variable may be an Array that contains Promise, so we must wait for resolving
-               * it and then return result. Also we prevent from inseting commas into template.
+               * Variable may be an Array that contains string, Promise<string> and Component,
+               * so we must wait for resolving it and then return result. We do not handle other
+               * objects.
+               * Also we prevent from inseting commas into template.
                */
               promiseWithVariable.then((variable) =>
                 isArray(variable)
-                  ? Promise.all(variable).then((all) => all.join(''))
+                  ? Promise.all(
+                      variable.map((maybeComponent) =>
+                        buildMaybeComponent(maybeComponent)
+                      )
+                    ).then((all) => all.join(''))
                   : variable
               )
             )
@@ -100,7 +100,7 @@ function formCurrentHTML(
 
           return current.replace(
             eventListener[0],
-            `data-event-id${index}="${eventId}"` // eventsInElement++
+            `data-event-id${index}="${eventId}"`
           );
         })
         .extract();
@@ -128,9 +128,7 @@ function formCurrentHTML(
     if (!isNothing(matchCustomElement)) {
       return just(matchCustomElement)
         .map((customElementMatch) => {
-          // eslint-disable-next-line no-prototype-builtins
           if (Element.isPrototypeOf(variable)) {
-            // $FlowFixMe - we already check for Class.
             registerCustomElement(customElementMatch, variable);
             return current.replace(
               customElementRegExp,
@@ -140,7 +138,6 @@ function formCurrentHTML(
           } else {
             warn(
               `You must pass a class constructor to custom element ${customElementMatch[1]}. But given ->` +
-                // $FlowFixMe
                 `"${variable}"`
             );
             return '';
@@ -151,4 +148,11 @@ function formCurrentHTML(
 
     return current + variable;
   });
+}
+
+/**
+ * Extract template from `Component`.
+ */
+function buildMaybeComponent<T>(variable: T | Component): T | Promise<string> {
+  return variable instanceof Component ? variable._createNodes() : variable;
 }

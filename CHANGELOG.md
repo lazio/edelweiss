@@ -1,4 +1,10 @@
-# [1.1.1] - 2020-08-25
+# [1.1.2] - 2020-08-25
+
+### Fixed
+
+- Instance of `Component` now handled properly as child in `Array`.
+
+## [1.1.1] - 2020-08-25
 
 ### Changed
 

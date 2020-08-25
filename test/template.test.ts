@@ -42,10 +42,17 @@ describe('Test template of "edelweiss"', () => {
     expect(value).toMatch(/<div>\s*<p>Component<\/p>\s*<\/div>/);
   });
 
-  test('html() must return Promise<string> with inserted "Array<string>" into test', () => {
-    const array = ['<p>1</p>', '<p>2</p>'];
+  test('html() must return Promise<string> with inserted "Array<string | Component | Promise<string>>" into test', () => {
+    class TestComponent extends Component {
+      template() {
+        return html` <p>Component</p> `;
+      }
+    }
+    const array = ['<p>1</p>', '<p>2</p>', new TestComponent(), html`<p>3</p>`];
 
-    expect(html` <p>${array}</p> `).resolves.toMatch('<p><p>1</p><p>2</p></p>');
+    expect(html` <p>${array}</p> `).resolves.toMatch(
+      '<p><p>1</p><p>2</p> <p>Component</p> <p>3</p></p>'
+    );
   });
 
   test('html() must return Promise<string> with inserted "Promise<string>" into test', () => {
