@@ -8,6 +8,7 @@ import {
   hasAttribute,
   setAttribute,
   removeAttribute,
+  addEventListener,
 } from '@fluss/web';
 import {
   reduce,
@@ -15,6 +16,7 @@ import {
   forEach,
   entries,
   resolve,
+  maybeOf,
   arrayFrom,
   isNothing,
 } from '@fluss/core';
@@ -105,7 +107,11 @@ export function attachEvents(element: Element) {
         const eventListener = eventListenersMap.get(dataAttributes[key] || '');
         if (!isNothing(eventListener)) {
           const [listener] = entries(eventListener);
-          element.addEventListener(listener[0], listener[1]);
+          addEventListener<EventTarget, string>(
+            element,
+            listener[0],
+            listener[1]
+          );
 
           /**
            * "data-event-id{number}" attribute is no more useful, so
@@ -116,10 +122,9 @@ export function attachEvents(element: Element) {
            * has "data-event-id{number}" attribute.
            * First result is matched substring.
            */
-          const eventNumber = key.match(/[\d]+/);
-          if (!isNothing(eventNumber)) {
-            removeAttribute(element, `data-event-id${eventNumber[0]}`);
-          }
+          maybeOf(key.match(/[\d]+/)).map((eventNumber) =>
+            removeAttribute(element, `data-event-id${eventNumber[0]}`)
+          );
         }
       }
     }

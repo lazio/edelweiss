@@ -1,6 +1,6 @@
 import { warn } from '../utils/warn';
 import { render } from '../render';
-import { querySelector } from '@fluss/web';
+import { querySelector, addEventListener } from '@fluss/web';
 import {
   maybeOf,
   isArray,
@@ -156,7 +156,8 @@ export default class Router {
 /**
  * Triggering navigating via browser's buttons and "Router.back()", "Router.forward()".
  */
-window.addEventListener(
+addEventListener(
+  window,
   'popstate',
   (event: { state: { path: string; container: string } }) => {
     Router.to(event.state.path, { willStateChange: false });
