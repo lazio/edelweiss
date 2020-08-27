@@ -73,7 +73,7 @@ export async function html(
         : // End of template
           previous.then((prevHtml) => prevHtml + current);
     },
-    Promise.resolve('')
+    resolve('')
   );
 }
 
