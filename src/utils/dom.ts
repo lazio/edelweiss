@@ -26,26 +26,38 @@ export function diff(oldNode: Element, newNode: Element) {
     if (oldNode.tagName === newNode.tagName) {
       diffAttributes(oldNode, newNode);
 
-      if (newNode.childElementCount > 0) {
-        const oChildren = arrayFrom(oldNode.children);
-        const nChildren = arrayFrom(newNode.children);
+      if (newNode.hasChildNodes()) {
+        const oldChildNodes = arrayFrom(oldNode.childNodes);
+        const newChildNodes = arrayFrom(newNode.childNodes);
 
-        for (let i = 0; i < Math.max(oChildren.length, nChildren.length); i++) {
-          const oNode = oChildren[i];
-          const nNode = nChildren[i];
+        for (
+          let i = 0;
+          i < Math.max(newChildNodes.length, oldChildNodes.length);
+          i++
+        ) {
+          const oNode = oldChildNodes[i];
+          const nNode = newChildNodes[i];
 
-          if (!isNothing(oNode)) {
-            isNothing(nNode) ? removeNode(oNode) : diff(oNode, nNode);
-          } else if (!isNothing(nNode)) {
-            append(oldNode, nNode);
+          if (!isNothing(nNode)) {
+            if (nNode.nodeType === Node.ELEMENT_NODE) {
+              isNothing(oNode)
+                ? append(oldNode, nNode)
+                : diff(oNode as Element, nNode as Element);
+            } else if (nNode.nodeType === Node.TEXT_NODE) {
+              !isNothing(oNode)
+                ? (oNode.textContent = nNode.textContent)
+                : append(oldNode, nNode);
+            } else {
+              // TODO(kapelianovych): add document fragment node?
+            }
+          } else if (!isNothing(oNode)) {
+            removeNode(oNode);
+          } else {
+            // Do nothing - old and new node is null or undefined.
           }
         }
-      } else if (!isNothing(newNode.textContent)) {
-        if (oldNode.textContent !== newNode.textContent) {
-          oldNode.textContent = newNode.textContent;
-        }
       } else {
-        replaceNode(oldNode, newNode); // Script will probably never be here
+        replaceNode(oldNode, newNode);
       }
     } else {
       replaceNode(oldNode, newNode);

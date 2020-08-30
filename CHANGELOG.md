@@ -1,4 +1,10 @@
-# [1.1.2] - 2020-08-25
+# [1.1.3] - 2020-08-31
+
+### Fixed
+
+- Updating text nodes, if they have element nodes as siblings.
+
+## [1.1.2] - 2020-08-25
 
 ### Fixed
 

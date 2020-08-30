@@ -1,5 +1,6 @@
 import Router from '../router/router';
 import { warn } from '../utils/warn';
+import { setAttribute } from '@fluss/web';
 import {
   keys,
   reduce,
@@ -8,6 +9,7 @@ import {
   entries,
   path as pathOf,
   isNothing,
+  resolve,
 } from '@fluss/core';
 
 export type I18nLanguage = {
@@ -49,18 +51,18 @@ export default class I18n {
   }
 
   static setLanguage(tag: string): Promise<void> {
-    return maybeOf(_languages[tag])
-      .map(() => {
-        /**
-         * Change lang attribute of html element.
-         * https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/lang
-         */
-        document.documentElement.setAttribute('lang', tag);
-        _currentLanguage = tag;
+    if (!isNothing(_languages[tag])) {
+      /**
+       * Change lang attribute of html element.
+       * https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/lang
+       */
+      setAttribute(document.documentElement, 'lang', tag);
+      _currentLanguage = tag;
 
-        return Router.reload();
-      })
-      .extract();
+      return Router.reload();
+    } else {
+      return resolve();
+    }
   }
 
   static translate(
