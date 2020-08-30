@@ -45,7 +45,10 @@ export function diff(oldNode: Element, newNode: Element) {
                 : diff(oNode as Element, nNode as Element);
             } else if (nNode.nodeType === Node.TEXT_NODE) {
               !isNothing(oNode)
-                ? (oNode.textContent = nNode.textContent)
+                ? // Update text node only if there is difference
+                  oNode.textContent !== nNode.textContent
+                  ? (oNode.textContent = nNode.textContent)
+                  : null
                 : append(oldNode, nNode);
             } else {
               // TODO(kapelianovych): add document fragment node?

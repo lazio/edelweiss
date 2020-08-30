@@ -1,4 +1,10 @@
-# [1.1.3] - 2020-08-31
+# [1.1.4] - 2020-08-31
+
+### Fixed
+
+- Update text nodes only if there is difference.
+
+## [1.1.3] - 2020-08-31
 
 ### Fixed
 
