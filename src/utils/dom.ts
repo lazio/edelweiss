@@ -59,8 +59,11 @@ export function diff(oldNode: Element, newNode: Element) {
             // Do nothing - old and new node is null or undefined.
           }
         }
-      } else {
+      } else if (oldNode.hasChildNodes()) {
         replaceNode(oldNode, newNode);
+      } else {
+        // Do nothing - both nodes haven't children and difference of attributes is
+        // already checked.
       }
     } else {
       replaceNode(oldNode, newNode);

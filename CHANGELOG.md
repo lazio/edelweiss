@@ -1,4 +1,10 @@
-# [1.1.4] - 2020-08-31
+# [1.1.5] - 2020-08-31
+
+### Fixed
+
+- Replacing nodes without children (`img`, `input` etc) if they do not have any changes.
+
+## [1.1.4] - 2020-08-31
 
 ### Fixed
 
