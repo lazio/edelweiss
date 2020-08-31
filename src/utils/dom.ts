@@ -2,8 +2,8 @@ import Component from '../component/component';
 import { eventListenersMap } from '../template/template';
 import { dataEventIdJSRegExp } from './regexps';
 import {
-  append,
   removeNode,
+  appendNodes,
   replaceNode,
   hasAttribute,
   setAttribute,
@@ -41,7 +41,7 @@ export function diff(oldNode: Element, newNode: Element) {
           if (!isNothing(nNode)) {
             if (nNode.nodeType === Node.ELEMENT_NODE) {
               isNothing(oNode)
-                ? append(oldNode, nNode)
+                ? appendNodes(oldNode, nNode)
                 : diff(oNode as Element, nNode as Element);
             } else if (nNode.nodeType === Node.TEXT_NODE) {
               !isNothing(oNode)
@@ -49,7 +49,7 @@ export function diff(oldNode: Element, newNode: Element) {
                   oNode.textContent !== nNode.textContent
                   ? (oNode.textContent = nNode.textContent)
                   : null
-                : append(oldNode, nNode);
+                : appendNodes(oldNode, nNode);
             } else {
               // TODO(kapelianovych): add document fragment node?
             }

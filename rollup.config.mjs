@@ -6,11 +6,11 @@ export default {
   input: 'src/index.ts',
   output: [
     {
-      file: 'dist/index.mjs',
+      file: 'build/index.mjs',
       format: 'es',
     },
     {
-      file: 'dist/index.js',
+      file: 'build/index.js',
       format: 'cjs',
     },
   ],

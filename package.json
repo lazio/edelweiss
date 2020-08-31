@@ -13,14 +13,14 @@
     "url": "https://github.com/YevhenKap/edelweiss"
   },
   "scripts": {
-    "clean": "rm -r dist/*",
+    "clean": "rm -r build/*",
     "build": "npm run clean; rollup --config; npm run copy; npm run test",
     "copy": "npm run copy:docs; npm run copy:settings; npm run copy:typings; npm run copy:license",
-    "copy:docs": "cp README.md dist/; cp CHANGELOG.md dist/",
-    "copy:license": "cp LICENSE dist/",
-    "copy:settings": "cp package.json dist/",
-    "copy:typings": "cp src/declaration/index.d.ts dist/",
-    "release": "npm run build; npm publish dist/ --access public",
+    "copy:docs": "cp README.md build/; cp CHANGELOG.md build/",
+    "copy:license": "cp LICENSE build/",
+    "copy:settings": "cp package.json build/",
+    "copy:typings": "cp src/declaration/index.d.ts build/",
+    "release": "npm run build; npm publish build/ --access public",
     "test": "jest"
   },
   "author": "Kapelianovych Yevhen",
@@ -38,6 +38,6 @@
   },
   "dependencies": {
     "@fluss/core": "^0.4.2",
-    "@fluss/web": "^0.3.2"
+    "@fluss/web": "^0.4.0"
   }
 }
