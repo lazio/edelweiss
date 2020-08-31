@@ -1,8 +1,8 @@
 import Config from '../config';
 import { alternation, tap } from '@fluss/core';
 import {
-  append,
   removeNode,
+  appendNodes,
   setAttribute,
   querySelector,
   createElement,
@@ -25,7 +25,7 @@ export function loadCSS(name: string): void {
         document.head
       ).extract(),
     () => {
-      append(
+      appendNodes(
         document.head,
         createElement('link')
           .map((link) =>
