@@ -51,4 +51,13 @@ describe('Test "Router"', () => {
   test('"Router.to" must not throw an error if container is not exist', () => {
     expect(Router.to('/not-found')).resolves.not.toThrow();
   });
+
+  test('Navigating to any links without setting state, does not throw error', () => {
+    document.body.innerHTML = '<a href="#u"></a>';
+
+    const a = document.querySelector('a');
+    if (a) {
+      expect(() => a.click()).not.toThrow();
+    }
+  });
 });

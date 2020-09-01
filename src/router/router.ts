@@ -154,15 +154,15 @@ export default class Router {
 }
 
 /**
- * Triggering navigating via browser's buttons and "Router.back()", "Router.forward()".
+ * Triggering navigating via browser's buttons, "Router.back()", "Router.forward()",
+ * but not via elements that changes url without setting "state"
+ * (default behavior of <a> etc.).
  */
-addEventListener(
-  window,
-  'popstate',
-  (event: { state: { path: string; container: string } }) => {
+addEventListener(window, 'popstate', (event) => {
+  if (!isNothing(event.state)) {
     Router.to(event.state.path, { willStateChange: false });
   }
-);
+});
 
 function regexpifyString(regexp: string): string {
   let normalizedRegExp = regexp;

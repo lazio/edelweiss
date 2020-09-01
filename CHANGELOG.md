@@ -1,4 +1,10 @@
-# [1.1.5] - 2020-08-31
+# [1.1.6] - 2020-09-01
+
+### Fixed
+
+- Popstate event listener throws an error when navigating to any link, that does not set _state_ object.
+
+## [1.1.5] - 2020-08-31
 
 ### Fixed
 
