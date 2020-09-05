@@ -1,14 +1,7 @@
 import { warn } from '../utils/warn';
 import { render } from '../render';
 import { querySelector, addEventListener } from '@fluss/web';
-import {
-  maybeOf,
-  isArray,
-  forEach,
-  resolve,
-  isNothing,
-  arrayFrom,
-} from '@fluss/core';
+import { maybeOf, promiseOf, isNothing, arrayFrom } from '@fluss/core';
 import type Component from '../component/component';
 
 export type RouteInfo = {
@@ -61,8 +54,8 @@ export default class Router {
   }
 
   static add(routes: Route | Route[]): void {
-    isArray(routes)
-      ? forEach(routes, (route) => _routes.set(route.path, route))
+    Array.isArray(routes)
+      ? routes.forEach((route) => _routes.set(route.path, route))
       : _routes.set(routes.path, routes);
   }
 
@@ -79,12 +72,12 @@ export default class Router {
     if (_routes.size === 0) {
       warn(`You cannot navigate to ${path} because you didn't define any routes!
       At first call "Router.add(...)".`);
-      return resolve();
+      return promiseOf(undefined);
     }
 
     let routeFound: Promise<void> | null | undefined;
 
-    forEach(arrayFrom(_routes.entries()), ([key, route]) => {
+    arrayFrom(_routes.entries()).forEach(([key, route]) => {
       const pathRegExp =
         typeof key === 'string' ? new RegExp(regexpifyString(key)) : key;
 
@@ -131,7 +124,7 @@ export default class Router {
 
     if (isNothing(routeFound)) {
       warn(`No route is specified for path: ${path}!`);
-      return resolve();
+      return promiseOf(undefined);
     } else {
       return routeFound;
     }

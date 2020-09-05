@@ -1,6 +1,7 @@
 import Component from '../component/component';
 import { eventListenersMap } from '../template/template';
 import { dataEventIdJSRegExp } from './regexps';
+import { maybeOf, promiseOf, arrayFrom, isNothing } from '@fluss/core';
 import {
   removeNode,
   appendNodes,
@@ -10,16 +11,6 @@ import {
   removeAttribute,
   addEventListener,
 } from '@fluss/web';
-import {
-  reduce,
-  isArray,
-  forEach,
-  entries,
-  resolve,
-  maybeOf,
-  arrayFrom,
-  isNothing,
-} from '@fluss/core';
 
 export function diff(oldNode: Element, newNode: Element) {
   if (oldNode.nodeType === newNode.nodeType) {
@@ -80,7 +71,7 @@ export function diff(oldNode: Element, newNode: Element) {
 function diffAttributes(oldNode: Element, newNode: Element) {
   if (oldNode.attributes.length !== newNode.attributes.length) {
     // Remove exessive attributes
-    forEach(oldNode.attributes, ({ name }) => {
+    arrayFrom(oldNode.attributes).forEach(({ name }) => {
       if (!hasAttribute(newNode, name)) {
         removeAttribute(oldNode, name);
       }
@@ -88,7 +79,7 @@ function diffAttributes(oldNode: Element, newNode: Element) {
   }
 
   // Add missing attributes and update changed
-  forEach(newNode.attributes, ({ name, value }) =>
+  arrayFrom(newNode.attributes).forEach(({ name, value }) =>
     setAttribute(oldNode, name, value)
   );
 }
@@ -100,16 +91,15 @@ export async function normalizeHTML(
     | Promise<string>
     | Array<string | Component | Promise<string>>
 ): Promise<string> {
-  if (isArray(nodes)) {
-    return reduce(
-      nodes,
-      (prev, current) =>
+  if (Array.isArray(nodes)) {
+    return nodes.reduce(
+      (prev: Promise<string>, current) =>
         prev.then((prevHtml) =>
           normalizeHTML(current).then(
             (normalizedHtml) => prevHtml + normalizedHtml
           )
         ),
-      resolve('')
+      promiseOf('')
     );
   } else {
     return nodes instanceof Component ? nodes._createNodes() : nodes;
@@ -124,7 +114,7 @@ export function attachEvents(element: Element) {
       if (dataEventIdJSRegExp.test(key)) {
         const eventListener = eventListenersMap.get(dataAttributes[key] || '');
         if (!isNothing(eventListener)) {
-          const [listener] = entries(eventListener);
+          const [listener] = Object.entries(eventListener);
           addEventListener<EventTarget, string>(
             element,
             listener[0],
@@ -148,7 +138,7 @@ export function attachEvents(element: Element) {
     }
 
     if (element.childElementCount > 0) {
-      forEach(element.children, attachEvents);
+      arrayFrom(element.children).forEach(attachEvents);
     }
   }
 }

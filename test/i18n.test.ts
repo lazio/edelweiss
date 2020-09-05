@@ -1,5 +1,5 @@
 import { querySelector } from '@fluss/web';
-import { I18n, Router, html } from '../src';
+import { I18n, Router, html, translate } from '../src';
 
 describe('Internationalization', () => {
   beforeAll(() => {
@@ -47,7 +47,7 @@ describe('Internationalization', () => {
 
   test('changing language cause rerender of the page', async () => {
     await I18n.setLanguage('en');
-    
+
     expect(
       querySelector('.main')
         .map((el) => el.innerHTML)
@@ -72,5 +72,23 @@ describe('Internationalization', () => {
         .map((el) => el.innerHTML)
         .extract()
     ).toMatch('Hello world');
+  });
+
+  test('translate function behave as I18n.translate', async () => {
+    document.body.insertAdjacentHTML('beforeend', '<div class="alias"></div>');
+    Router.add({
+      path: '/alias',
+      container: '.alias',
+      view() {
+        return html`${translate('withVar', { name: 'alias' })}`;
+      },
+    });
+    await Router.to('/alias');
+
+    expect(
+      querySelector('.alias')
+        .map((el) => el.innerHTML)
+        .extract()
+    ).toMatch('Hello alias');
   });
 });

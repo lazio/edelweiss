@@ -1,5 +1,4 @@
 import { unloadCSS } from './utils/styles';
-import { isArray, forEach } from '@fluss/core';
 
 /**
  * Holds all path of styles that was registered by [registerCss].
@@ -24,10 +23,10 @@ export const stylePathsToRemove = new Set<string>();
 export function registerCss(
   css: string | Array<string>
 ): (immediately?: boolean) => void {
-  isArray(css) ? forEach(css, stylePaths.add) : stylePaths.add(css);
+  Array.isArray(css) ? css.forEach(stylePaths.add) : stylePaths.add(css);
   return (immediately: boolean = false) => {
-    isArray(css)
-      ? forEach(css, immediately ? unloadCSS : stylePathsToRemove.add)
+    Array.isArray(css)
+      ? css.forEach(immediately ? unloadCSS : stylePathsToRemove.add)
       : immediately
       ? unloadCSS(css)
       : stylePathsToRemove.add(css);

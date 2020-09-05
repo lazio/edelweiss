@@ -20,12 +20,16 @@ export function render(
 ): Promise<void> {
   return querySelector(to)
     .map((toElement) => {
-      const element = cloneNode(toElement) as Element;
-
+      return {
+        toElement,
+        clonedToElement: cloneNode(toElement).extract(),
+      };
+    })
+    .map(({ toElement, clonedToElement }) => {
       return normalizeHTML(nodes)
         .then((html) => {
-          element.innerHTML = edelweissPolicy.createHTML(html);
-          return element;
+          clonedToElement.innerHTML = edelweissPolicy.createHTML(html);
+          return clonedToElement;
         })
         .then((element) => {
           arrayFrom(element.children).forEach(attachEvents);

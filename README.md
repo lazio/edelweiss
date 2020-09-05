@@ -399,6 +399,8 @@ const en = {
 I18n.translate('greeting', { name: 'Peter', surname: 'Dal' }); // Output will be "Hello, Peter Dal!"
 ```
 
+> The `translate` function is also exported as a standalone function for convenience.
+
 3. `add(languages: I18nLanguagesSet, initial?: string): void` - add languages set to `I18n` object. `initial` is a optional tag that, if provided, will be used as initial language on the site. If it is omitted first language in set will be used.
 
 ```typescript

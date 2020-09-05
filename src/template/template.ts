@@ -7,14 +7,7 @@ import {
   customElementRegExp,
   booleanAttributeRegExp,
 } from '../utils/regexps';
-import {
-  just,
-  reduce,
-  maybeOf,
-  resolve,
-  isArray,
-  isNothing,
-} from '@fluss/core';
+import { just, maybeOf, promiseOf, isNothing } from '@fluss/core';
 
 /**
  * Holds all listeners that will be attached to element.
@@ -31,50 +24,46 @@ export async function html(
   parts: TemplateStringsArray,
   ...variables: Array<any>
 ): Promise<string> {
-  return reduce(
-    parts,
-    (previous, current, index) => {
-      return !isNothing(variables[index])
-        ? just(variables[index])
-            // Wrap variable into Promise
-            .map(resolve)
-            .map((promiseWithVariable) =>
-              // Gets template from Component
-              promiseWithVariable.then((variable) =>
-                buildMaybeComponent(variable)
+  return parts.reduce((previous, current, index) => {
+    return !isNothing(variables[index])
+      ? just(variables[index])
+          // Wrap variable into Promise
+          .map(promiseOf)
+          .map((promiseWithVariable) =>
+            // Gets template from Component
+            promiseWithVariable.then((variable) =>
+              buildMaybeComponent(variable)
+            )
+          )
+          .map((promiseWithVariable) =>
+            /**
+             * Variable may be an Array that contains string, Promise<string> and Component,
+             * so we must wait for resolving it and then return result. We do not handle other
+             * objects.
+             * Also we prevent from inseting commas into template.
+             */
+            promiseWithVariable.then((variable) =>
+              Array.isArray(variable)
+                ? Promise.all(
+                    variable.map((maybeComponent) =>
+                      buildMaybeComponent(maybeComponent)
+                    )
+                  ).then((all) => all.join(''))
+                : variable
+            )
+          )
+          .map((promiseWithVariable) =>
+            // Consume current part with previous part
+            previous.then((textHTML) =>
+              formCurrentHTML(promiseWithVariable, current, index).then(
+                (currentHTML) => textHTML + currentHTML
               )
             )
-            .map((promiseWithVariable) =>
-              /**
-               * Variable may be an Array that contains string, Promise<string> and Component,
-               * so we must wait for resolving it and then return result. We do not handle other
-               * objects.
-               * Also we prevent from inseting commas into template.
-               */
-              promiseWithVariable.then((variable) =>
-                isArray(variable)
-                  ? Promise.all(
-                      variable.map((maybeComponent) =>
-                        buildMaybeComponent(maybeComponent)
-                      )
-                    ).then((all) => all.join(''))
-                  : variable
-              )
-            )
-            .map((promiseWithVariable) =>
-              // Consume current part with previous part
-              previous.then((textHTML) =>
-                formCurrentHTML(promiseWithVariable, current, index).then(
-                  (currentHTML) => textHTML + currentHTML
-                )
-              )
-            )
-            .extract()
-        : // End of template
-          previous.then((prevHtml) => prevHtml + current);
-    },
-    resolve('')
-  );
+          )
+          .extract()
+      : // End of template
+        previous.then((prevHtml) => prevHtml + current);
+  }, promiseOf(''));
 }
 
 function formCurrentHTML(

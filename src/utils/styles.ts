@@ -1,5 +1,5 @@
 import Config from '../config';
-import { alternation, tap } from '@fluss/core';
+import { alternation } from '@fluss/core';
 import {
   removeNode,
   appendNodes,
@@ -28,19 +28,17 @@ export function loadCSS(name: string): void {
       appendNodes(
         document.head,
         createElement('link')
-          .map((link) =>
-            tap(link, (el) => {
-              setAttribute(el, 'rel', 'stylesheet');
-            })
-          )
-          .map((link) =>
-            tap(link, (el) => {
-              setAttribute(el, 'href', getCSSPath(name));
-            })
-          )
+          .map((link) => {
+            setAttribute(link, 'rel', 'stylesheet');
+            return link;
+          })
+          .map((link) => {
+            setAttribute(link, 'href', getCSSPath(name));
+            return link;
+          })
           .extract()
       );
-      return document.head;
+      return null;
     }
   )();
 }

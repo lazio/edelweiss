@@ -43,6 +43,15 @@ export class Config {
   static set cssRootFolder(dir: string);
 }
 
+/**
+ * Returns translated text based on _path_. Same as `I18n.translate` static
+ * method.
+ */
+export function translate(
+  path: string,
+  variables?: { [key: string]: string }
+): string;
+
 /** Creates state based on object initial values. */
 export function createState<T extends object = object>(object: T): T;
 

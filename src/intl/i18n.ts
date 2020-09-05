@@ -1,16 +1,7 @@
 import Router from '../router/router';
 import { warn } from '../utils/warn';
 import { setAttribute } from '@fluss/web';
-import {
-  keys,
-  reduce,
-  maybeOf,
-  forEach,
-  entries,
-  path as pathOf,
-  isNothing,
-  resolve,
-} from '@fluss/core';
+import { maybeOf, isNothing, promiseOf, path as pathOf } from '@fluss/core';
 
 export type I18nLanguage = {
   [key: string]: string | { [key: string]: I18nLanguage };
@@ -35,11 +26,11 @@ export default class I18n {
   }
 
   static get languagesTags(): ReadonlyArray<string> {
-    return keys(_languages);
+    return Object.keys(_languages);
   }
 
   static add(languages: I18nLanguagesSet, initial?: string): void {
-    forEach(keys(languages), (lang, index) => {
+    Object.keys(languages).forEach((lang, index) => {
       if (isNothing(_currentLanguage) && index === 0) {
         _currentLanguage = initial || lang;
       }
@@ -61,7 +52,7 @@ export default class I18n {
 
       return Router.reload();
     } else {
-      return resolve();
+      return promiseOf(undefined);
     }
   }
 
@@ -86,8 +77,7 @@ export default class I18n {
       })
       .map((text) => {
         // Replacing variables in translated text.
-        return reduce(
-          entries(variables),
+        return Object.entries(variables).reduce(
           (maybeText, nameAndValue) =>
             insertVariables(maybeText, ...nameAndValue),
           text

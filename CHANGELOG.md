@@ -1,4 +1,10 @@
-# [1.1.6] - 2020-09-01
+# [1.1.7] - 2020-09-05
+
+### Added
+
+- Library now exports `translate` function as alias to `I18n.translate`.
+
+## [1.1.6] - 2020-09-01
 
 ### Fixed
 

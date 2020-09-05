@@ -5,23 +5,19 @@ import { loadCSS } from '../utils/styles';
  * Can be replaced by plain function.
  */
 export default class Component {
-  /**
-   * Executes always before component is building.
-   */
+  /** Executes always before component is building. */
   styles(): string | string[] {
     return '';
   }
 
-  // Executes before building of component.
+  /** Executes before building of component. */
   async beforeBuild(): Promise<void> {}
 
   async template(): Promise<string> {
     return '';
   }
 
-  /**
-   * Executes after component is builded, but not inserted into document.
-   */
+  /** Executes after component is builded, but not inserted into document. */
   async afterBuild(): Promise<void> {}
 
   async _createNodes(): Promise<string> {
