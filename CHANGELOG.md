@@ -1,4 +1,10 @@
-# [1.1.7] - 2020-09-05
+# [1.1.8] - 2020-09-06
+
+### Fixed
+
+- Replacing text node by element node and vice versa.
+
+## [1.1.7] - 2020-09-05
 
 ### Added
 

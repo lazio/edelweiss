@@ -30,20 +30,15 @@ export function diff(oldNode: Element, newNode: Element) {
           const nNode = newChildNodes[i];
 
           if (!isNothing(nNode)) {
-            if (nNode.nodeType === Node.ELEMENT_NODE) {
-              isNothing(oNode)
-                ? appendNodes(oldNode, nNode)
-                : diff(oNode as Element, nNode as Element);
-            } else if (nNode.nodeType === Node.TEXT_NODE) {
-              !isNothing(oNode)
-                ? // Update text node only if there is difference
-                  oNode.textContent !== nNode.textContent
-                  ? (oNode.textContent = nNode.textContent)
-                  : null
-                : appendNodes(oldNode, nNode);
-            } else {
-              // TODO(kapelianovych): add document fragment node?
-            }
+            isNothing(oNode)
+              ? appendNodes(oldNode, nNode)
+              : nNode.nodeType === Node.TEXT_NODE &&
+                oNode.nodeType === Node.TEXT_NODE
+              ? // Update text node only if there is difference
+                oNode.textContent !== nNode.textContent
+                ? (oNode.textContent = nNode.textContent)
+                : null
+              : diff(oNode as Element, nNode as Element);
           } else if (!isNothing(oNode)) {
             removeNode(oNode);
           } else {
