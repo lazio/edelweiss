@@ -1,4 +1,12 @@
-# [1.1.8] - 2020-09-06
+# [1.1.9] - 2020-09-08
+
+### Changed
+
+- `after` and `before` methods of `Route` object can be syncronous now.
+- `beforeBuild` and `afterBuild` methods of `Component` object can be syncronous now.
+- `template` method of `Component` object can return plain string now.
+
+## [1.1.8] - 2020-09-06
 
 ### Fixed
 

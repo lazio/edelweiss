@@ -1,4 +1,5 @@
 import { loadCSS } from '../utils/styles';
+import { promiseOf } from '@fluss/core';
 
 /**
  * Class that must be used to describe components of the page or page itself.
@@ -6,19 +7,19 @@ import { loadCSS } from '../utils/styles';
  */
 export default class Component {
   /** Executes always before component is building. */
-  styles(): string | string[] {
+  styles(): string | Array<string> {
     return '';
   }
 
   /** Executes before building of component. */
-  async beforeBuild(): Promise<void> {}
+  beforeBuild(): Promise<void> | void {}
 
-  async template(): Promise<string> {
+  template(): Promise<string> | string {
     return '';
   }
 
   /** Executes after component is builded, but not inserted into document. */
-  async afterBuild(): Promise<void> {}
+  afterBuild(): Promise<void> | void {}
 
   async _createNodes(): Promise<string> {
     const maybeCssPaths = this.styles();
@@ -28,9 +29,9 @@ export default class Component {
         : loadCSS(maybeCssPaths);
     }
 
-    await this.beforeBuild();
-    const buildedComponent = await this.template();
-    await this.afterBuild();
+    await promiseOf(this.beforeBuild());
+    const buildedComponent = await promiseOf(this.template());
+    await promiseOf(this.afterBuild());
 
     return buildedComponent;
   }

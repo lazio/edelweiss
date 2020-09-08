@@ -17,7 +17,7 @@ describe('Test "Component"', () => {
     class TestComponent extends Component {
       declare name: string;
 
-      async beforeBuild() {
+      beforeBuild() {
         this.name = 'TestComponent';
       }
 
@@ -34,10 +34,11 @@ describe('Test "Component"', () => {
     class TestComponent extends Component {
       declare name: string;
 
-      async beforeBuild() {
+      beforeBuild() {
         this.name = 'TestComponent';
       }
 
+      // Left for sure
       async afterBuild() {
         this.name = 'TestComponent2';
       }

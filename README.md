@@ -173,11 +173,11 @@ html`
 
 If you create template that can be used in two or more places of your site you can group it in plain function that will returns them or define _Component_.
 
-It can be achieved by creating class that extends `Component` class. You must override `template()` method that returns value of type `Promise<string>`.
-Also you can override `async beforeBuild()` method that invokes before `async template()` method and `async afterBuild()` that invokes after `async template()`. You can use them for getting data for your view or other tasks that need to be finished before or after building template.
-All methods is asyncrounous so you can accomplish asyncrounous operation (like `fetch`ing for some data) in rendering order without creating additional asyncrounous functions.
+It can be achieved by creating class that extends `Component` class. You must override `template()` method that returns value of type `string | Promise<string>`.
+Also you can override `beforeBuild(): void | Promise<void>` method that invokes before `template` method and `afterBuild(): void | Promise<void>` that invokes after `template`. You can use them for getting data for your view or other tasks that need to be finished before or after building template.
+All methods can be asyncrounous so you can accomplish asyncrounous operation (like `fetch`ing for some data) in rendering order without creating additional asyncrounous functions.
 
-> Note that while `beforeBuild()` and `afterBuild()` methods are executing when template is not inserted into DOM, so you can't access elements that `template()` method returns.
+> Note that `beforeBuild()` and `afterBuild()` methods are executing when template is not inserted into DOM, so you can't access elements that `template()` method returns.
 
 ```typescript
 class MyComponent extends Component {
@@ -263,13 +263,13 @@ You must set up `Router` with routes. Route is a plain object:
 type Route = {
   path: string | RegExp;
   container?: string;
-  before?: () => Promise<void>;
+  before?: () => Promise<void> | void;
   view: () =>
     | string
     | Component
     | Promise<string>
     | Array<string | Component | Promise<string>>;
-  after?: () => Promise<void>;
+  after?: () => Promise<void> | void;
 };
 ```
 

@@ -4,9 +4,9 @@
  */
 export class Component {
   styles(): string | Array<string>;
-  beforeBuild(): Promise<void>;
-  template(): Promise<string>;
-  afterBuild(): Promise<void>;
+  beforeBuild(): void | Promise<void>;
+  template(): string | Promise<string>;
+  afterBuild(): void | Promise<void>;
 }
 
 /** Does routing of site. */
@@ -77,13 +77,13 @@ export function registerCss(
 export type Route = {
   path: string | RegExp;
   container?: string;
-  before?: () => Promise<void>;
+  before?: () => void | Promise<void>;
   view: () =>
     | string
     | Component
     | Promise<string>
     | Array<string | Component | Promise<string>>;
-  after?: () => Promise<void>;
+  after?: () => void | Promise<void>;
 };
 
 export type RouteInfo = {

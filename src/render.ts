@@ -1,31 +1,26 @@
 import Component from './component/component';
-import { arrayFrom } from '@fluss/core';
 import { edelweissPolicy } from './utils/trusted_types';
 import { eventListenersMap } from './template/template';
+import { arrayFrom, tupleOf } from '@fluss/core';
 import { loadCSS, unloadCSS } from './utils/styles';
 import { stylePaths, stylePathsToRemove } from './css';
 import { diff, normalizeHTML, attachEvents } from './utils/dom';
 import { querySelector, replaceNode, cloneNode } from '@fluss/web';
 
-/**
- * Render templates on the page.
- */
+/** Render templates on the page. */
 export function render(
   to: string,
   nodes:
     | string
     | Component
     | Promise<string>
-    | (string | Component | Promise<string>)[]
+    | Array<string | Component | Promise<string>>
 ): Promise<void> {
   return querySelector(to)
     .map((toElement) => {
-      return {
-        toElement,
-        clonedToElement: cloneNode(toElement).extract(),
-      };
+      return tupleOf(toElement, cloneNode(toElement).extract());
     })
-    .map(({ toElement, clonedToElement }) => {
+    .map(([toElement, clonedToElement]) => {
       return normalizeHTML(nodes)
         .then((html) => {
           clonedToElement.innerHTML = edelweissPolicy.createHTML(html);

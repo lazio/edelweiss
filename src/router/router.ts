@@ -11,13 +11,13 @@ export type RouteInfo = {
 export type Route = {
   path: string | RegExp;
   container?: string;
-  before?: () => Promise<void>;
+  before?: () => Promise<void> | void;
   view: () =>
     | string
     | Component
     | Promise<string>
-    | (string | Component | Promise<string>)[];
-  after?: () => Promise<void>;
+    | Array<string | Component | Promise<string>>;
+  after?: () => Promise<void> | void;
 };
 
 /**
@@ -53,7 +53,7 @@ export default class Router {
     _pageContainer = value;
   }
 
-  static add(routes: Route | Route[]): void {
+  static add(routes: Route | Array<Route>): void {
     Array.isArray(routes)
       ? routes.forEach((route) => _routes.set(route.path, route))
       : _routes.set(routes.path, routes);
@@ -100,7 +100,7 @@ export default class Router {
 
               // Before route render hook
               if (!isNothing(route.before)) {
-                await route.before();
+                await promiseOf(route.before());
               }
 
               await render(container, route.view());
@@ -114,7 +114,7 @@ export default class Router {
 
               // After route render hook
               if (!isNothing(route.after)) {
-                await route.after();
+                await promiseOf(route.after());
               }
             });
           })
