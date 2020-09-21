@@ -1,3 +1,9 @@
+## Unreleased
+
+### Added
+
+- `mounted`, `updated` and `removed` hooks to template.
+
 # [1.1.9] - 2020-09-08
 
 ### Changed
