@@ -1,5 +1,4 @@
 import Component from './component/component';
-import { renderedHook } from './utils/hooks';
 import { edelweissPolicy } from './utils/trusted_types';
 import { eventListenersMap } from './template/template';
 import { arrayFrom, tupleOf } from '@fluss/core';
@@ -41,15 +40,7 @@ export function render(
           stylePathsToRemove.clear();
           return element;
         })
-        .then((element) => diff(toElement, element))
-        .then(() => {
-          /**
-           * This trick is used in order to render "initial" state
-           * of page and then apply rendered hook. This is the difference
-           * between mounted and rendered hook.
-           */
-          setTimeout(() => renderedHook(toElement), 0);
-        });
+        .then((element) => diff(toElement, element));
     })
     .extract();
 }
