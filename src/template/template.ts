@@ -5,9 +5,10 @@ import { registerCustomElement } from './custom_element';
 import {
   eventListenerRegExp,
   customElementRegExp,
+  hookAttributeRegExp,
   booleanAttributeRegExp,
 } from '../utils/regexps';
-import { just, maybeOf, promiseOf, isNothing } from '@fluss/core';
+import { just, maybeOf, promiseOf, isNothing, freeze } from '@fluss/core';
 
 /**
  * Holds all listeners that will be attached to element.
@@ -19,6 +20,24 @@ export const eventListenersMap = new Map<
     [eventName: string]: EventListenerOrEventListenerObject;
   }
 >();
+
+/** Hooks are defined in order they have been executed in element's lifecycle. */
+export enum Hooks {
+  Mounted = 'mounted',
+  Rendered = 'rendered',
+  Updated = 'updated',
+  Removed = 'removed',
+}
+
+type HookCallback = (self: Element) => void | Promise<void>;
+
+/** Holds callbacks for every element's hooks. */
+export const hooksManager = freeze({
+  [Hooks.Mounted]: new Map<string, HookCallback>(),
+  [Hooks.Rendered]: new Map<string, HookCallback>(),
+  [Hooks.Updated]: new Map<string, HookCallback>(),
+  [Hooks.Removed]: new Map<string, HookCallback>(),
+});
 
 export async function html(
   parts: TemplateStringsArray,
@@ -112,6 +131,29 @@ function formCurrentHTML(
         .extract();
     }
 
+    /**
+     * Handle hook attribute.
+     * It is placed before customElement RegExp matcher,
+     * because it has similar pattern. And Hook RegExp is
+     * more concrete.
+     */
+    const matchHookAttribute = hookAttributeRegExp.exec(current);
+    if (!isNothing(matchHookAttribute)) {
+      const dataHookId = uid();
+      /**
+       * matchHookAttribute can contain only hook keywords, so we can not
+       * check its value.
+       */
+      const hookName = matchHookAttribute[1] as Hooks;
+
+      hooksManager[hookName].set(dataHookId, variable);
+
+      return current.replace(
+        hookAttributeRegExp,
+        `data-${hookName}-hook-id="${dataHookId}"`
+      );
+    }
+
     // Handle custom element in html
     const matchCustomElement = customElementRegExp.exec(current);
     if (!isNothing(matchCustomElement)) {
@@ -139,9 +181,7 @@ function formCurrentHTML(
   });
 }
 
-/**
- * Extract template from `Component`.
- */
+/** Extract template from `Component`. */
 function buildMaybeComponent<T>(variable: T | Component): T | Promise<string> {
   return variable instanceof Component ? variable._createNodes() : variable;
 }

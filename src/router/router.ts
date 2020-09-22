@@ -131,9 +131,21 @@ export default class Router {
   }
 
   static reload(): Promise<void> {
-    const { container, view } = _current;
+    const { container, view, after, before } = _current;
     return maybeOf(container || _pageContainer)
-      .map((currentContainer) => render(currentContainer, view()))
+      .map(async (currentContainer) => {
+        // Before route render hook
+        if (!isNothing(before)) {
+          await promiseOf(before());
+        }
+
+        await render(currentContainer, view());
+
+        // After route render hook
+        if (!isNothing(after)) {
+          await promiseOf(after());
+        }
+      })
       .extract();
   }
 

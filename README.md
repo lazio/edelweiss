@@ -53,10 +53,12 @@ const paragraph: Promise<string> = html`<p>Hello world!</p>`;
 ```
 
 You should pass valid HTML to `html`. But for convenience there is special syntax for
-event listeners, boolean attributes and for defining custom elements.
+event listeners, boolean attributes, element hooks and for defining custom elements.
 
-1. In order to attach event listener to element you can define `@eventName` attribute
-   to element. Note **@** followed by `eventName`(_click_, _input_, _change_ etc.). The value of the attribute must be function, that accepts native _event_ object, or object with `handleEvent(event)` method. Otherwise an error will be thrown.
+#### Event listeners
+
+In order to attach event listener to element you can define `@eventName` attribute
+to element. Note **@** followed by `eventName`(_click_, _input_, _change_ etc.). The value of the attribute must be function, that accepts native _event_ object, or object with `handleEvent(event)` method. Otherwise an error will be thrown.
 
 > Note that if you call _this_ inside such function, in production you can receive `undefined` behavior [more detailed here](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/this).
 
@@ -69,9 +71,11 @@ const button: Promise<string> = html`
 `;
 ```
 
-2. For defining attributes that do not have special values (truthy or falsy attributes:
-   `required`, `disabled`, `controls` etc.), you can append **?** to name of that attribute
-   and give him _true_ of _false_ value.
+#### Boolean attributes
+
+For defining attributes that do not have special values (truthy or falsy attributes:
+`required`, `disabled`, `controls` etc.), you can append **?** to name of that attribute
+and give him _true_ of _false_ value.
 
 > Actually that attribute can accept not only boolean values, but all truthy and falsy values. Though `boolean` is recommended.
 
@@ -96,7 +100,7 @@ const thirdButton: Promise<string> = html`
 
 Regular attributes can be defined as all above. They do not need special syntax.
 But all inserted values must be type of `string` or coerce to it.
-Also you can omit `"` and `'` around attribute value (not recommended).
+Also you can omit `"` and `'` around attribute value.
 
 ```typescript
 const button: Promise<string> = html`
@@ -129,6 +133,35 @@ const template: Promise<string> = html`
 ```
 
 As you already saw `html()` funtion returns _Promise_, but you should not handle returning value itself. `html()` handles it for you. Think of it like function returns `string`.
+
+#### Element hooks
+
+It is possible to react on node lifecycle: on inserting node into DOM, updating this node or on removing node from DOM. This is done by providing _hooks_:
+
+1. `mounted` - invokes only on inserting node into DOM (one time).
+2. `rendered` - invokes every time node is rendered.
+3. `updated` - invokes on every change is made with node.
+4. `removed` - invokes only on removing node from DOM (one time).
+
+Hook's value is function that has one parameter - `self`. This is element for which hook is provided.
+
+```ts
+// Hook signature, you can provide more consise type by yourself.
+type HookCallback = (self: Element) => void | Promise<void>;
+```
+
+For defining hook write it as regular attribute with preceeding `:` character.
+**Hook's callback must not be surrounded by `"` and `'` characters.**
+
+```ts
+html`
+  <p
+    :mounted=${(self: HTMLParagraphElement) => {
+      /* Some work */
+    }}
+  ></p>
+`;
+```
 
 #### Custom elements
 
@@ -276,8 +309,8 @@ type Route = {
 1. `path` - path of the page that will be visible in browser's search box. If you defines path as `RegExp` always insert start (**^**) and end (**\$**) symbols. If path will be type of _string_ you can not do this.
 2. `container` - selector of element which nodes will be replaced. You can not provide it. In this case you must define global `Route.container`.
 3. `view` - function that returns nodes that need to be rendered.
-4. `before` - hook that invokes before rendering route in which hook is defined. If exists, invokes on every moving to this route. Does not invokes on reloading page.
-5. `after` - hook that invokes after rendering route is finished in which hook is defined. If exists, invokes on every moving to this route. Does not invokes on reloading page.
+4. `before` - hook that invokes before rendering route in which hook is defined. If exists, invokes on every moving to this route and reloading page.
+5. `after` - hook that invokes after rendering route is finished in which hook is defined. If exists, invokes on every moving to this route and reloading page.
 
 > Does not set changes to state in route hooks. This may lead to infinite rendering route.
 

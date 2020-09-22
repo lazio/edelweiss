@@ -1,10 +1,14 @@
-## Unreleased
+# [1.2.0] - 2020-09-22
+
+### Changed
+
+- `before` and `after` route hooks are invoked on reloading page now.
 
 ### Added
 
-- `mounted`, `updated` and `removed` hooks to template.
+- `mounted`, `rendered`, `updated` and `removed` hooks to template.
 
-# [1.1.9] - 2020-09-08
+## [1.1.9] - 2020-09-08
 
 ### Changed
 

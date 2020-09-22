@@ -1,17 +1,7 @@
-import crypto from 'crypto';
+import './crypto_for_jest';
 import { html, Component } from '../src';
 
 describe('Test template of "edelweiss"', () => {
-  beforeAll(() => {
-    // @ts-ignore - add crypto to jsdom's window object.
-    window.crypto = {
-      getRandomValues(arr: Array<number>) {
-        // We do not need to polyfill window.crypto, so we just return array with one number.
-        return [crypto.randomBytes(arr.length).length];
-      },
-    };
-  });
-
   test('html() must return Promise<string>', () => {
     expect(html` <p></p> `).resolves.toMatch('<p></p>');
   });
