@@ -10,7 +10,12 @@ export function mountedHook(node: Node) {
 }
 /** If parent node is rendered, so its children are also rendered. */
 export function renderedHook(node: Node) {
-  applyHook(node, Hooks.Rendered);
+  /**
+   * This trick is used in order to render "initial" state
+   * of element and then apply rendered hook. This is the difference
+   * between mounted and rendered hook.
+   */
+  setTimeout(() => applyHook(node, Hooks.Rendered), 0);
   arrayFrom(node.childNodes).forEach(renderedHook);
 }
 

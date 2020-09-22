@@ -1,4 +1,10 @@
-# [1.2.0] - 2020-09-22
+# [1.2.1] - 2020-09-22
+
+### Fixed
+
+- `rendered` hook was invoked on every changes made to html.
+
+## [1.2.0] - 2020-09-22
 
 ### Changed
 
