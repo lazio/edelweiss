@@ -29,6 +29,10 @@ export function removedHook(node: Node) {
   arrayFrom(node.childNodes).forEach(removedHook);
 }
 
+/**
+ * Hook id does not be deleted from element, because
+ * some of them require its.
+ */
 function applyHook(node: Node, type: Hooks) {
   if (isElement(node)) {
     getAttribute(node, `data-${type}-hook-id`)

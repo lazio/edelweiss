@@ -1,4 +1,10 @@
-# [1.2.1] - 2020-09-22
+# [1.2.2] - 2020-09-22
+
+### Fixed
+
+- Removing old event listeners from elements and attaching new ones.
+
+## [1.2.1] - 2020-09-22
 
 ### Fixed
 
