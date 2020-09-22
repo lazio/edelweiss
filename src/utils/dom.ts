@@ -131,36 +131,41 @@ export async function normalizeHTML(
   }
 }
 
+/** Holds all detach functions of every element's event listeners. */
+export const detachEventListenersList: Array<() => void> = [];
+
 export function attachEvents(element: Element) {
   if (element instanceof HTMLElement) {
-    const dataAttributes = element.dataset;
-
-    for (const key in dataAttributes) {
-      if (dataEventIdJSRegExp.test(key)) {
-        const eventListener = eventListenersMap.get(dataAttributes[key] || '');
-        if (!isNothing(eventListener)) {
-          const [listener] = Object.entries(eventListener);
-          addEventListener<EventTarget, string>(
-            element,
-            listener[0],
-            listener[1]
+    Object.entries(element.dataset)
+      .filter(([attrName, _]) => dataEventIdJSRegExp.test(attrName))
+      .map(([attrName, eventId]) => {
+        maybeOf(eventId)
+          .map((id) => eventListenersMap.get(id))
+          .map<Array<[string, EventListenerOrEventListenerObject]>>(
+            Object.entries
+          )
+          .map(([listener]) =>
+            addEventListener<EventTarget, string>(
+              element,
+              listener[0],
+              listener[1]
+            ).map(
+              detachEventListenersList.push.bind(
+                detachEventListenersList
+              )
+            )
           );
 
-          /**
-           * "data-event-id{number}" attribute is no more useful, so
-           * we can remove it.
-           *
-           * "eventNumber" will be always type of number and greater or eaual,
-           * than zero because if script is here, so event listener exists and element
-           * has "data-event-id{number}" attribute.
-           * First result is matched substring.
-           */
-          maybeOf(key.match(/[\d]+/)).map((eventNumber) =>
-            removeAttribute(element, `data-event-id${eventNumber[0]}`)
-          );
-        }
-      }
-    }
+        return attrName;
+      })
+      .map((attrName) =>
+        maybeOf(/(\d+)$/.exec(attrName)).map((execArray) => execArray[1])
+      )
+      .forEach((maybeEventIdNumber) =>
+        maybeEventIdNumber.map((eventIdNumber) =>
+          removeAttribute(element, `data-event-id${eventIdNumber}`)
+        )
+      );
 
     if (element.childElementCount > 0) {
       arrayFrom(element.children).forEach(attachEvents);
