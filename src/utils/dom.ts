@@ -96,11 +96,7 @@ function diffAttributes(oldNode: Element, newNode: Element): boolean {
 
   // Add missing attributes and update changed
   arrayFrom(newNode.attributes).forEach(({ name, value }) => {
-    const maybeOldAttribute = getAttribute(oldNode, name);
-    if (
-      maybeOldAttribute.isNothing() ||
-      maybeOldAttribute.extract() !== value
-    ) {
+    if (getAttribute(oldNode, name).extract() !== value) {
       setAttribute(oldNode, name, value);
       areAttributesDifferent = true;
     }
@@ -149,11 +145,7 @@ export function attachEvents(element: Element) {
               element,
               listener[0],
               listener[1]
-            ).map(
-              detachEventListenersList.push.bind(
-                detachEventListenersList
-              )
-            )
+            ).map(detachEventListenersList.push.bind(detachEventListenersList))
           );
 
         return attrName;

@@ -1,4 +1,10 @@
-# [1.2.2] - 2020-09-22
+# [1.2.3] - 2020-09-23
+
+### Fixed
+
+- Diffing attributes algorithm: in some circumstances missing attributes was not added to nodes.
+
+## [1.2.2] - 2020-09-22
 
 ### Fixed
 
