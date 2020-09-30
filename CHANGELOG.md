@@ -1,4 +1,20 @@
-# [1.2.3] - 2020-09-23
+# [1.3.0] - 2020-09-30
+
+### Added
+
+- Defining base prefix for paths.
+- `configure` method to `Router`.
+
+### Changed
+
+- Implement new _path to RegExp_ functionality, so `Route`'s _path_ can now be only type of `string`.
+- Move docs to https://yevhenkap.github.io/ site.
+
+### Removed
+
+- `container` getter and setter from `Router`.
+
+## [1.2.3] - 2020-09-23
 
 ### Fixed
 

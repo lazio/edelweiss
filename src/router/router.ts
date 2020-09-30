@@ -1,16 +1,14 @@
 import { warn } from '../utils/warn';
 import { render } from '../render';
+import { matchPath } from './path_to_regexp';
 import { querySelector, addEventListener } from '@fluss/web';
-import { maybeOf, promiseOf, isNothing, arrayFrom } from '@fluss/core';
+import { promiseOf, isNothing, arrayFrom } from '@fluss/core';
 import type Component from '../component/component';
 
-export type RouteInfo = {
-  parameters?: RegExpMatchArray | null;
-};
-
 export type Route = {
-  path: string | RegExp;
-  container?: string;
+  readonly path: string;
+  readonly container?: string;
+  readonly parameters?: RegExpMatchArray;
   before?: () => Promise<void> | void;
   view: () =>
     | string
@@ -23,34 +21,48 @@ export type Route = {
 /**
  * Holds all routes that user pass to "Router.add()".
  */
-const _routes: Map<string | RegExp, Route> = new Map();
+const _routes: Map<string, Route> = new Map();
 /**
  * Holds current route.
  */
-let _current: Route & RouteInfo = {
+let _current: Route = {
   path: '',
   container: '',
   view() {
     return '';
   },
 };
-/**
- * Container for elements from all routes.
- * If all routes will have the same container, then this variable may be set and used.
- */
-let _pageContainer: string = '';
+
+type RouterOptions = {
+  /** Prefix path that will be prepended to path of all user's defined routes. */
+  basePrefix: string;
+  /**
+   * Container for elements from all routes.
+   * If all routes will have the same container, then this variable may be set and used.
+   */
+  baseContainer: string;
+};
+
+const _routerOptions: RouterOptions = {
+  basePrefix: '',
+  baseContainer: '',
+};
 
 export default class Router {
   static get current() {
     return _current;
   }
 
-  static get container(): string {
-    return _pageContainer;
-  }
+  static configure(options: Partial<RouterOptions>): void {
+    const { basePrefix, baseContainer } = options;
 
-  static set container(value: string) {
-    _pageContainer = value;
+    if (!isNothing(basePrefix)) {
+      _routerOptions.basePrefix = basePrefix;
+    }
+
+    if (!isNothing(baseContainer)) {
+      _routerOptions.baseContainer = baseContainer;
+    }
   }
 
   static add(routes: Route | Array<Route>): void {
@@ -69,8 +81,10 @@ export default class Router {
       willStateChange?: boolean;
     } = {}
   ): Promise<void> {
+    const pathWithPrefix = prependPathPrefix(path);
+
     if (_routes.size === 0) {
-      warn(`You cannot navigate to ${path} because you didn't define any routes!
+      warn(`You cannot navigate to ${pathWithPrefix} because you didn't define any routes!
       At first call "Router.add(...)".`);
       return promiseOf(undefined);
     }
@@ -78,12 +92,13 @@ export default class Router {
     let routeFound: Promise<void> | null | undefined;
 
     arrayFrom(_routes.entries()).forEach(([key, route]) => {
-      const pathRegExp =
-        typeof key === 'string' ? new RegExp(regexpifyString(key)) : key;
+      const pathMatch = matchPath(pathWithPrefix, prependPathPrefix(key));
 
-      if (pathRegExp.test(path)) {
-        routeFound = maybeOf(route.container || _pageContainer)
-          .chain((container) => {
+      if (pathMatch.isJust()) {
+        const container = route.container || _routerOptions.baseContainer;
+
+        routeFound = pathMatch
+          .chain((parameters) => {
             return querySelector(container).map(async () => {
               _current = {
                 ...route,
@@ -92,10 +107,8 @@ export default class Router {
                  * the whole matched string.
                  * If parameters exist in path (they must be surrounded by brackets), then
                  * second item and go on to end of array are parameters.
-                 *
-                 * For more info: [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/exec)
                  */
-                parameters: pathRegExp.exec(path),
+                parameters,
               };
 
               // Before route render hook
@@ -109,7 +122,11 @@ export default class Router {
                 isNothing(options.willStateChange) ||
                 options.willStateChange
               ) {
-                window.history.pushState({ path, container }, '', path);
+                window.history.pushState(
+                  { path: pathWithPrefix, container },
+                  '',
+                  pathWithPrefix
+                );
               }
 
               // After route render hook
@@ -123,30 +140,27 @@ export default class Router {
     });
 
     if (isNothing(routeFound)) {
-      warn(`No route is specified for path: ${path}!`);
+      warn(`No route is specified for path: ${pathWithPrefix}!`);
       return promiseOf(undefined);
     } else {
       return routeFound;
     }
   }
 
-  static reload(): Promise<void> {
+  static async reload(): Promise<void> {
     const { container, view, after, before } = _current;
-    return maybeOf(container || _pageContainer)
-      .map(async (currentContainer) => {
-        // Before route render hook
-        if (!isNothing(before)) {
-          await promiseOf(before());
-        }
 
-        await render(currentContainer, view());
+    // Before route render hook
+    if (!isNothing(before)) {
+      await promiseOf(before());
+    }
 
-        // After route render hook
-        if (!isNothing(after)) {
-          await promiseOf(after());
-        }
-      })
-      .extract();
+    await render(container || _routerOptions.baseContainer, view());
+
+    // After route render hook
+    if (!isNothing(after)) {
+      await promiseOf(after());
+    }
   }
 
   static back() {
@@ -169,18 +183,8 @@ addEventListener(window, 'popstate', (event) => {
   }
 });
 
-function regexpifyString(regexp: string): string {
-  let normalizedRegExp = regexp;
-
-  if (/[^\\]\//g.test(regexp)) {
-    normalizedRegExp = normalizedRegExp.split('/').join('\\/');
-  }
-  if (!normalizedRegExp.startsWith('^')) {
-    normalizedRegExp = `^${normalizedRegExp}`;
-  }
-  if (!normalizedRegExp.endsWith('$')) {
-    normalizedRegExp = `${normalizedRegExp}$`;
-  }
-
-  return normalizedRegExp;
+function prependPathPrefix(path: string): string {
+  return path.startsWith(_routerOptions.basePrefix)
+    ? path
+    : _routerOptions.basePrefix + path;
 }

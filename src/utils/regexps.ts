@@ -7,3 +7,5 @@ export const customElementRegExp = /<([\w-]+)\s*(:[\w]+)?\s*=$/;
 export const booleanAttributeRegExp = /\?([\w-]+)=['"]?$/;
 
 export const hookAttributeRegExp = /:(mounted|rendered|updated|removed)=$/;
+
+export const pathVariableRegExp = /:.+:(\?)?/g;
