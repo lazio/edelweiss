@@ -2,13 +2,13 @@ import Component from '../component/component';
 import { uid } from '../utils/uid';
 import { warn } from '../utils/warn';
 import { registerCustomElement } from './custom_element';
+import { just, freeze, promiseOf, isNothing } from '@fluss/core';
 import {
   eventListenerRegExp,
   customElementRegExp,
   hookAttributeRegExp,
   booleanAttributeRegExp,
 } from '../utils/regexps';
-import { just, freeze, identity, promiseOf, isNothing } from '@fluss/core';
 
 /**
  * Holds all listeners that will be attached to element.
@@ -99,7 +99,7 @@ function formCurrentHTML(
       if (typeof listener !== 'function' && isNothing(listener.handleEvent)) {
         warn(`Event listener must be type of "function" or object with
   "handleEvent" method, but given "${typeof listener}".`);
-        listener = identity;
+        listener = () => {};
       }
 
       const eventId = uid();
