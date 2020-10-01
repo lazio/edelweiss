@@ -77,14 +77,23 @@ export function registerCss(
 
 export type Route = {
   /**
-   * Path of the route. It can have variables anywhere
-   * inside - marked as `:any-name:`. Also variables can be
-   * optional, in such case they must end with question
+   * Path of the route. It will be implicitly converted to `RegExp`,
+   * so you can write valid RegExp in string.
+   * For convinience "(.+)" means _variable_ and can be
+   * writed as ":any-name:". This is **variable**.
+   * Also variables can be optional, in such case they must end with question
    * mark - `:any-name:?`.
-   * 
+   *
+   * For example: `/docs-?:section:?` equals to `new Regexp('^/docs-?(.+)?$')`.
+   *
    * Variables will be available in _parameters_ field.
    */
   readonly path: string;
+  /**
+   * Selector of root element that will hold HTML of this route.
+   * If local container property is absent, then global one will
+   * be used.
+   */
   readonly container?: string;
   /**
    * Holds variables that are defined inside _path_.
@@ -92,12 +101,15 @@ export type Route = {
    * Second value (index **1**) and go on are path's variables.
    */
   readonly parameters?: RegExpMatchArray;
+  /** Hook is invoked before this route will render. */
   before?: () => void | Promise<void>;
+  /** Returns HTML template for this route. */
   view: () =>
     | string
     | Component
     | Promise<string>
     | Array<string | Component | Promise<string>>;
+  /** Hook is invoked after this route renders. */
   after?: () => void | Promise<void>;
 };
 

@@ -10,7 +10,14 @@ export function matchPath(
   path: string,
   templatePath: string
 ): Maybe<RegExpMatchArray> {
+  let boundedTemplatePath = templatePath.startsWith('^')
+    ? templatePath
+    : `^${templatePath}`;
+  boundedTemplatePath = boundedTemplatePath.endsWith('$')
+    ? boundedTemplatePath
+    : `${boundedTemplatePath}$`;
+
   return maybeOf(
-    path.match(`^${templatePath}$`.replace(pathVariableRegExp, '(.+)$1'))
+    path.match(boundedTemplatePath.replace(pathVariableRegExp, '(.+)$1'))
   );
 }
