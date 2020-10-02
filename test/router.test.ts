@@ -1,6 +1,11 @@
-import { Router } from '../src';
+import './crypto_for_jest';
+import { html, Router } from '../src';
 
 describe('Test "Router"', () => {
+  beforeAll(() => {
+    document.body.innerHTML = '<p class="page"></p><a href="#u"></a>';
+  });
+
   test('"Router.current" before "Router.to" must to have empty values in "path" and "view()"', () => {
     expect(Router.current.path).toEqual('');
     expect(Router.current.view()).toEqual('');
@@ -10,8 +15,8 @@ describe('Test "Router"', () => {
     expect(Router.to('/')).resolves.not.toThrow();
   });
 
-  test('"Router.to" must use global "container" if there is not local one', () => {
-    Router.container = '.page ';
+  test('"Router.to" must use global "container" if there is no local one', () => {
+    Router.configure({ baseContainer: '.page ' });
     Router.add([
       {
         path: '/',
@@ -40,11 +45,10 @@ describe('Test "Router"', () => {
   test('"Router.to" must update "container" element with children that returns from "Route.view()"', async () => {
     await Router.to('/test');
 
-    const container = document.querySelector<HTMLDivElement>('.page');
+    const container = document.querySelector('.page');
 
     if (container) {
-      const child = container.innerText;
-      expect(child).toMatch('Test');
+      expect(container.innerHTML).toMatch('Test');
     }
   });
 
@@ -53,11 +57,63 @@ describe('Test "Router"', () => {
   });
 
   test('Navigating to any links without setting state, does not throw error', () => {
-    document.body.innerHTML = '<a href="#u"></a>';
-
     const a = document.querySelector('a');
     if (a) {
       expect(() => a.click()).not.toThrow();
+    }
+  });
+
+  test('Prefix path must be checked internally and users can navigate to path with or without prefix', async () => {
+    Router.configure({ basePrefix: '/pre' });
+    Router.add({
+      path: '/pre/fix',
+      view() {
+        return 'Prefix page';
+      },
+    });
+
+    await Router.to('/pre/fix');
+    const pageElement = document.body.querySelector('.page');
+
+    if (pageElement) {
+      expect(pageElement.innerHTML).toBe('Prefix page');
+    }
+
+    await Router.to('/');
+    await Router.to('/fix');
+
+    if (pageElement) {
+      expect(pageElement.innerHTML).toBe('Prefix page');
+    }
+  });
+
+  test('Conditional rendering', async () => {
+    let clicked = 0;
+
+    Router.add({
+      path: '/conditional',
+      view() {
+        return html`
+          <div>
+            ${Router.current.path.includes('/conditional')
+              ? html`<button class="btn" @click=${() => clicked++}>
+                  Button
+                </button>`
+              : ''}
+          </div>
+        `;
+      },
+    });
+
+    await Router.to('/conditional');
+
+    const button = document.querySelector<HTMLButtonElement>('.btn');
+    expect(button).toBeTruthy();
+
+    if (button) {
+      button.click();
+
+      expect(clicked).toBe(1);
     }
   });
 });

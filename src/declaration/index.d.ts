@@ -11,13 +11,14 @@ export class Component {
 
 /** Does routing of site. */
 export class Router {
-  static get current(): Route & RouteInfo;
-  static get container(): string | undefined;
-  static set container(value: string | undefined);
+  /** Returns info about current route. */
+  static get current(): Route;
 
+  /** Define settings for `Router`. */
+  static configure(options: Partial<RouterOptions>): void;
   /** Makes routes known for `Router`.  */
   static add(routes: Route | Array<Route>): void;
-  /** Navigates to route base on `path`. */
+  /** Navigates to route based on `path`. */
   static to(
     path: string,
     options?: {
@@ -75,19 +76,52 @@ export function registerCss(
 ): (immediately?: boolean) => void;
 
 export type Route = {
-  path: string | RegExp;
-  container?: string;
+  /**
+   * Path of the route. It will be implicitly converted to `RegExp`,
+   * so you can write valid RegExp in string.
+   * For convinience "(.+)" means _variable_ and can be
+   * writed as ":any-name:". This is **variable**.
+   * Also variables can be optional, in such case they must end with question
+   * mark - `:any-name:?`.
+   *
+   * For example: `/docs-?:section:?` equals to `new Regexp('^/docs-?(.+)?$')`.
+   *
+   * Variables will be available in _parameters_ field.
+   */
+  readonly path: string;
+  /**
+   * Selector of root element that will hold HTML of this route.
+   * If local container property is absent, then global one will
+   * be used.
+   */
+  readonly container?: string;
+  /**
+   * Holds variables that are defined inside _path_.
+   * First value of array is whole matched string.
+   * Second value (index **1**) and go on are path's variables.
+   */
+  readonly parameters?: RegExpMatchArray;
+  /** Hook is invoked before this route will render. */
   before?: () => void | Promise<void>;
+  /** Returns HTML template for this route. */
   view: () =>
     | string
     | Component
     | Promise<string>
     | Array<string | Component | Promise<string>>;
+  /** Hook is invoked after this route renders. */
   after?: () => void | Promise<void>;
 };
 
-export type RouteInfo = {
-  parameters?: RegExpMatchArray;
+type RouterOptions = {
+  /** Prefix path that will be prepended to path of all user's defined routes. */
+  basePrefix: string;
+  /**
+   * Container for elements from all routes.
+   * If all routes will have the same container,
+   * then this variable may be set and used.
+   */
+  baseContainer: string;
 };
 
 export type I18nLanguage = string | { [key: string]: I18nLanguage };

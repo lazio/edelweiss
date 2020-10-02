@@ -2,13 +2,13 @@ import Component from '../component/component';
 import { uid } from '../utils/uid';
 import { warn } from '../utils/warn';
 import { registerCustomElement } from './custom_element';
+import { just, freeze, promiseOf, isNothing } from '@fluss/core';
 import {
   eventListenerRegExp,
   customElementRegExp,
   hookAttributeRegExp,
   booleanAttributeRegExp,
 } from '../utils/regexps';
-import { just, maybeOf, promiseOf, isNothing, freeze } from '@fluss/core';
 
 /**
  * Holds all listeners that will be attached to element.
@@ -94,41 +94,36 @@ function formCurrentHTML(
     // Handle @event listener if there is any.
     const matchedElementEventListener = eventListenerRegExp.exec(current);
     if (!isNothing(matchedElementEventListener)) {
-      return maybeOf(matchedElementEventListener)
-        .map((eventListener) => {
-          if (typeof variable !== 'function' && !variable.handleEvent) {
-            throw new Error(`Event listener must be type of "function" or object with
-      "handleEvent" method, but given "${typeof variable}".`);
-          }
+      let listener = variable;
 
-          const eventId = uid();
-          eventListenersMap.set(eventId, {
-            [eventListener[1]]: variable,
-          });
+      if (typeof listener !== 'function' && isNothing(listener.handleEvent)) {
+        warn(`Event listener must be type of "function" or object with
+  "handleEvent" method, but given "${typeof listener}".`);
+        listener = () => {};
+      }
 
-          return current.replace(
-            eventListener[0],
-            `data-event-id${index}="${eventId}"`
-          );
-        })
-        .extract();
+      const eventId = uid();
+      eventListenersMap.set(eventId, {
+        [matchedElementEventListener[1]]: listener,
+      });
+
+      return current.replace(
+        matchedElementEventListener[0],
+        `data-event-id${index}="${eventId}"`
+      );
     }
 
     // Handle ?attribute
     const matchBooleanAttribute = booleanAttributeRegExp.exec(current);
     if (!isNothing(matchBooleanAttribute)) {
-      return just(matchBooleanAttribute)
-        .map((booleanAttribute) => {
-          /**
-           * It accepts all values and check if it is falsy or truthy.
-           * There are 7 falsy values in JS: [values](https://developer.mozilla.org/en-US/docs/Glossary/Falsy)
-           */
-          return current.replace(
-            booleanAttribute[0],
-            variable ? booleanAttribute[1] : ''
-          );
-        })
-        .extract();
+      /**
+       * It accepts all values and check if it is falsy or truthy.
+       * There are 7 falsy values in JS: [values](https://developer.mozilla.org/en-US/docs/Glossary/Falsy)
+       */
+      return current.replace(
+        matchBooleanAttribute[0],
+        variable ? matchBooleanAttribute[1] : ''
+      );
     }
 
     /**
@@ -157,24 +152,21 @@ function formCurrentHTML(
     // Handle custom element in html
     const matchCustomElement = customElementRegExp.exec(current);
     if (!isNothing(matchCustomElement)) {
-      return just(matchCustomElement)
-        .map((customElementMatch) => {
-          if (Element.isPrototypeOf(variable)) {
-            registerCustomElement(customElementMatch, variable);
-            return current.replace(
-              customElementRegExp,
-              // Get rid of hyphens as start or end symbol of tag name.
-              `<${customElementMatch[1]}`.replace(/^<-(.+)-$/, '<$1')
-            );
-          } else {
-            warn(
-              `You must pass a class constructor to custom element ${customElementMatch[1]}. But given ->` +
-                `"${variable}"`
-            );
-            return '';
-          }
-        })
-        .extract();
+      if (Element.isPrototypeOf(variable)) {
+        registerCustomElement(matchCustomElement, variable);
+
+        return current.replace(
+          customElementRegExp,
+          // Get rid of hyphens as start or end symbol of tag name.
+          `<${matchCustomElement[1]}`.replace(/^<-(.+)-$/, '<$1')
+        );
+      } else {
+        warn(
+          `You must pass a class constructor to custom element ${matchCustomElement[1]}. But given ->` +
+            `"${variable}"`
+        );
+        return '';
+      }
     }
 
     return current + variable;

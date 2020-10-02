@@ -22,24 +22,22 @@ export function render(
     | Array<string | Component | Promise<string>>
 ): Promise<void> {
   return querySelector(to)
-    .map((toElement) => tupleOf(toElement, cloneNode(toElement).extract()))
+    .map((toElement) => tupleOf(toElement, cloneNode(toElement)))
     .map(([toElement, clonedToElement]) => {
       return (
         normalizeHTML(nodes)
           .then((html) => {
             clonedToElement.innerHTML = edelweissPolicy.createHTML(html);
-            return clonedToElement;
           })
-          .then((element) => {
+          .then(() => {
             stylePaths.forEach(loadCSS);
             stylePathsToRemove.forEach(unloadCSS);
 
             // Clear paths of styles
             stylePaths.clear();
             stylePathsToRemove.clear();
-            return element;
           })
-          .then((element) => diff(toElement, element))
+          .then(() => diff(toElement, clonedToElement))
           .then(() => detachEventListenersList.forEach((detach) => detach()))
           // Delete old detach functions.
           .then(() => (detachEventListenersList.length = 0))
