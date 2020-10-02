@@ -38,6 +38,6 @@
   },
   "dependencies": {
     "@fluss/core": "^0.5.4",
-    "@fluss/web": "^0.5.3"
+    "@fluss/web": "^0.6.0"
   }
 }

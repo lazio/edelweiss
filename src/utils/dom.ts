@@ -141,11 +141,13 @@ export function attachEvents(element: Element) {
             Object.entries
           )
           .map(([listener]) =>
-            addEventListener<EventTarget, string>(
-              element,
-              listener[0],
-              listener[1]
-            ).map(detachEventListenersList.push.bind(detachEventListenersList))
+            detachEventListenersList.push(
+              addEventListener<EventTarget, string>(
+                element,
+                listener[0],
+                listener[1]
+              )
+            )
           );
 
         return attrName;
