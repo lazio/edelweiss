@@ -1,4 +1,4 @@
-# [1.3.0] - 2020-09-30
+# [1.3.0] - 2020-10-03
 
 ### Added
 
@@ -13,6 +13,11 @@
 ### Removed
 
 - `container` getter and setter from `Router`.
+- `rendered` hook (as it became the same as `mounted`).
+
+### Fixed
+
+- Hook's invocation flow. Now they will be called after DOM is constructed, due to fix rerendering bug.
 
 ## [1.2.3] - 2020-09-23
 

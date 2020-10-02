@@ -1,9 +1,9 @@
 import Component from '../component/component';
-import { isTextNode } from './predicates';
 import { eventListenersMap } from '../template/template';
 import { dataEventIdJSRegExp } from './regexps';
+import { mountedHook, removedHook, updatedHook } from './hooks';
+import { isCommentNode, isElementNode, isTextNode } from './predicates';
 import { maybeOf, promiseOf, arrayFrom, isNothing } from '@fluss/core';
-import { mountedHook, removedHook, renderedHook, updatedHook } from './hooks';
 import {
   removeNode,
   appendNodes,
@@ -15,8 +15,8 @@ import {
   addEventListener,
 } from '@fluss/web';
 
-export function diff(oldNode: Element, newNode: Element) {
-  if (oldNode.nodeType === newNode.nodeType) {
+export function diff(oldNode: Node, newNode: Node) {
+  if (isElementNode(oldNode) && isElementNode(newNode)) {
     if (oldNode.tagName === newNode.tagName) {
       diffAttributes(oldNode, newNode) && updatedHook(oldNode);
 
@@ -34,17 +34,8 @@ export function diff(oldNode: Element, newNode: Element) {
 
           if (!isNothing(nNode)) {
             isNothing(oNode)
-              ? (appendNodes(oldNode, nNode),
-                mountedHook(nNode),
-                renderedHook(nNode))
-              : isTextNode(nNode) && isTextNode(oNode)
-              ? // Update text node only if there is difference
-                oNode.textContent !== nNode.textContent
-                ? ((oNode.textContent = nNode.textContent),
-                  // If Text node is changed, assumes that parent Node is updated
-                  updatedHook(oldNode))
-                : null
-              : diff(oNode as Element, nNode as Element);
+              ? (appendNodes(oldNode, nNode), mountedHook(nNode))
+              : diff(oNode, nNode);
           } else if (!isNothing(oNode)) {
             removeNode(oNode);
             removedHook(oNode);
@@ -55,7 +46,6 @@ export function diff(oldNode: Element, newNode: Element) {
       } else if (oldNode.hasChildNodes()) {
         replaceNode(oldNode, newNode);
         mountedHook(newNode);
-        renderedHook(newNode);
         removedHook(oldNode);
       } else {
         // Do nothing - both nodes haven't children and difference of attributes is
@@ -64,13 +54,19 @@ export function diff(oldNode: Element, newNode: Element) {
     } else {
       replaceNode(oldNode, newNode);
       mountedHook(newNode);
-      renderedHook(newNode);
       removedHook(oldNode);
     }
+  } else if (
+    (isTextNode(oldNode) && isTextNode(newNode)) ||
+    (isCommentNode(oldNode) && isCommentNode(newNode))
+  ) {
+    oldNode.textContent !== newNode.textContent
+      ? ((oldNode.textContent = newNode.textContent),
+        maybeOf(oldNode.parentElement).map(updatedHook))
+      : null;
   } else {
-    replaceNode(oldNode, newNode);
+    replaceNode(oldNode as ChildNode, newNode);
     mountedHook(newNode);
-    renderedHook(newNode);
     removedHook(oldNode);
   }
 }

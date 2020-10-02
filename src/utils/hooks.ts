@@ -1,5 +1,5 @@
-import { isElement } from './predicates';
 import { getAttribute } from '@fluss/web';
+import { isElementNode } from './predicates';
 import { Hooks, hooksManager } from '../template/template';
 import { arrayFrom, maybeOf, promiseOf, tupleOf } from '@fluss/core';
 
@@ -7,16 +7,6 @@ import { arrayFrom, maybeOf, promiseOf, tupleOf } from '@fluss/core';
 export function mountedHook(node: Node) {
   applyHook(node, Hooks.Mounted);
   arrayFrom(node.childNodes).forEach(mountedHook);
-}
-/** If parent node is rendered, so its children are also rendered. */
-export function renderedHook(node: Node) {
-  /**
-   * This trick is used in order to render "initial" state
-   * of element and then apply rendered hook. This is the difference
-   * between mounted and rendered hook.
-   */
-  setTimeout(() => applyHook(node, Hooks.Rendered), 0);
-  arrayFrom(node.childNodes).forEach(renderedHook);
 }
 
 export function updatedHook(node: Node) {
@@ -34,13 +24,19 @@ export function removedHook(node: Node) {
  * some of them require its.
  */
 function applyHook(node: Node, type: Hooks) {
-  if (isElement(node)) {
-    getAttribute(node, `data-${type}-hook-id`)
-      .map((id) => tupleOf(id, maybeOf(hooksManager[type].get(id))))
-      .map(([id, maybeFn]) =>
-        maybeFn.map((fn) =>
-          promiseOf(fn(node)).then(() => hooksManager[type].delete(id))
-        )
-      );
-  }
+  /**
+   * This trick is used in order to render "initial" state
+   * of element and then apply hook.
+   */
+  setTimeout(() => {
+    if (isElementNode(node)) {
+      getAttribute(node, `data-${type}-hook-id`)
+        .map((id) => tupleOf(id, maybeOf(hooksManager[type].get(id))))
+        .map(([id, maybeFn]) =>
+          maybeFn.map((fn) =>
+            promiseOf(fn(node)).then(() => hooksManager[type].delete(id))
+          )
+        );
+    }
+  }, 0);
 }
