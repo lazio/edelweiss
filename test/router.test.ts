@@ -1,4 +1,5 @@
-import { Router } from '../src';
+import './crypto_for_jest';
+import { html, Router } from '../src';
 
 describe('Test "Router"', () => {
   beforeAll(() => {
@@ -62,7 +63,7 @@ describe('Test "Router"', () => {
     }
   });
 
-  test('Prefix path must be checked internally and users can navigate to path without prefix', async () => {
+  test('Prefix path must be checked internally and users can navigate to path with or without prefix', async () => {
     Router.configure({ basePrefix: '/pre' });
     Router.add({
       path: '/pre/fix',
@@ -71,11 +72,48 @@ describe('Test "Router"', () => {
       },
     });
 
-    await Router.to('/fix');
+    await Router.to('/pre/fix');
     const pageElement = document.body.querySelector('.page');
 
     if (pageElement) {
       expect(pageElement.innerHTML).toBe('Prefix page');
+    }
+
+    await Router.to('/');
+    await Router.to('/fix');
+
+    if (pageElement) {
+      expect(pageElement.innerHTML).toBe('Prefix page');
+    }
+  });
+
+  test('Conditional rendering', async () => {
+    let clicked = 0;
+
+    Router.add({
+      path: '/conditional',
+      view() {
+        return html`
+          <div>
+            ${Router.current.path.includes('/conditional')
+              ? html`<button class="btn" @click=${() => clicked++}>
+                  Button
+                </button>`
+              : ''}
+          </div>
+        `;
+      },
+    });
+
+    await Router.to('/conditional');
+
+    const button = document.querySelector<HTMLButtonElement>('.btn');
+    expect(button).toBeTruthy();
+
+    if (button) {
+      button.click();
+
+      expect(clicked).toBe(1);
     }
   });
 });
