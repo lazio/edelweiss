@@ -1,4 +1,10 @@
-# [1.3.0] - 2020-10-03
+# [1.3.1] - 2020-10-03
+
+### Fixed
+
+- Invoking hook on element that contains comment node if last one was changed.
+
+## [1.3.0] - 2020-10-03
 
 ### Added
 
