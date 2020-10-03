@@ -56,14 +56,17 @@ export function diff(oldNode: Node, newNode: Node) {
       mountedHook(newNode);
       removedHook(oldNode);
     }
-  } else if (
-    (isTextNode(oldNode) && isTextNode(newNode)) ||
-    (isCommentNode(oldNode) && isCommentNode(newNode))
-  ) {
-    oldNode.textContent !== newNode.textContent
-      ? ((oldNode.textContent = newNode.textContent),
-        maybeOf(oldNode.parentElement).map(updatedHook))
-      : null;
+  } else if (isTextNode(oldNode) && isTextNode(newNode)) {
+    oldNode.textContent !== newNode.textContent &&
+      ((oldNode.textContent = newNode.textContent),
+      maybeOf(oldNode.parentElement).map(updatedHook));
+  } else if (isCommentNode(oldNode) && isCommentNode(newNode)) {
+    /**
+     * Comment node is separated, because we do not need
+     * invoke hook on parent node if comment node is changed.
+     */
+    oldNode.textContent !== newNode.textContent &&
+      (oldNode.textContent = newNode.textContent);
   } else {
     replaceNode(oldNode as ChildNode, newNode);
     mountedHook(newNode);

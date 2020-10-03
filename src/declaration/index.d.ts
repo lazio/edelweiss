@@ -3,6 +3,10 @@
  * Can be replaced by plain function.
  */
 export class Component {
+  /**
+   * Loads css files to page before `Component` is built.
+   * Looks for files in directory that is defined by `Config.cssRootFolder`.
+   */
   styles(): string | Array<string>;
   beforeBuild(): void | Promise<void>;
   template(): string | Promise<string>;
@@ -34,12 +38,19 @@ export class I18n {
   static get currentLanguage(): string | undefined;
   static get languagesTags(): Array<string>;
 
+  /** Add language pack. */
   static add(languages: I18nLanguagesSet, initial?: string): void;
+  /** Change current language of view. */
   static setLanguage(tag: string): Promise<void>;
+  /** Returns translated text based on _path_. */
   static translate(path: string, variables?: { [key: string]: string }): string;
 }
 
 export class Config {
+  /**
+   * Path to directory where must be css files that will be loaded
+   * by `registerCss` function or by `Component.styles` method.
+   */
   static get cssRootFolder(): string;
   static set cssRootFolder(dir: string);
 }
