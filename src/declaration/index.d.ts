@@ -33,30 +33,33 @@ type HTMLElementDescriptionObject = {
     /**
      * If value of this property is `HTMLElement`, then
      * _extends.tagName_ must be `undefined`, otherwise
-     * it must be presented.
+     * it must be presented. Default value is `HTMLElement`.
      */
     constructor: CustomElementConstructor;
-    /**
-     * Provide it if _extends.constructor_ is not `HMTLElement`.
-     */
+    /** Provide it if _extends.constructor_ is not `HMTLElement`. */
     tagName?: string;
   };
 };
 
 /**
  * Defines custom element.
- * @param tagName name of the custom tag. Must contain dash symbol.
- * @param template creates inner HTML of custom element.
- * Accept created custom element as parameter.
- * @param componentOptionsOrClass is either tuple of custom element class
- * or object that describes behavior of custom element.
  *
  * More info about custom elements and their lifecycle
  * [at MDN](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements).
  */
 export function defineWebComponent(
+  /** Name of the custom tag. Must contain dash symbol. */
   tagName: string,
+  /**
+   * Creates inner HTML of custom element.
+   * Accept created custom element as parameter.
+   */
   template: (rootElement: HTMLElement) => string | Promise<string>,
+  /**
+   * Is either tuple of custom element class
+   * or object that describes behavior of custom element.
+   * Default value is `[HTMLElement]`.
+   */
   componentOptionsOrClass?:
     | HTMLElementDescriptionObject
     | [constructor: CustomElementConstructor, tagName?: string]
