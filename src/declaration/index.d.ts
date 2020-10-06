@@ -1,3 +1,64 @@
+type HTMLElementDescriptionObject = {
+  /** Defines attributes which must be watched. */
+  observedAttributes?: Array<string>;
+  hooks?: {
+    /**
+     * Invoked each time the custom element is appended into a
+     * document-connected element. This will happen each time
+     * the node is moved, and may happen before the element's
+     * contents have been fully parsed.
+     */
+    connected?: (rootElement: HTMLElement) => void;
+    /**
+     * Invoked each time the custom element is disconnected from the document's DOM.
+     */
+    disconnected?: (rootElement: HTMLElement) => void;
+    /**
+     * Invoked each time the custom element is moved to a new document.
+     */
+    adopted?: (rootElement: HTMLElement) => void;
+    /**
+     * Invoked each time one of the custom element's attributes
+     * is added, removed, or changed. Which attributes to notice
+     * change for is specified in a _observedAttributes_ property.
+     */
+    attributeChanged?: (
+      rootElement: HTMLElement,
+      name: string,
+      oldValue: string,
+      newValue: string
+    ) => void;
+  };
+  extends?: {
+    /**
+     * If value of this property is `HTMLElement`, then
+     * _extends.tagName_ must be `undefined`, otherwise
+     * it must be presented.
+     */
+    constructor: CustomElementConstructor;
+    /**
+     * Provide it if _extends.constructor_ is not `HMTLElement`.
+     */
+    tagName?: string;
+  };
+};
+
+/**
+ * Defines custom element.
+ * @param tagName name of the custom tag. Must contain dash symbol.
+ * @param template creates inner HTML of custom element.
+ * Accept created custom element as parameter.
+ * @param componentOptionsOrClass is either tuple of custom element class
+ * or object that describes behavior of custom element.
+ */
+export function defineWebComponent(
+  tagName: string,
+  template: (rootElement: HTMLElement) => string | Promise<string>,
+  componentOptionsOrClass?:
+    | HTMLElementDescriptionObject
+    | [constructor: CustomElementConstructor, tagName?: string]
+): void;
+
 /**
  * Class that must be used to describe components of the page or page itself.
  * Can be replaced by plain function.
@@ -75,10 +136,10 @@ export function html(
 
 /**
  * Lazingly load CSS to page.
- * @param {string | Array<string>} css - name of css files that need to be
+ * @param css - name of css files that need to be
  * lazy loaded.
- * @returns {(immediately?: boolean) => void} function that unload registered css
- * (removes from the page). If [immediately] is `true`, then css will be removed
+ * @returns function that unload registered css
+ * (removes from the page). If _immediately_ is `true`, then css will be removed
  * in time of function's invoking, otherwise css will be removed on next
  * rendering step (`Router.to`, `Router.reload` etc).
  */
