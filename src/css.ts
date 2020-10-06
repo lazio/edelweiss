@@ -13,10 +13,10 @@ export const stylePathsToRemove = new Set<string>();
 
 /**
  * Lazingly load CSS to page.
- * @param {string | Array<string>} css - name of css files that need to be
+ * @param css - name of css files that need to be
  * lazy loaded.
- * @returns {(immediately?: boolean) => void} function that unload registered css
- * (removes from the page). If [immediately] is `true`, then css will be removed
+ * @returns function that unload registered css
+ * (removes from the page). If _immediately_ is `true`, then css will be removed
  * in time of function's invoking, otherwise css will be removed on next
  * rendering step (`Router.to`, `Router.reload` etc).
  */

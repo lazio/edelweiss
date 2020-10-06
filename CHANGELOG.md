@@ -2,7 +2,7 @@
 
 ### Changed
 
-- Web components now must be registered by `defineWebComponent` function. Defining custom elements in template no longer supported.
+- Web components now must be registered by `defineWebComponent` function. Defining custom elements in template is no longer supported.
 
 ## [1.3.1] - 2020-10-03
 

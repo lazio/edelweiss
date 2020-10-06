@@ -50,6 +50,9 @@ type HTMLElementDescriptionObject = {
  * Accept created custom element as parameter.
  * @param componentOptionsOrClass is either tuple of custom element class
  * or object that describes behavior of custom element.
+ *
+ * More info about custom elements and their lifecycle
+ * [at MDN](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements).
  */
 export function defineWebComponent(
   tagName: string,
