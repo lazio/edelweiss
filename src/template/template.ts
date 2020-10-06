@@ -1,11 +1,9 @@
 import Component from '../component/component';
 import { uid } from '../utils/uid';
 import { warn } from '../utils/warn';
-import { registerCustomElement } from './custom_element';
 import { just, freeze, promiseOf, isNothing } from '@fluss/core';
 import {
   eventListenerRegExp,
-  customElementRegExp,
   hookAttributeRegExp,
   booleanAttributeRegExp,
 } from '../utils/regexps';
@@ -24,7 +22,6 @@ export const eventListenersMap = new Map<
 /** Hooks are defined in order they have been executed in element's lifecycle. */
 export enum Hooks {
   Mounted = 'mounted',
-  Rendered = 'rendered',
   Updated = 'updated',
   Removed = 'removed',
 }
@@ -34,7 +31,6 @@ type HookCallback = (self: Element) => void | Promise<void>;
 /** Holds callbacks for every element's hooks. */
 export const hooksManager = freeze({
   [Hooks.Mounted]: new Map<string, HookCallback>(),
-  [Hooks.Rendered]: new Map<string, HookCallback>(),
   [Hooks.Updated]: new Map<string, HookCallback>(),
   [Hooks.Removed]: new Map<string, HookCallback>(),
 });
@@ -126,12 +122,7 @@ function formCurrentHTML(
       );
     }
 
-    /**
-     * Handle hook attribute.
-     * It is placed before customElement RegExp matcher,
-     * because it has similar pattern. And Hook RegExp is
-     * more concrete.
-     */
+    /** Handle hook attribute. */
     const matchHookAttribute = hookAttributeRegExp.exec(current);
     if (!isNothing(matchHookAttribute)) {
       const dataHookId = uid();
@@ -147,26 +138,6 @@ function formCurrentHTML(
         hookAttributeRegExp,
         `data-${hookName}-hook-id="${dataHookId}"`
       );
-    }
-
-    // Handle custom element in html
-    const matchCustomElement = customElementRegExp.exec(current);
-    if (!isNothing(matchCustomElement)) {
-      if (Element.isPrototypeOf(variable)) {
-        registerCustomElement(matchCustomElement, variable);
-
-        return current.replace(
-          customElementRegExp,
-          // Get rid of hyphens as start or end symbol of tag name.
-          `<${matchCustomElement[1]}`.replace(/^<-(.+)-$/, '<$1')
-        );
-      } else {
-        warn(
-          `You must pass a class constructor to custom element ${matchCustomElement[1]}. But given ->` +
-            `"${variable}"`
-        );
-        return '';
-      }
     }
 
     return current + variable;

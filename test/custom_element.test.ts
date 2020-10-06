@@ -1,29 +1,41 @@
-import { html } from '../src';
+import { defineWebComponent, html } from '../src';
 
-describe('Test custom element creation', () => {
-  test('Defining custom element', async () => {
-    class MyP extends HTMLParagraphElement {}
+describe('Custom elements', () => {
+  test('Defining default autonomous custom element', () => {
+    defineWebComponent('my-def-com', (rootElement) => html`<p>Hello</p>`);
 
-    await html`<my-p:p=${MyP}>Hello</my-p>`;
-    const myP = customElements.get('my-p');
-    expect(myP).toEqual(MyP.prototype.constructor);
+    expect(customElements.get('my-def-com')).toBeTruthy();
   });
 
-  test('Creating custom element', async () => {
-    const text = await html`<my-p>Test</my-p>`;
-    expect(text).toMatch('<my-p>Test</my-p>');
+  test('Defining autonomous custom element with object description', () => {
+    defineWebComponent('my-desc-com', (rootElement) => html`<p>Hello</p>`, {
+      hooks: {
+        connected() {
+          console.log('connected');
+        },
+      },
+    });
+
+    expect(customElements.get('my-desc-com')).toBeTruthy();
   });
 
-  test('Registering custom element do not throw an error if "extend" parameter is not defined', () => {
-    expect(
-      html`<u-u =${class extends HTMLElement {}}></u-u>`
-    ).resolves.not.toThrow();
+  test('Defining customized default custom element', () => {
+    defineWebComponent('my-p-com', (rootElement) => html`<p>Hello</p>`, [
+      HTMLParagraphElement,
+      'p',
+    ]);
+
+    expect(customElements.get('my-p-com')).toBeTruthy();
   });
 
-  test('Defining custom element from template', async () => {
-    class MyE extends HTMLElement {}
+  test('Defining customized custom element with object description', () => {
+    defineWebComponent('my-div-com', (rootElement) => html`<p>Hello</p>`, {
+      extends: {
+        constructor: HTMLDivElement,
+        tagName: 'div',
+      },
+    });
 
-    const text = await html`<long-list:p=${MyE}></long-list>`;
-    expect(text).toMatch('<long-list></long-list>');
+    expect(customElements.get('my-div-com')).toBeTruthy();
   });
 });
