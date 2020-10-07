@@ -21,10 +21,7 @@ describe('Custom elements', () => {
   });
 
   test('Defining customized default custom element', () => {
-    defineWebComponent('my-p-com', (rootElement) => html`<p>Hello</p>`, [
-      HTMLParagraphElement,
-      'p',
-    ]);
+    defineWebComponent('my-p-com', [HTMLParagraphElement, 'p']);
 
     expect(customElements.get('my-p-com')).toBeTruthy();
   });
@@ -41,13 +38,14 @@ describe('Custom elements', () => {
   });
 
   test('Defining custom element with template as html element', () => {
-    const element = createElement('template').chain((e) =>
-      createElement('span').map((s) => {
-        appendNodes(e, s);
-        return e;
-      })
+    defineWebComponent(
+      'my-template-com',
+      (rootElement) => html`
+        <template>
+          <span>Hello</span>
+        </template>
+      `
     );
-    defineWebComponent('my-template-com', (rootElement) => element.extract());
 
     expect(customElements.get('my-template-com')).toBeTruthy();
   });

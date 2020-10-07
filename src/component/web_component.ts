@@ -1,6 +1,5 @@
-import { edelweissPolicy } from '../utils/trusted_types';
-import { appendNodes, cloneNode } from '@fluss/web';
-import { alternation, isNothing, promiseOf } from '@fluss/core';
+import { isNothing, promiseOf, alternation } from '@fluss/core';
+import { appendNodes, querySelector, createElement } from '@fluss/web';
 
 type HTMLElementDescriptionObject = {
   observedAttributes?: Array<string>;
@@ -21,22 +20,17 @@ type HTMLElementDescriptionObject = {
   };
 };
 
-/**
- * Defines custom element.
- * @param tagName name of the custom tag. Must contain dash symbol.
- * @param template creates inner HTML of custom element.
- * Accept created custom element as parameter.
- * @param componentOptionsOrClass is either tuple of custom element class
- * or object that describes behavior of custom element.
- */
+type TemplateFunction = (
+  rootElement: HTMLElement
+) => string | Promise<string> | HTMLTemplateElement;
+
+/** Defines custom element. */
 export function defineWebComponent(
   tagName: string,
-  template: (
-    rootElement: HTMLElement
-  ) => string | Promise<string> | HTMLElement,
-  componentOptionsOrClass:
-    | HTMLElementDescriptionObject
-    | [constructor: CustomElementConstructor, tagName?: string] = [HTMLElement]
+  templateOrClass:
+    | [constructor: CustomElementConstructor, tagName?: string]
+    | TemplateFunction,
+  componentOptions: HTMLElementDescriptionObject = {}
 ): void {
   let componentClass: CustomElementConstructor;
   let extendsElementOptions: {
@@ -44,15 +38,15 @@ export function defineWebComponent(
     tagName?: string;
   } = { constructor: HTMLElement, tagName: undefined };
 
-  if (Array.isArray(componentOptionsOrClass)) {
-    componentClass = class extends componentOptionsOrClass[0] {};
-    extendsElementOptions.tagName = componentOptionsOrClass[1];
+  if (Array.isArray(templateOrClass)) {
+    componentClass = class extends templateOrClass[0] {};
+    extendsElementOptions.tagName = templateOrClass[1];
   } else {
     const {
       observedAttributes = [],
       hooks = {},
       extends: extendsClause,
-    } = componentOptionsOrClass;
+    } = componentOptions;
 
     if (!isNothing(extendsClause)) {
       extendsElementOptions = extendsClause;
@@ -66,14 +60,17 @@ export function defineWebComponent(
       constructor() {
         super();
 
-        promiseOf(template(this)).then((html) => {
+        promiseOf((templateOrClass as TemplateFunction)(this)).then((html) => {
           const shadow = this.attachShadow({
             mode: 'open',
           });
 
-          html instanceof HTMLElement
-            ? appendNodes(shadow, cloneNode(html, true))
-            : (shadow.innerHTML = edelweissPolicy.createHTML(html));
+          const clonedHTML = document.importNode(
+            prepareHTML(html).content,
+            true
+          );
+
+          appendNodes(shadow, clonedHTML);
         });
       }
 
@@ -115,4 +112,25 @@ export function defineWebComponent(
       });
     }
   )();
+}
+
+function prepareHTML(html: string | HTMLElement): HTMLTemplateElement {
+  const wrapperElement = createElement('div')
+    .map((div) => {
+      typeof html === 'string'
+        ? (div.innerHTML = html)
+        : appendNodes(div, html);
+      return div;
+    })
+    .extract();
+
+  return (
+    querySelector<HTMLTemplateElement>('template', wrapperElement).extract() ||
+    /**
+     * Template element must be directly defined in HTML.
+     * Content can't be added to it in JS.
+     * So function returns empty element as fallback.
+     */
+    createElement('template').extract()
+  );
 }

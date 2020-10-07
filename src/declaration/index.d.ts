@@ -51,23 +51,22 @@ export function defineWebComponent(
   /** Name of the custom tag. Must contain dash symbol. */
   tagName: string,
   /**
-   * Creates inner HTML of custom element.
-   * Accept created custom element as parameter.
+   * If function is passed as parameter, it creates inner HTML of custom element.
+   * Function accept created custom element as parameter.
    * 
-   * If function returns HTML element, its **deep copy** is appended
-   * to shadow root of custom element.
+   * **Function must return `HTMLTemplateElement` or HTML string with
+   * `<template>` as root element**.
+   *
+   * If tuple with class is passed as parameter, it is used as constructor for
+   * custom element. In such case third parameter will be ignored.
    */
-  template: (
-    rootElement: HTMLElement
-  ) => string | Promise<string> | HTMLElement,
-  /**
-   * Is either tuple of custom element class
-   * or object that describes behavior of custom element.
-   * Default value is `[HTMLElement]`.
-   */
-  componentOptionsOrClass?:
-    | HTMLElementDescriptionObject
-    | [constructor: CustomElementConstructor, tagName?: string]
+  templateOrClass:
+    | ((
+        rootElement: HTMLElement
+      ) => string | Promise<string> | HTMLTemplateElement)
+    | [constructor: CustomElementConstructor, tagName?: string],
+  /** It is object that describes behavior of custom element. */
+  componentOptions?: HTMLElementDescriptionObject
 ): void;
 
 /**
