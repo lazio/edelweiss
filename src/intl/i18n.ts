@@ -60,30 +60,32 @@ export default class I18n {
     path: string,
     variables: { [key: string]: string } = {}
   ): string {
-    return maybeOf(_currentLanguage)
-      .map((lang) => _languages[lang])
-      .chain((translationObjectOrText) =>
-        // Getting text from translation object.
-        pathOf<string>(path, translationObjectOrText)
-      )
-      .map((translatedText) => {
-        if (typeof translatedText !== 'string') {
-          warn(`Path "${path}" does not match any translation!
+    return (
+      maybeOf(_currentLanguage)
+        .map((lang) => _languages[lang])
+        .chain((translationObjectOrText) =>
+          // Getting text from translation object.
+          pathOf<string>(path, translationObjectOrText)
+        )
+        .map((translatedText) => {
+          if (typeof translatedText !== 'string') {
+            warn(`Path "${path}" does not match any translation!
           Check "path" - it must point to plain text in object hierarchy.`);
-          return '';
-        }
+            return '';
+          }
 
-        return translatedText;
-      })
-      .map((text) => {
-        // Replacing variables in translated text.
-        return Object.entries(variables).reduce(
-          (maybeText, nameAndValue) =>
-            insertVariables(maybeText, ...nameAndValue),
-          text
-        );
-      })
-      .extract();
+          return translatedText;
+        })
+        .map((text) => {
+          // Replacing variables in translated text.
+          return Object.entries(variables).reduce(
+            (maybeText, nameAndValue) =>
+              insertVariables(maybeText, ...nameAndValue),
+            text
+          );
+        })
+        .extract() || ''
+    );
   }
 }
 
