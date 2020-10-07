@@ -1,4 +1,5 @@
 import { defineWebComponent, html } from '../src';
+import { appendNodes, createElement } from '@fluss/web';
 
 describe('Custom elements', () => {
   test('Defining default autonomous custom element', () => {
@@ -37,5 +38,17 @@ describe('Custom elements', () => {
     });
 
     expect(customElements.get('my-div-com')).toBeTruthy();
+  });
+
+  test('Defining custom element with template as html element', () => {
+    const element = createElement('template').chain((e) =>
+      createElement('span').map((s) => {
+        appendNodes(e, s);
+        return e;
+      })
+    );
+    defineWebComponent('my-template-com', (rootElement) => element.extract());
+
+    expect(customElements.get('my-template-com')).toBeTruthy();
   });
 });

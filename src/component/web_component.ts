@@ -1,4 +1,5 @@
 import { edelweissPolicy } from '../utils/trusted_types';
+import { appendNodes, cloneNode } from '@fluss/web';
 import { alternation, isNothing, promiseOf } from '@fluss/core';
 
 type HTMLElementDescriptionObject = {
@@ -30,7 +31,9 @@ type HTMLElementDescriptionObject = {
  */
 export function defineWebComponent(
   tagName: string,
-  template: (rootElement: HTMLElement) => string | Promise<string>,
+  template: (
+    rootElement: HTMLElement
+  ) => string | Promise<string> | HTMLElement,
   componentOptionsOrClass:
     | HTMLElementDescriptionObject
     | [constructor: CustomElementConstructor, tagName?: string] = [HTMLElement]
@@ -64,9 +67,13 @@ export function defineWebComponent(
         super();
 
         promiseOf(template(this)).then((html) => {
-          this.attachShadow({
+          const shadow = this.attachShadow({
             mode: 'open',
-          }).innerHTML = edelweissPolicy.createHTML(html);
+          });
+
+          html instanceof HTMLElement
+            ? appendNodes(shadow, cloneNode(html, true))
+            : (shadow.innerHTML = edelweissPolicy.createHTML(html));
         });
       }
 

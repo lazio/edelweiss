@@ -1,4 +1,10 @@
-# [1.4.0] - 2020-10-07
+# Unreleased
+
+### Added
+
+- `defineWebComponent`'s _template_ parameter can now return `HTMLElement`.
+
+## [1.4.0] - 2020-10-07
 
 ### Changed
 

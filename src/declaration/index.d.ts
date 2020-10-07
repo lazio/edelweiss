@@ -53,8 +53,13 @@ export function defineWebComponent(
   /**
    * Creates inner HTML of custom element.
    * Accept created custom element as parameter.
+   * 
+   * If function returns HTML element, its **deep copy** is appended
+   * to shadow root of custom element.
    */
-  template: (rootElement: HTMLElement) => string | Promise<string>,
+  template: (
+    rootElement: HTMLElement
+  ) => string | Promise<string> | HTMLElement,
   /**
    * Is either tuple of custom element class
    * or object that describes behavior of custom element.
