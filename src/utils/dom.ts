@@ -134,24 +134,22 @@ export function attachEvents(element: Element, rememberDetach = true) {
     Object.entries(element.dataset)
       .filter(([attrName, _]) => dataEventIdJSRegExp.test(attrName))
       .map(([attrName, eventId]) => {
-        maybeOf(eventId)
-          .map((id) => {
-            maybeOf(eventListenersMap.get(id))
-              .map<ReadonlyArray<[string, EventListenerOrEventListenerObject]>>(
-                Object.entries
-              )
-              .map(([listener]) => {
-                const detachFn = addEventListener<EventTarget, string>(
-                  element,
-                  listener[0],
-                  listener[1]
-                );
+        maybeOf(eventId).map((id) => {
+          maybeOf(eventListenersMap.get(id))
+            .map<ReadonlyArray<[string, EventListenerOrEventListenerObject]>>(
+              Object.entries
+            )
+            .map(([listener]) => {
+              const detachFn = addEventListener<EventTarget, string>(
+                element,
+                listener[0],
+                listener[1]
+              );
 
-                rememberDetach && detachEventListenersList.push(detachFn);
-              });
-            return id;
-          })
-          .map((eventId) => eventListenersMap.delete(eventId));
+              return rememberDetach && detachEventListenersList.push(detachFn);
+            })
+            .map(() => eventListenersMap.delete(id));
+        });
 
         return attrName;
       })
