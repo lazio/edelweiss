@@ -1,6 +1,5 @@
 import Component from './component/component';
 import { edelweissPolicy } from './utils/trusted_types';
-import { eventListenersMap } from './template/template';
 import { loadCSS, unloadCSS } from './utils/styles';
 import { querySelector, cloneNode } from '@fluss/web';
 import { stylePaths, stylePathsToRemove } from './css';
@@ -42,8 +41,11 @@ export function render(
             .then(() => detachEventListenersList.forEach((detach) => detach()))
             // Delete old detach functions.
             .then(() => (detachEventListenersList.length = 0))
-            .then(() => arrayFrom(toElement.children).forEach(attachEvents))
-            .then(() => eventListenersMap.clear())
+            .then(() =>
+              arrayFrom(toElement.children).forEach((element) =>
+                attachEvents(element, true)
+              )
+            )
         );
       })
       .extract() || promiseOf(undefined)

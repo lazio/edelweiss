@@ -1,115 +1,48 @@
-import { isNothing, promiseOf, alternation } from '@fluss/core';
+import { attachEvents } from '../utils/dom';
+import { promiseOf, alternation, arrayFrom } from '@fluss/core';
 import { appendNodes, querySelector, createElement } from '@fluss/web';
 
-type HTMLElementDescriptionObject = {
-  observedAttributes?: Array<string>;
-  hooks?: {
-    connected?: (rootElement: HTMLElement) => void;
-    disconnected?: (rootElement: HTMLElement) => void;
-    adopted?: (rootElement: HTMLElement) => void;
-    attributeChanged?: (
-      rootElement: HTMLElement,
-      name: string,
-      oldValue: string,
-      newValue: string
-    ) => void;
-  };
-  extends?: {
-    constructor: CustomElementConstructor;
-    tagName?: string;
-  };
-};
+export default class WebComponent extends HTMLElement {
+  constructor() {
+    super();
+  }
 
-type TemplateFunction = (
-  rootElement: HTMLElement
-) => string | Promise<string> | HTMLTemplateElement;
+  // Rendering in connectedCallback, not in constructor,
+  // because the browser did not yet process/assign attributes at constructor stage.
+  connectedCallback() {
+    const shadow = this.attachShadow({
+      mode: 'open',
+    });
+
+    promiseOf(this.template()).then((html) => {
+      const clonedHTML = document.importNode(prepareHTML(html).content, true);
+
+      /**
+       * Custom element in Shadow DOM don't differs as usual DOM nodes,
+       * so we don't need to detach event listeners.
+       */
+      arrayFrom(clonedHTML.children).forEach((element) =>
+        attachEvents(element, false)
+      );
+
+      appendNodes(shadow, clonedHTML);
+    });
+  }
+
+  template(): string | Promise<string> | HTMLTemplateElement {
+    return '';
+  }
+}
 
 /** Defines custom element. */
 export function defineWebComponent(
   tagName: string,
-  templateOrClass:
-    | [constructor: CustomElementConstructor, tagName?: string]
-    | TemplateFunction,
-  componentOptions: HTMLElementDescriptionObject = {}
+  elementClass: { new (): WebComponent; prototype: WebComponent }
 ): void {
-  let componentClass: CustomElementConstructor;
-  let extendsElementOptions: {
-    constructor: CustomElementConstructor;
-    tagName?: string;
-  } = { constructor: HTMLElement, tagName: undefined };
-
-  if (Array.isArray(templateOrClass)) {
-    componentClass = class extends templateOrClass[0] {};
-    extendsElementOptions.tagName = templateOrClass[1];
-  } else {
-    const {
-      observedAttributes = [],
-      hooks = {},
-      extends: extendsClause,
-    } = componentOptions;
-
-    if (!isNothing(extendsClause)) {
-      extendsElementOptions = extendsClause;
-    }
-
-    componentClass = class extends extendsElementOptions.constructor {
-      static get observedAttributes(): Array<string> {
-        return observedAttributes;
-      }
-
-      constructor() {
-        super();
-
-        promiseOf((templateOrClass as TemplateFunction)(this)).then((html) => {
-          const shadow = this.attachShadow({
-            mode: 'open',
-          });
-
-          const clonedHTML = document.importNode(
-            prepareHTML(html).content,
-            true
-          );
-
-          appendNodes(shadow, clonedHTML);
-        });
-      }
-
-      connectedCallback() {
-        if (!isNothing(hooks.connected)) {
-          hooks.connected(this);
-        }
-      }
-
-      disconnectedCallback() {
-        if (!isNothing(hooks.disconnected)) {
-          hooks.disconnected(this);
-        }
-      }
-
-      adoptedCallback() {
-        if (!isNothing(hooks.adopted)) {
-          hooks.adopted(this);
-        }
-      }
-
-      attributeChangedCallback(
-        name: string,
-        oldValue: string,
-        newValue: string
-      ) {
-        if (!isNothing(hooks.attributeChanged)) {
-          hooks.attributeChanged(this, name, oldValue, newValue);
-        }
-      }
-    };
-  }
-
   alternation(
     () => customElements.get(tagName),
     () => {
-      customElements.define(tagName, componentClass, {
-        extends: extendsElementOptions.tagName,
-      });
+      customElements.define(tagName, elementClass);
     }
   )();
 }

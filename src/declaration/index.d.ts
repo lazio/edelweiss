@@ -1,72 +1,59 @@
-type HTMLElementDescriptionObject = {
-  /** Defines attributes which must be watched. */
-  observedAttributes?: Array<string>;
-  hooks?: {
-    /**
-     * Invoked each time the custom element is appended into a
-     * document-connected element. This will happen each time
-     * the node is moved, and may happen before the element's
-     * contents have been fully parsed.
-     */
-    connected?: (rootElement: HTMLElement) => void;
-    /**
-     * Invoked each time the custom element is disconnected from the document's DOM.
-     */
-    disconnected?: (rootElement: HTMLElement) => void;
-    /**
-     * Invoked each time the custom element is moved to a new document.
-     */
-    adopted?: (rootElement: HTMLElement) => void;
-    /**
-     * Invoked each time one of the custom element's attributes
-     * is added, removed, or changed. Which attributes to notice
-     * change for is specified in a _observedAttributes_ property.
-     */
-    attributeChanged?: (
-      rootElement: HTMLElement,
-      name: string,
-      oldValue: string,
-      newValue: string
-    ) => void;
-  };
-  extends?: {
-    /**
-     * If value of this property is `HTMLElement`, then
-     * _extends.tagName_ must be `undefined`, otherwise
-     * it must be presented. Default value is `HTMLElement`.
-     */
-    constructor: CustomElementConstructor;
-    /** Provide it if _extends.constructor_ is not `HMTLElement`. */
-    tagName?: string;
-  };
-};
+/**
+ * Parent class for all custom elements.
+ * The main method is `template` that must return `HTMLTemplateElement`
+ * or HTML string with `<template> as root element.`
+ *
+ * Other properties and custom element's callbacks you can define as
+ * usual.
+ */
+export class WebComponent extends HTMLElement {
+  /* Returns array of attribute names to monitor for changes. */
+  static get observedAttributes(): ReadonlyArray<string>;
+
+  /**
+   * Called when the element is moved to a new document
+   * (happens in `document.adoptNode`, very rarely used).
+   */
+  adoptedCallback(): void;
+  /**
+   * Browser calls this method when the element is added to the document
+   * (can be called many times if an element is repeatedly added/removed).
+   *
+   * When overriding this method always call **super.connectedCallback()** at start.
+   */
+  connectedCallback(): void;
+  /**
+   * Browser calls this method when the element is removed from the document
+   * (can be called many times if an element is repeatedly added/removed).
+   */
+  disconnectedCallback(): void;
+  /**
+   * Called when one of attributes returned by `observedAttributes` is modified.
+   */
+  attributeChangedCallback(
+    name: string,
+    oldValue: string,
+    newValue: string
+  ): void;
+
+  /** Defines inner DOM of custom element. */
+  template(): string | Promise<string> | HTMLTemplateElement;
+}
 
 /**
- * Defines custom element.
+ * Defines autonomous custom elements.
  *
- * More info about custom elements and their lifecycle
+ * More info about them and their lifecycles
  * [at MDN](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements).
  */
 export function defineWebComponent(
   /** Name of the custom tag. Must contain dash symbol. */
   tagName: string,
   /**
-   * If function is passed as parameter, it creates inner HTML of custom element.
-   * Function accept created custom element as parameter.
-   * 
-   * **Function must return `HTMLTemplateElement` or HTML string with
-   * `<template>` as root element**.
-   *
-   * If tuple with class is passed as parameter, it is used as constructor for
-   * custom element. In such case third parameter will be ignored.
+   * Class that describe custom element. You must override `template`
+   * method.
    */
-  templateOrClass:
-    | ((
-        rootElement: HTMLElement
-      ) => string | Promise<string> | HTMLTemplateElement)
-    | [constructor: CustomElementConstructor, tagName?: string],
-  /** It is object that describes behavior of custom element. */
-  componentOptions?: HTMLElementDescriptionObject
+  elementClass: { new (): WebComponent; prototype: WebComponent }
 ): void;
 
 /**

@@ -2,7 +2,12 @@
 
 ### Added
 
-- `defineWebComponent`'s _template_ parameter can now return `HTMLElement`.
+- `WebComponent` for creating custom components.
+
+### Changed
+
+- `defineWebComponent` has only two parameters: custom element's name and class (`WebComponent`) that describe its behavior.
+- `attachEvents` removes unneded listeners by itself now and selectively saves _detach_ functions.
 
 ## [1.4.0] - 2020-10-07
 

@@ -129,25 +129,29 @@ export async function normalizeHTML(
 /** Holds all detach functions of every element's event listeners. */
 export const detachEventListenersList: Array<() => void> = [];
 
-export function attachEvents(element: Element) {
+export function attachEvents(element: Element, rememberDetach = true) {
   if (element instanceof HTMLElement) {
     Object.entries(element.dataset)
       .filter(([attrName, _]) => dataEventIdJSRegExp.test(attrName))
       .map(([attrName, eventId]) => {
         maybeOf(eventId)
-          .map((id) => eventListenersMap.get(id))
-          .map<Array<[string, EventListenerOrEventListenerObject]>>(
-            Object.entries
-          )
-          .map(([listener]) =>
-            detachEventListenersList.push(
-              addEventListener<EventTarget, string>(
-                element,
-                listener[0],
-                listener[1]
+          .map((id) => {
+            maybeOf(eventListenersMap.get(id))
+              .map<ReadonlyArray<[string, EventListenerOrEventListenerObject]>>(
+                Object.entries
               )
-            )
-          );
+              .map(([listener]) => {
+                const detachFn = addEventListener<EventTarget, string>(
+                  element,
+                  listener[0],
+                  listener[1]
+                );
+
+                rememberDetach && detachEventListenersList.push(detachFn);
+              });
+            return id;
+          })
+          .map((eventId) => eventListenersMap.delete(eventId));
 
         return attrName;
       })
@@ -161,7 +165,9 @@ export function attachEvents(element: Element) {
       );
 
     if (element.childElementCount > 0) {
-      arrayFrom(element.children).forEach(attachEvents);
+      arrayFrom(element.children).forEach((element) =>
+        attachEvents(element, rememberDetach)
+      );
     }
   }
 }
