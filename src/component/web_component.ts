@@ -58,7 +58,7 @@ function prepareHTML(html: string | HTMLElement): HTMLTemplateElement {
     .extract();
 
   return (
-    querySelector<HTMLTemplateElement>('template', wrapperElement).extract() ||
+    querySelector('template', wrapperElement).extract() ||
     /**
      * Template element must be directly defined in HTML.
      * Content can't be added to it in JS.

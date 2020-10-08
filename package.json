@@ -26,7 +26,6 @@
   "author": "Kapelianovych Yevhen",
   "license": "MIT",
   "devDependencies": {
-    "@rollup/plugin-node-resolve": "^9.0.0",
     "@rollup/plugin-typescript": "^6.0.0",
     "@types/jest": "^26.0.14",
     "jest": "^26.5.2",
@@ -38,6 +37,6 @@
   },
   "dependencies": {
     "@fluss/core": "^0.7.0",
-    "@fluss/web": "^0.6.1"
+    "@fluss/web": "^0.6.2"
   }
 }
