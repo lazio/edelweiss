@@ -15,9 +15,25 @@ import {
   addEventListener,
 } from '@fluss/web';
 
+const IGNORED_ATTRIBUTE_NAME = 'data-ignored';
+
 export function diff(oldNode: Node, newNode: Node) {
   if (isElementNode(oldNode) && isElementNode(newNode)) {
     if (oldNode.tagName === newNode.tagName) {
+      /**
+       * If element has boolean `data-ignore` attribute, then
+       * this element and his descendants will not be checked
+       * for difference. It is useful for elements, which has
+       * dynamic content or is changed by programmer, not through
+       * template differing (by example JS animation).
+       */
+      if (
+        hasAttribute(oldNode, IGNORED_ATTRIBUTE_NAME) &&
+        hasAttribute(newNode, IGNORED_ATTRIBUTE_NAME)
+      ) {
+        return;
+      }
+
       diffAttributes(oldNode, newNode) && updatedHook(oldNode);
 
       if (newNode.hasChildNodes()) {

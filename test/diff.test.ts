@@ -1,3 +1,4 @@
+import { appendNodes, querySelector } from '@fluss/web';
 import { html, Router, createState } from '../src';
 
 type PageCase = 'both' | 'element' | 'text';
@@ -31,6 +32,18 @@ describe('Diff DOM', () => {
         container: '#app',
         view() {
           return page('element');
+        },
+      },
+      {
+        path: '/ignored',
+        container: '#app',
+        view() {
+          return html`
+            <div>
+              <p class="ign" data-ignored>Ignored</p>
+              <p>Not ignored</p>
+            </div>
+          `;
         },
       },
       {
@@ -85,5 +98,20 @@ describe('Diff DOM', () => {
       expect(app.innerHTML).toContain('<p>1</p>');
       expect(app.innerHTML).toContain('Clicks - 1');
     }
+  });
+
+  test('Element is not changed if it has data-ignored attributes', async () => {
+    await Router.to('/ignored');
+    
+    querySelector('.ign').map((element) =>
+      expect(element.childElementCount).toBe(0)
+    );
+
+    appendNodes(querySelector('div .ign'), document.createElement('span'));
+    await Router.reload();
+
+    querySelector('.ign').map((element) =>
+      expect(element.childElementCount).toBe(1)
+    );
   });
 });
