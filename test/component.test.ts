@@ -15,7 +15,7 @@ describe('Test "Component"', () => {
   
   test('Component.beforeBuild() invokes before template is builded', () => {
     class TestComponent extends Component {
-      declare name: string;
+      name: string;
 
       beforeBuild() {
         this.name = 'TestComponent';
@@ -32,7 +32,7 @@ describe('Test "Component"', () => {
 
   test('Component.afterBuild() invokes after template is builded', async () => {
     class TestComponent extends Component {
-      declare name: string;
+      name: string;
 
       beforeBuild() {
         this.name = 'TestComponent';

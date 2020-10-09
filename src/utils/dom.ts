@@ -140,15 +140,18 @@ export function attachEvents(element: Element, rememberDetach = true) {
               Object.entries
             )
             .map(([listener]) => {
-              const detachFn = addEventListener<EventTarget, string>(
+              addEventListener<EventTarget, string>(
                 element,
                 listener[0],
                 listener[1]
+              ).map(
+                (detachFn) =>
+                  rememberDetach && detachEventListenersList.push(detachFn)
               );
 
-              return rememberDetach && detachEventListenersList.push(detachFn);
+              return id;
             })
-            .map(() => eventListenersMap.delete(id));
+            .map((id) => eventListenersMap.delete(id));
         });
 
         return attrName;

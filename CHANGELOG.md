@@ -1,4 +1,10 @@
-# [1.5.0] - 2020-10-08
+# Unreleased
+
+### Removed
+
+- CommonJS bundle.
+
+## [1.5.0] - 2020-10-08
 
 ### Added
 

@@ -3,16 +3,10 @@ import { terser } from 'rollup-plugin-terser';
 
 export default {
   input: 'src/index.ts',
-  output: [
-    {
-      file: 'build/index.mjs',
-      format: 'es',
-    },
-    {
-      file: 'build/index.js',
-      format: 'cjs',
-    },
-  ],
+  output: {
+    file: 'build/index.js',
+    format: 'es',
+  },
   plugins: [typescript(), terser()],
   external: ['@fluss/core', '@fluss/web'],
 };

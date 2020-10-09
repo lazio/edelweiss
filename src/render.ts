@@ -23,11 +23,13 @@ export function render(
   return (
     querySelector(to)
       .map((toElement) => tupleOf(toElement, cloneNode(toElement)))
-      .map(([toElement, clonedToElement]) => {
+      .map(([toElement, maybeClone]) => {
         return (
           normalizeHTML(nodes)
             .then((html) => {
-              clonedToElement.innerHTML = edelweissPolicy.createHTML(html);
+              maybeClone.map(
+                (clone) => (clone.innerHTML = edelweissPolicy.createHTML(html))
+              );
             })
             .then(() => {
               stylePaths.forEach(loadCSS);
@@ -37,7 +39,7 @@ export function render(
               stylePaths.clear();
               stylePathsToRemove.clear();
             })
-            .then(() => diff(toElement, clonedToElement))
+            .then(() => maybeClone.map((clone) => diff(toElement, clone)))
             .then(() => detachEventListenersList.forEach((detach) => detach()))
             // Delete old detach functions.
             .then(() => (detachEventListenersList.length = 0))
