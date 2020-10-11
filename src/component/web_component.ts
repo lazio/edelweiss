@@ -5,11 +5,7 @@ import { appendNodes, querySelector, createElement } from '@fluss/web';
 export default class WebComponent extends HTMLElement {
   constructor() {
     super();
-  }
 
-  // Rendering in connectedCallback, not in constructor,
-  // because the browser did not yet process/assign attributes at constructor stage.
-  connectedCallback() {
     const shadow = this.attachShadow({
       mode: 'open',
     });

@@ -7,6 +7,12 @@
  * usual.
  */
 export class WebComponent extends HTMLElement {
+  /**
+   * When overriding constructor always call **super()** at start,
+   * so that the correct prototype chain will be established.
+   */
+  constructor();
+
   /* Returns array of attribute names to monitor for changes. */
   static get observedAttributes(): ReadonlyArray<string>;
 
@@ -18,8 +24,6 @@ export class WebComponent extends HTMLElement {
   /**
    * Browser calls this method when the element is added to the document
    * (can be called many times if an element is repeatedly added/removed).
-   *
-   * When overriding this method always call **super.connectedCallback()** at start.
    */
   connectedCallback(): void;
   /**
