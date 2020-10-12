@@ -1,6 +1,7 @@
 module.exports = {
   transform: {
-    '^.+\\.[t|j]sx?$': 'babel-jest',
+    '^.+\\.ts$': 'ts-jest',
+    '^.+\\.js$': 'babel-jest',
   },
   testEnvironment: 'jsdom',
 };

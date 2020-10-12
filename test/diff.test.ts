@@ -1,23 +1,22 @@
-import { appendNodes, querySelector } from '@fluss/web';
 import { html, Router, createState } from '../src';
 
 type PageCase = 'both' | 'element' | 'text';
 
-const state = createState({ clicks: 0 });
+const state = createState({ clicks: 0, secondClicks: 0, thirdClicks: 0 });
+
+function page(pageCase: PageCase) {
+  return html`<div id="#app">
+    ${pageCase === 'element'
+      ? `<p>${state.clicks}</p>`
+      : pageCase === 'text'
+      ? `Clicks - ${state.secondClicks}`
+      : `<p>${state.thirdClicks}</p>Clicks - ${state.thirdClicks}`}
+  </div>`;
+}
 
 describe('Diff DOM', () => {
-  beforeAll(async () => {
-    document.body.innerHTML = '<div id="#app"></div>';
-
-    function page(pageCase: PageCase) {
-      return html`<div id="#app">
-        ${pageCase === 'element'
-          ? `<p>${state.clicks}</p>`
-          : pageCase === 'text'
-          ? `Clicks - ${state.clicks}`
-          : `<p>${state.clicks}</p>Clicks - ${state.clicks}`}
-      </div>`;
-    }
+  beforeAll(() => {
+    document.body.innerHTML = '<div id="app"></div>';
 
     Router.add([
       {
@@ -66,7 +65,10 @@ describe('Diff DOM', () => {
 
       state.clicks++;
 
-      expect(app.innerHTML).toContain('<p>1</p>');
+      // Wait for end of reload method.
+      setTimeout(() => {
+        expect(app.innerHTML).toContain('<p>1</p>');
+      }, 0);
     }
   });
 
@@ -78,9 +80,12 @@ describe('Diff DOM', () => {
     if (app) {
       expect(app.innerHTML).toContain('Clicks - 0');
 
-      state.clicks++;
+      state.secondClicks++;
 
-      expect(app.innerHTML).toContain('Clicks - 1');
+      // Wait for end of reload method.
+      setTimeout(() => {
+        expect(app.innerHTML).toContain('Clicks - 1');
+      }, 0);
     }
   });
 
@@ -93,25 +98,27 @@ describe('Diff DOM', () => {
       expect(app.innerHTML).toContain('<p>0</p>');
       expect(app.innerHTML).toContain('Clicks - 0');
 
-      state.clicks++;
+      state.thirdClicks++;
 
-      expect(app.innerHTML).toContain('<p>1</p>');
-      expect(app.innerHTML).toContain('Clicks - 1');
+      // Wait for end of reload method.
+      setTimeout(() => {
+        expect(app.innerHTML).toContain('<p>1</p>');
+        expect(app.innerHTML).toContain('Clicks - 1');
+      }, 0);
     }
   });
 
   test('Element is not changed if it has data-ignored attributes', async () => {
     await Router.to('/ignored');
-    
-    querySelector('.ign').map((element) =>
-      expect(element.childElementCount).toBe(0)
-    );
 
-    appendNodes(querySelector('div .ign'), document.createElement('span'));
-    await Router.reload();
+    const element = document.querySelector('.ign');
+    if (element) {
+      expect(element.childElementCount).toBe(0);
 
-    querySelector('.ign').map((element) =>
-      expect(element.childElementCount).toBe(1)
-    );
+      element.append(document.createElement('span'));
+      await Router.reload();
+
+      expect(element.childElementCount).toBe(1);
+    }
   });
 });

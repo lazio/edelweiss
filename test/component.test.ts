@@ -12,10 +12,10 @@ describe('Test "Component"', () => {
     expect(component.template()).toBeInstanceOf(Promise);
     expect(component.template()).resolves.toBe('Test');
   });
-  
+
   test('Component.beforeBuild() invokes before template is builded', () => {
     class TestComponent extends Component {
-      name: string;
+      name: string = '';
 
       beforeBuild() {
         this.name = 'TestComponent';
@@ -32,7 +32,7 @@ describe('Test "Component"', () => {
 
   test('Component.afterBuild() invokes after template is builded', async () => {
     class TestComponent extends Component {
-      name: string;
+      name: string = '';
 
       beforeBuild() {
         this.name = 'TestComponent';

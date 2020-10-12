@@ -98,8 +98,8 @@ export default class Router {
         const container = route.container || _routerOptions.baseContainer;
 
         routeFound = pathMatch
-          .chain((parameters) => {
-            return querySelector(container).map(async () => {
+          .map(async (parameters) => {
+            if (querySelector(container).isJust()) {
               _current = {
                 ...route,
                 /**
@@ -133,18 +133,19 @@ export default class Router {
               if (!isNothing(route.after)) {
                 await promiseOf(route.after());
               }
-            });
+            } else {
+              return warn(
+                `Page does not contain element with selector: "${container}"!`
+              );
+            }
           })
           .extract();
       }
     });
 
-    if (isNothing(routeFound)) {
-      warn(`No route is specified for path: ${pathWithPrefix}!`);
-      return promiseOf(undefined);
-    } else {
-      return routeFound;
-    }
+    return isNothing(routeFound)
+      ? promiseOf(warn(`No route is specified for path: ${pathWithPrefix}!`))
+      : routeFound;
   }
 
   static async reload(): Promise<void> {
