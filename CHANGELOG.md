@@ -4,6 +4,10 @@
 
 - `data-ignored` boolean attribute for detecting elements, that must not be checked for structure difference.
 
+### Changed
+
+- `template` method of `WebComponent` can return only `string` and `Promise<string>` now.
+
 ### Removed
 
 - CommonJS bundle.

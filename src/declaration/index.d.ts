@@ -41,7 +41,7 @@ export class WebComponent extends HTMLElement {
   ): void;
 
   /** Defines inner DOM of custom element. */
-  template(): string | Promise<string> | HTMLTemplateElement;
+  template(): string | Promise<string>;
 }
 
 /**

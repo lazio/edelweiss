@@ -1,4 +1,5 @@
 import { attachEvents } from '../utils/dom';
+import { edelweissPolicy } from '../utils/trusted_types';
 import { promiseOf, alternation, arrayFrom } from '@fluss/core';
 import { appendNodes, querySelector, createElement } from '@fluss/web';
 
@@ -25,7 +26,7 @@ export default class WebComponent extends HTMLElement {
     });
   }
 
-  template(): string | Promise<string> | HTMLTemplateElement {
+  template(): string | Promise<string> {
     return '';
   }
 }
@@ -43,12 +44,14 @@ export function defineWebComponent(
   )();
 }
 
-function prepareHTML(html: string | HTMLElement): HTMLTemplateElement {
+function prepareHTML(html: string): HTMLTemplateElement {
   const wrapperElement = createElement('div')
     .map((div) => {
-      typeof html === 'string'
-        ? (div.innerHTML = html)
-        : appendNodes(div, html);
+      div.innerHTML = edelweissPolicy.createHTML(
+        html.trim().startsWith('<template')
+          ? html
+          : `<template>${html}</template>`
+      );
       return div;
     })
     .extract();
