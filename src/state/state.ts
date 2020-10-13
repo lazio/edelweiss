@@ -1,6 +1,11 @@
 import Router from '../router/router';
 
-export function createState<T extends object = object>(obj: T): T {
+type StateValue = string | number | boolean | Array<StateValue> | State;
+export interface State {
+  [key: string]: StateValue;
+}
+
+export function createState<T extends State>(obj: T): T {
   return new Proxy<T>(obj, {
     set(target, property, value, receiver) {
       const isSuccessful = Reflect.set(target, property, value, receiver);

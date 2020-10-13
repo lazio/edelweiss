@@ -37,28 +37,7 @@ export function diff(oldNode: Node, newNode: Node) {
       diffAttributes(oldNode, newNode) && updatedHook(oldNode);
 
       if (newNode.hasChildNodes()) {
-        const oldChildNodes = arrayFrom(oldNode.childNodes);
-        const newChildNodes = arrayFrom(newNode.childNodes);
-
-        for (
-          let i = 0;
-          i < Math.max(newChildNodes.length, oldChildNodes.length);
-          i++
-        ) {
-          const oNode = oldChildNodes[i];
-          const nNode = newChildNodes[i];
-
-          if (!isNothing(nNode)) {
-            isNothing(oNode)
-              ? (appendNodes(oldNode, nNode), mountedHook(nNode))
-              : diff(oNode, nNode);
-          } else if (!isNothing(oNode)) {
-            removeNode(oNode);
-            removedHook(oNode);
-          } else {
-            // Do nothing - old and new node is null or undefined.
-          }
-        }
+        diffChildren(oldNode, newNode);
       } else if (oldNode.hasChildNodes()) {
         replaceNode(oldNode, newNode);
         mountedHook(newNode);
@@ -87,6 +66,38 @@ export function diff(oldNode: Node, newNode: Node) {
     replaceNode(oldNode as ChildNode, newNode);
     mountedHook(newNode);
     removedHook(oldNode);
+  }
+}
+
+/**
+ * Diff children of nodes, but not them itself.
+ * Need to be separated for diffing shadow root of custom elements.
+ */
+export function diffChildren(
+  oldNode: Element | ShadowRoot,
+  newNode: Element | DocumentFragment
+) {
+  const oldChildNodes = arrayFrom(oldNode.childNodes);
+  const newChildNodes = arrayFrom(newNode.childNodes);
+
+  for (
+    let i = 0;
+    i < Math.max(newChildNodes.length, oldChildNodes.length);
+    i++
+  ) {
+    const oNode = oldChildNodes[i];
+    const nNode = newChildNodes[i];
+
+    if (!isNothing(nNode)) {
+      isNothing(oNode)
+        ? (appendNodes(oldNode, nNode), mountedHook(nNode))
+        : diff(oNode, nNode);
+    } else if (!isNothing(oNode)) {
+      removeNode(oNode);
+      removedHook(oNode);
+    } else {
+      // Do nothing - old and new node is null or undefined.
+    }
   }
 }
 

@@ -6,7 +6,7 @@
  * Other properties and custom element's callbacks you can define as
  * usual.
  */
-export class WebComponent extends HTMLElement {
+export class WebComponent<T extends State> extends HTMLElement {
   /**
    * When overriding constructor always call **super()** at start,
    * so that the correct prototype chain will be established.
@@ -15,6 +15,20 @@ export class WebComponent extends HTMLElement {
 
   /* Returns array of attribute names to monitor for changes. */
   static get observedAttributes(): ReadonlyArray<string>;
+
+  /** Returns state of custom element. */
+  get state(): T;
+  /**
+   * Replace state of custom element. This is reactive operation.
+   * But for convinience use `changeState` method.
+   */
+  set state(value: T);
+
+  /**
+   * Change part of state of custom element.
+   * Every change is reactive.
+   */
+  changeState(parts: Partial<T>): void;
 
   /**
    * Called when the element is moved to a new document
@@ -50,14 +64,14 @@ export class WebComponent extends HTMLElement {
  * More info about them and their lifecycles
  * [at MDN](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements).
  */
-export function defineWebComponent(
+export function defineWebComponent<T extends State>(
   /** Name of the custom tag. Must contain dash symbol. */
   tagName: string,
   /**
    * Class that describe custom element. You must override `template`
    * method.
    */
-  elementClass: { new (): WebComponent; prototype: WebComponent }
+  elementClass: { new (): WebComponent<T>; prototype: WebComponent<T> }
 ): void;
 
 /**
@@ -126,8 +140,14 @@ export function translate(
   variables?: { [key: string]: string }
 ): string;
 
+type StateValue = string | number | boolean | Array<StateValue> | State;
+/** Common shape of state for application. */
+export interface State {
+  [key: string]: StateValue;
+}
+
 /** Creates state based on object initial values. */
-export function createState<T extends object = object>(object: T): T;
+export function createState<T extends State>(object: T): T;
 
 /** Creates string template that will be evaluated as DOM elements. */
 export function html(

@@ -3,6 +3,7 @@
 ### Added
 
 - `data-ignored` boolean attribute for detecting elements, that must not be checked for structure difference.
+- `state` and `changeState` to `WebComponent` class.
 
 ### Changed
 

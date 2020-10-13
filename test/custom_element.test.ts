@@ -2,7 +2,7 @@ import { defineWebComponent, html, WebComponent } from '../src';
 
 describe('Custom elements', () => {
   test('Defining default autonomous custom element', () => {
-    defineWebComponent('my-def-com', class extends WebComponent {});
+    defineWebComponent('my-def-com', class extends WebComponent<{}> {});
 
     expect(customElements.get('my-def-com')).toBeTruthy();
   });
@@ -10,7 +10,7 @@ describe('Custom elements', () => {
   test('Defining autonomous custom element with custom template', () => {
     defineWebComponent(
       'my-desc-com',
-      class extends WebComponent {
+      class extends WebComponent<{}> {
         template() {
           return html`<template> <p>Hello</p></template>`;
         }

@@ -1,29 +1,36 @@
-import { attachEvents } from '../utils/dom';
 import { edelweissPolicy } from '../utils/trusted_types';
-import { promiseOf, alternation, arrayFrom } from '@fluss/core';
-import { appendNodes, querySelector, createElement } from '@fluss/web';
+import { attachEvents, diffChildren } from '../utils/dom';
+import { querySelector, createElement } from '@fluss/web';
+import { maybeOf, arrayFrom, promiseOf, alternation } from '@fluss/core';
+import type { State } from '../state/state';
 
-export default class WebComponent extends HTMLElement {
+export default class WebComponent<T extends State> extends HTMLElement {
+  #internalState: T = {} as T;
+
   constructor() {
     super();
 
-    const shadow = this.attachShadow({
+    this.attachShadow({
       mode: 'open',
     });
 
-    promiseOf(this.template()).then((html) => {
-      const clonedHTML = document.importNode(prepareHTML(html).content, true);
+    renderWebComponent(this);
+  }
 
-      /**
-       * Custom element in Shadow DOM don't differs as usual DOM nodes,
-       * so we don't need to detach event listeners.
-       */
-      arrayFrom(clonedHTML.children).forEach((element) =>
-        attachEvents(element, false)
-      );
+  get state(): T {
+    return this.#internalState;
+  }
 
-      appendNodes(shadow, clonedHTML);
-    });
+  set state(value: T) {
+    this.#internalState = value;
+    renderWebComponent(this);
+  }
+
+  changeState(parts: Partial<T>): void {
+    this.state = {
+      ...this.state,
+      ...parts,
+    };
   }
 
   template(): string | Promise<string> {
@@ -32,9 +39,9 @@ export default class WebComponent extends HTMLElement {
 }
 
 /** Defines custom element. */
-export function defineWebComponent(
+export function defineWebComponent<T extends State>(
   tagName: string,
-  elementClass: { new (): WebComponent; prototype: WebComponent }
+  elementClass: { new (): WebComponent<T>; prototype: WebComponent<T> }
 ): void {
   alternation(
     () => customElements.get(tagName),
@@ -65,4 +72,22 @@ function prepareHTML(html: string): HTMLTemplateElement {
      */
     createElement('template').extract()
   );
+}
+
+function renderWebComponent<T extends State>(element: WebComponent<T>): void {
+  promiseOf(element.template()).then((html) => {
+    const clonedHTML = document.importNode(prepareHTML(html).content, true);
+
+    /**
+     * Custom element in Shadow DOM don't differs as usual DOM nodes,
+     * so we don't need to detach event listeners.
+     */
+    arrayFrom(clonedHTML.children).forEach((element) =>
+      attachEvents(element, false)
+    );
+
+    maybeOf(element.shadowRoot).map((shadow) =>
+      diffChildren(shadow, clonedHTML)
+    );
+  });
 }
