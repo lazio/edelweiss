@@ -1,12 +1,10 @@
 /**
  * Parent class for all custom elements.
- * The main method is `template` that must return `HTMLTemplateElement`
- * or HTML string with `<template> as root element.`
  *
  * Other properties and custom element's callbacks you can define as
  * usual.
  */
-export class WebComponent<T extends State> extends HTMLElement {
+export class WebComponent<T extends State = {}> extends HTMLElement {
   /**
    * When overriding constructor always call **super()** at start,
    * so that the correct prototype chain will be established.
@@ -54,7 +52,12 @@ export class WebComponent<T extends State> extends HTMLElement {
     newValue: string
   ): void;
 
-  /** Defines inner DOM of custom element. */
+  /**
+   * Defines inner DOM of custom element as Shadow DOM.
+   *
+   * Returned HTML will be wrapped with `HTMLTemplateElement`,
+   * if method returns HTML that are not wrapped with top-level `<template>`.
+   */
   template(): string | Promise<string>;
 }
 
@@ -147,7 +150,7 @@ export interface State {
 }
 
 /** Creates state based on object initial values. */
-export function createState<T extends State>(object: T): T;
+export function createState<T extends State = {}>(object: T): T;
 
 /** Creates string template that will be evaluated as DOM elements. */
 export function html(

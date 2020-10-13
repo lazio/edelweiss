@@ -5,7 +5,7 @@ export interface State {
   [key: string]: StateValue;
 }
 
-export function createState<T extends State>(obj: T): T {
+export function createState<T extends State = {}>(obj: T): T {
   return new Proxy<T>(obj, {
     set(target, property, value, receiver) {
       const isSuccessful = Reflect.set(target, property, value, receiver);

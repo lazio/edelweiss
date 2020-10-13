@@ -4,7 +4,7 @@ import { querySelector, createElement } from '@fluss/web';
 import { maybeOf, arrayFrom, promiseOf, alternation } from '@fluss/core';
 import type { State } from '../state/state';
 
-export default class WebComponent<T extends State> extends HTMLElement {
+export default class WebComponent<T extends State = {}> extends HTMLElement {
   #internalState: T = {} as T;
 
   constructor() {
