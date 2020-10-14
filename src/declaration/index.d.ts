@@ -6,6 +6,12 @@
  */
 export class WebComponent<T extends State = {}> extends HTMLElement {
   /**
+   * State of custom element. Direct changes are not reactive.
+   * Use `changeState` mathod.
+   */
+  state: T;
+
+  /**
    * When overriding constructor always call **super()** at start,
    * so that the correct prototype chain will be established.
    */
@@ -13,14 +19,6 @@ export class WebComponent<T extends State = {}> extends HTMLElement {
 
   /* Returns array of attribute names to monitor for changes. */
   static get observedAttributes(): ReadonlyArray<string>;
-
-  /** Returns state of custom element. */
-  get state(): T;
-  /**
-   * Replace state of custom element. This is reactive operation.
-   * But for convinience use `changeState` method.
-   */
-  set state(value: T);
 
   /**
    * Change part of state of custom element.

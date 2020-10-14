@@ -5,7 +5,7 @@ import { maybeOf, arrayFrom, promiseOf, alternation } from '@fluss/core';
 import type { State } from '../state/state';
 
 export default class WebComponent<T extends State = {}> extends HTMLElement {
-  #internalState: T = {} as T;
+  state: T = {} as T;
 
   constructor() {
     super();
@@ -17,20 +17,12 @@ export default class WebComponent<T extends State = {}> extends HTMLElement {
     renderWebComponent(this);
   }
 
-  get state(): T {
-    return this.#internalState;
-  }
-
-  set state(value: T) {
-    this.#internalState = value;
-    renderWebComponent(this);
-  }
-
   changeState(parts: Partial<T>): void {
     this.state = {
       ...this.state,
       ...parts,
     };
+    renderWebComponent(this);
   }
 
   template(): string | Promise<string> {
