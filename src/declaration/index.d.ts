@@ -7,7 +7,7 @@
 export class WebComponent<T extends State = {}> extends HTMLElement {
   /**
    * State of custom element. Direct changes are not reactive.
-   * Use `changeState` mathod.
+   * Use `changeState` method.
    */
   state: T;
 
