@@ -1,6 +1,7 @@
-import Router from '../router/router';
 import { warn } from '../utils/warn';
+import { render } from '../dom/render';
 import { setAttribute } from '@fluss/web';
+import { _current, _routerGlobalOptions } from '../router/router';
 import { maybeOf, isNothing, promiseOf, path as pathOf } from '@fluss/core';
 
 export type I18nLanguage = {
@@ -50,7 +51,10 @@ export default class I18n {
       setAttribute(document.documentElement, 'lang', tag);
       _currentLanguage = tag;
 
-      return Router.reload();
+      return render(
+        _current.container || _routerGlobalOptions.baseContainer,
+        _current.view()
+      );
     } else {
       return promiseOf(undefined);
     }

@@ -24,7 +24,7 @@ export class WebComponent<T extends State = {}> extends HTMLElement {
    * Change part of state of custom element.
    * Every change is reactive.
    */
-  changeState(parts: Partial<T>): void;
+  changeState(parts: Partial<T>): Promise<void>;
 
   /**
    * Called when the element is moved to a new document
@@ -128,8 +128,7 @@ export class Config {
    * Path to directory where must be css files that will be loaded
    * by `registerCss` function or by `Component.styles` method.
    */
-  static get cssRootFolder(): string;
-  static set cssRootFolder(dir: string);
+  static cssRootFolder(): string;
 }
 
 /**

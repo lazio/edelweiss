@@ -1,4 +1,5 @@
-import Router from '../router/router';
+import { render } from '../dom/render';
+import { _current, _routerGlobalOptions } from '../router/router';
 
 type StateValue = string | number | boolean | Array<StateValue> | State;
 export interface State {
@@ -11,7 +12,10 @@ export function createState<T extends State = {}>(obj: T): T {
       const isSuccessful = Reflect.set(target, property, value, receiver);
 
       if (isSuccessful) {
-        Router.reload();
+        render(
+          _current.container || _routerGlobalOptions.baseContainer,
+          _current.view()
+        );
       }
 
       return isSuccessful;
@@ -21,7 +25,10 @@ export function createState<T extends State = {}>(obj: T): T {
         const isSuccessful = Reflect.deleteProperty(target, property);
 
         if (isSuccessful) {
-          Router.reload();
+          render(
+            _current.container || _routerGlobalOptions.baseContainer,
+            _current.view()
+          );
         }
 
         return isSuccessful;

@@ -1,5 +1,5 @@
 import { getAttribute } from '@fluss/web';
-import { isElementNode } from './predicates';
+import { isElementNode } from '../utils/predicates';
 import { Hooks, hooksManager } from '../template/template';
 import { arrayFrom, maybeOf, promiseOf, tupleOf } from '@fluss/core';
 

@@ -1,9 +1,6 @@
-import Component from '../component/component';
-import { eventListenersMap } from '../template/template';
-import { dataEventIdJSRegExp } from './regexps';
+import { maybeOf, arrayFrom, isNothing } from '@fluss/core';
 import { mountedHook, removedHook, updatedHook } from './hooks';
-import { isCommentNode, isElementNode, isTextNode } from './predicates';
-import { maybeOf, promiseOf, arrayFrom, isNothing } from '@fluss/core';
+import { isCommentNode, isElementNode, isTextNode } from '../utils/predicates';
 import {
   removeNode,
   appendNodes,
@@ -12,7 +9,6 @@ import {
   setAttribute,
   getAttribute,
   removeAttribute,
-  addEventListener,
 } from '@fluss/web';
 
 const IGNORED_ATTRIBUTE_NAME = 'data-ignored';
@@ -129,73 +125,4 @@ function diffAttributes(oldNode: Element, newNode: Element): boolean {
   });
 
   return areAttributesDifferent;
-}
-
-export async function normalizeHTML(
-  nodes:
-    | string
-    | Component
-    | Promise<string>
-    | Array<string | Component | Promise<string>>
-): Promise<string> {
-  if (Array.isArray(nodes)) {
-    return nodes.reduce(
-      (prev: Promise<string>, current) =>
-        prev.then((prevHtml) =>
-          normalizeHTML(current).then(
-            (normalizedHtml) => prevHtml + normalizedHtml
-          )
-        ),
-      promiseOf('')
-    );
-  } else {
-    return nodes instanceof Component ? nodes._createNodes() : nodes;
-  }
-}
-
-/** Holds all detach functions of every element's event listeners. */
-export const detachEventListenersList: Array<() => void> = [];
-
-export function attachEvents(element: Element, rememberDetach = true) {
-  if (element instanceof HTMLElement) {
-    Object.entries(element.dataset)
-      .filter(([attrName, _]) => dataEventIdJSRegExp.test(attrName))
-      .map(([attrName, eventId]) => {
-        maybeOf(eventId).map((id) => {
-          maybeOf(eventListenersMap.get(id))
-            .map<ReadonlyArray<[string, EventListenerOrEventListenerObject]>>(
-              Object.entries
-            )
-            .map(([listener]) => {
-              addEventListener<EventTarget, string>(
-                element,
-                listener[0],
-                listener[1]
-              ).map(
-                (detachFn) =>
-                  rememberDetach && detachEventListenersList.push(detachFn)
-              );
-
-              return id;
-            })
-            .map((id) => eventListenersMap.delete(id));
-        });
-
-        return attrName;
-      })
-      .map((attrName) =>
-        maybeOf(/(\d+)$/.exec(attrName)).map((execArray) => execArray[1])
-      )
-      .forEach((maybeEventIdNumber) =>
-        maybeEventIdNumber.map((eventIdNumber) =>
-          removeAttribute(element, `data-event-id${eventIdNumber}`)
-        )
-      );
-
-    if (element.childElementCount > 0) {
-      arrayFrom(element.children).forEach((element) =>
-        attachEvents(element, rememberDetach)
-      );
-    }
-  }
 }

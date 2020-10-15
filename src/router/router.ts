@@ -1,5 +1,5 @@
 import { warn } from '../utils/warn';
-import { render } from '../render';
+import { render } from '../dom/render';
 import { matchPath } from './path_to_regexp';
 import { querySelector, addEventListener } from '@fluss/web';
 import { promiseOf, isNothing, arrayFrom } from '@fluss/core';
@@ -25,7 +25,7 @@ const _routes: Map<string, Route> = new Map();
 /**
  * Holds current route.
  */
-let _current: Route = {
+export let _current: Route = {
   path: '',
   container: '',
   view() {
@@ -43,7 +43,7 @@ type RouterOptions = {
   baseContainer: string;
 };
 
-const _routerOptions: RouterOptions = {
+export const _routerGlobalOptions: RouterOptions = {
   basePrefix: '',
   baseContainer: '',
 };
@@ -57,11 +57,11 @@ export default class Router {
     const { basePrefix, baseContainer } = options;
 
     if (!isNothing(basePrefix)) {
-      _routerOptions.basePrefix = basePrefix;
+      _routerGlobalOptions.basePrefix = basePrefix;
     }
 
     if (!isNothing(baseContainer)) {
-      _routerOptions.baseContainer = baseContainer;
+      _routerGlobalOptions.baseContainer = baseContainer;
     }
   }
 
@@ -95,7 +95,7 @@ export default class Router {
       const pathMatch = matchPath(pathWithPrefix, prependPathPrefix(key));
 
       if (pathMatch.isJust()) {
-        const container = route.container || _routerOptions.baseContainer;
+        const container = route.container || _routerGlobalOptions.baseContainer;
 
         routeFound = pathMatch
           .map(async (parameters) => {
@@ -156,7 +156,7 @@ export default class Router {
       await promiseOf(before());
     }
 
-    await render(container || _routerOptions.baseContainer, view());
+    await render(container || _routerGlobalOptions.baseContainer, view());
 
     // After route render hook
     if (!isNothing(after)) {
@@ -185,7 +185,7 @@ addEventListener(window, 'popstate', (event) => {
 });
 
 function prependPathPrefix(path: string): string {
-  return path.startsWith(_routerOptions.basePrefix)
+  return path.startsWith(_routerGlobalOptions.basePrefix)
     ? path
-    : _routerOptions.basePrefix + path;
+    : _routerGlobalOptions.basePrefix + path;
 }

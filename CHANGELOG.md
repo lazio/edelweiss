@@ -8,6 +8,7 @@
 ### Changed
 
 - `template` method of `WebComponent` can return only `string` and `Promise<string>` now.
+- `cssRootFolder` is now static property of `Config` class.
 
 ### Removed
 

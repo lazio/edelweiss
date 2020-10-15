@@ -1,15 +1,14 @@
-import Component from './component/component';
-import { edelweissPolicy } from './utils/trusted_types';
-import { loadCSS, unloadCSS } from './utils/styles';
+import Component from '../component/component';
+import WebComponent from '../component/web_component';
+import { edelweissPolicy } from '../utils/trusted_types';
+import { diff, diffChildren } from './diff';
+import { loadCSS, unloadCSS } from '../utils/styles';
 import { querySelector, cloneNode } from '@fluss/web';
-import { stylePaths, stylePathsToRemove } from './css';
-import { arrayFrom, promiseOf, tupleOf } from '@fluss/core';
-import {
-  diff,
-  attachEvents,
-  normalizeHTML,
-  detachEventListenersList,
-} from './utils/dom';
+import { stylePaths, stylePathsToRemove } from '../css';
+import { attachEvents, detachEventListenersList } from './events';
+import { normalizeHTML, normalizeHTMLForWebComponent } from './normalize_html';
+import { arrayFrom, maybeOf, promiseOf, tupleOf } from '@fluss/core';
+import type { State } from '../state/state';
 
 /** Render templates on the page. */
 export function render(
@@ -52,4 +51,21 @@ export function render(
       })
       .extract() || promiseOf(undefined)
   );
+}
+
+export async function renderWebComponent<T extends State>(
+  element: WebComponent<T>
+): Promise<void> {
+  const html = await promiseOf(element.template());
+  const clonedHTML = document.importNode(
+    normalizeHTMLForWebComponent(html).content,
+    true
+  );
+
+  /**
+   * Custom element in Shadow DOM don't differs as usual DOM nodes,
+   * so we don't need to detach event listeners.
+   */
+  arrayFrom(clonedHTML.children).forEach((child) => attachEvents(child, false));
+  maybeOf(element.shadowRoot).map((shadow) => diffChildren(shadow, clonedHTML));
 }
