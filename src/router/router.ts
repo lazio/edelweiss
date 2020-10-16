@@ -99,44 +99,35 @@ export default class Router {
 
         routeFound = pathMatch
           .map(async (parameters) => {
-            if (querySelector(container).isJust()) {
-              _current = {
-                ...route,
-                /**
-                 * If match exists in path, then result is array, where first item is
-                 * the whole matched string.
-                 * If parameters exist in path (they must be surrounded by brackets), then
-                 * second item and go on to end of array are parameters.
-                 */
-                parameters,
-              };
+            _current = {
+              ...route,
+              /**
+               * If match exists in path, then result is array, where first item is
+               * the whole matched string.
+               * If parameters exist in path (they must be surrounded by brackets), then
+               * second item and go on to end of array are parameters.
+               */
+              parameters,
+            };
 
-              // Before route render hook
-              if (!isNothing(route.before)) {
-                await promiseOf(route.before());
-              }
+            // Before route render hook
+            if (!isNothing(route.before)) {
+              await promiseOf(route.before());
+            }
 
-              await render(container, route.view());
+            await render(container, route.view());
 
-              if (
-                isNothing(options.willStateChange) ||
-                options.willStateChange
-              ) {
-                window.history.pushState(
-                  { path: pathWithPrefix, container },
-                  '',
-                  pathWithPrefix
-                );
-              }
-
-              // After route render hook
-              if (!isNothing(route.after)) {
-                await promiseOf(route.after());
-              }
-            } else {
-              return warn(
-                `Page does not contain element with selector: "${container}"!`
+            if (isNothing(options.willStateChange) || options.willStateChange) {
+              window.history.pushState(
+                { path: pathWithPrefix, container },
+                '',
+                pathWithPrefix
               );
+            }
+
+            // After route render hook
+            if (!isNothing(route.after)) {
+              await promiseOf(route.after());
             }
           })
           .extract();

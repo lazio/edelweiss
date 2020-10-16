@@ -3,7 +3,8 @@
 ### Added
 
 - `data-ignored` boolean attribute for detecting elements, that must not be checked for structure difference.
-- `state` and `changeState` to `WebComponent` class.
+- `state` getter and `changeState` method to `WebComponent` class.
+- Order of render events (multiple invokation of `Router.to`, `Router.reload`, multiple state changing accomplish render in order they are called).
 
 ### Changed
 

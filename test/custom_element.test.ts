@@ -50,9 +50,9 @@ describe('Custom elements', () => {
       constructor() {
         super();
 
-        this.state = {
+        this.changeState({
           isDefined: true,
-        };
+        });
       }
 
       template() {
@@ -82,9 +82,9 @@ describe('Custom elements', () => {
       constructor() {
         super();
 
-        this.state = {
+        this.changeState({
           isChanged: false,
-        };
+        });
       }
 
       template() {
@@ -125,9 +125,9 @@ describe('Custom elements', () => {
       constructor() {
         super();
 
-        this.state = {
+        this.changeState({
           word: '',
-        };
+        });
       }
 
       template() {
@@ -184,9 +184,9 @@ describe('Custom elements', () => {
       constructor() {
         super();
 
-        this.state = {
+        this.changeState({
           word: '',
-        };
+        });
       }
 
       template() {
