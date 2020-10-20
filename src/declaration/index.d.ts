@@ -65,9 +65,9 @@ type WebComponentConstructor = {
 };
 
 /**
- * Defines autonomous custom elements.
+ * Defines autonomous custom elements. Can be safely called many times.
  *
- * More info about them and their lifecycles
+ * More info about custom elements and their lifecycles
  * [at MDN](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements).
  */
 export function defineWebComponent<E extends WebComponentConstructor>(
