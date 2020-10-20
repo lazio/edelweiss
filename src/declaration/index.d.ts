@@ -4,7 +4,7 @@
  * Other properties and custom element's callbacks you can define as
  * usual.
  */
-export class WebComponent<T extends State = {}> extends HTMLElement {
+export abstract class WebComponent<T extends State = {}> extends HTMLElement {
   /**
    * When overriding constructor always call **super()** at start,
    * so that the correct prototype chain will be established.
@@ -56,7 +56,7 @@ export class WebComponent<T extends State = {}> extends HTMLElement {
    * Returned HTML will be wrapped with `HTMLTemplateElement`,
    * if method returns HTML that are not wrapped with top-level `<template>`.
    */
-  template(): string | Promise<string>;
+  abstract template(): string | Promise<string>;
 }
 
 type WebComponentConstructor = {
@@ -84,14 +84,14 @@ export function defineWebComponent<E extends WebComponentConstructor>(
  * Class that must be used to describe components of the page or page itself.
  * Can be replaced by plain function.
  */
-export class Component {
+export abstract class Component {
   /**
    * Loads css files to page before `Component` is built.
    * Looks for files in directory that is defined by `Config.cssRootFolder`.
    */
   styles(): string | Array<string>;
   beforeBuild(): void | Promise<void>;
-  template(): string | Promise<string>;
+  abstract template(): string | Promise<string>;
   afterBuild(): void | Promise<void>;
 }
 

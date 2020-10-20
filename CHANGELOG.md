@@ -11,6 +11,7 @@
 - `template` method of `WebComponent` can return only `string` and `Promise<string>` now.
 - `cssRootFolder` is now static property of `Config` class.
 - Event listeners and values of boolean attributes (prepended by `?`) must not be surrounded by `'` or `"` now.
+- `Component` and `WebComponent` are now abstract classes with abstract `template` method.
 
 ### Removed
 

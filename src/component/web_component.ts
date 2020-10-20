@@ -2,7 +2,9 @@ import { renderWebComponent } from '../dom/render';
 import { alternation, promiseOf } from '@fluss/core';
 import type { State } from '../state/state';
 
-export default class WebComponent<T extends State = {}> extends HTMLElement {
+export default abstract class WebComponent<
+  T extends State = {}
+> extends HTMLElement {
   /**
    * Contains the rendering order. This property is similar to `renderOrder`
    * field in **render.ts** file. The property ensures that the rendering
@@ -39,9 +41,7 @@ export default class WebComponent<T extends State = {}> extends HTMLElement {
     ));
   }
 
-  template(): string | Promise<string> {
-    return '';
-  }
+  abstract template(): string | Promise<string>;
 }
 
 type WebComponentConstructor = {

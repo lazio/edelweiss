@@ -5,7 +5,7 @@ import { promiseOf } from '@fluss/core';
  * Class that must be used to describe components of the page or page itself.
  * Can be replaced by plain function.
  */
-export default class Component {
+export default abstract class Component {
   /** Executes always before component is building. */
   styles(): string | Array<string> {
     return '';
@@ -14,9 +14,7 @@ export default class Component {
   /** Executes before building of component. */
   beforeBuild(): Promise<void> | void {}
 
-  template(): Promise<string> | string {
-    return '';
-  }
+  abstract template(): Promise<string> | string;
 
   /** Executes after component is builded, but not inserted into document. */
   afterBuild(): Promise<void> | void {}
