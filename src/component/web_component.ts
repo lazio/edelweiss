@@ -44,10 +44,15 @@ export default class WebComponent<T extends State = {}> extends HTMLElement {
   }
 }
 
+type WebComponentConstructor = {
+  new (): WebComponent;
+  prototype: WebComponent;
+};
+
 /** Defines custom element. */
-export function defineWebComponent<T extends State>(
+export function defineWebComponent<E extends WebComponentConstructor>(
   tagName: string,
-  elementClass: { new (): WebComponent<T>; prototype: WebComponent<T> }
+  elementClass: E
 ): void {
   alternation(
     () => customElements.get(tagName),

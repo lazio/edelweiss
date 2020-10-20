@@ -59,20 +59,25 @@ export class WebComponent<T extends State = {}> extends HTMLElement {
   template(): string | Promise<string>;
 }
 
+type WebComponentConstructor = {
+  new (): WebComponent;
+  prototype: WebComponent;
+};
+
 /**
  * Defines autonomous custom elements.
  *
  * More info about them and their lifecycles
  * [at MDN](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements).
  */
-export function defineWebComponent<T extends State>(
+export function defineWebComponent<E extends WebComponentConstructor>(
   /** Name of the custom tag. Must contain dash symbol. */
   tagName: string,
   /**
    * Class that describe custom element. You must override `template`
    * method.
    */
-  elementClass: { new (): WebComponent<T>; prototype: WebComponent<T> }
+  elementClass: E
 ): void;
 
 /**
