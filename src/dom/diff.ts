@@ -1,3 +1,4 @@
+import { attachEvents, detachEvents } from './events';
 import { maybeOf, arrayFrom, isNothing } from '@fluss/core';
 import { mountedHook, removedHook, updatedHook } from './hooks';
 import { isCommentNode, isElementNode, isTextNode } from '../utils/predicates';
@@ -30,11 +31,18 @@ export function diff(oldNode: Node, newNode: Node) {
         return;
       }
 
-      diffAttributes(oldNode, newNode) && updatedHook(oldNode);
-
       if (newNode.hasChildNodes()) {
+        detachEvents(oldNode);
+
+        diffAttributes(oldNode, newNode) && updatedHook(oldNode);
+
+        attachEvents(oldNode);
+
         diffChildren(oldNode, newNode);
       } else if (oldNode.hasChildNodes()) {
+        detachEvents(oldNode, true);
+        attachEvents(newNode, true);
+
         replaceNode(oldNode, newNode);
         mountedHook(newNode);
         removedHook(oldNode);
@@ -43,6 +51,9 @@ export function diff(oldNode: Node, newNode: Node) {
         // already checked.
       }
     } else {
+      detachEvents(oldNode, true);
+      attachEvents(newNode, true);
+
       replaceNode(oldNode, newNode);
       mountedHook(newNode);
       removedHook(oldNode);
@@ -59,6 +70,9 @@ export function diff(oldNode: Node, newNode: Node) {
     oldNode.textContent !== newNode.textContent &&
       (oldNode.textContent = newNode.textContent);
   } else {
+    detachEvents(oldNode, true);
+    attachEvents(newNode, true);
+
     replaceNode(oldNode as ChildNode, newNode);
     mountedHook(newNode);
     removedHook(oldNode);
@@ -86,9 +100,13 @@ export function diffChildren(
 
     if (!isNothing(nNode)) {
       isNothing(oNode)
-        ? (appendNodes(oldNode, nNode), mountedHook(nNode))
+        ? (attachEvents(nNode, true),
+          appendNodes(oldNode, nNode),
+          mountedHook(nNode))
         : diff(oNode, nNode);
     } else if (!isNothing(oNode)) {
+      detachEvents(oNode, true);
+
       removeNode(oNode);
       removedHook(oNode);
     } else {

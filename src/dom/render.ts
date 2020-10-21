@@ -6,9 +6,8 @@ import { diff, diffChildren } from './diff';
 import { loadCSS, unloadCSS } from '../utils/styles';
 import { querySelector, cloneNode } from '@fluss/web';
 import { stylePaths, stylePathsToRemove } from '../css';
-import { attachEvents, detachEventListenersList } from './events';
 import { normalizeHTML, normalizeHTMLForWebComponent } from './normalize_html';
-import { arrayFrom, maybeOf, promiseOf, tupleOf } from '@fluss/core';
+import { maybeOf, promiseOf, tupleOf } from '@fluss/core';
 import type { State } from '../state/state';
 
 /**
@@ -32,34 +31,23 @@ export function render(
       querySelector(to)
         .map((toElement) => tupleOf(toElement, cloneNode(toElement)))
         .map(([toElement, maybeClone]) => {
-          return (
-            normalizeHTML(nodes)
-              .then((html) => {
-                maybeClone.map(
-                  (clone) =>
-                    (clone.innerHTML = edelweissPolicy.createHTML(html))
-                );
-              })
-              .then(() => {
-                stylePaths.forEach(loadCSS);
-                stylePathsToRemove.forEach(unloadCSS);
+          return normalizeHTML(nodes)
+            .then((html) => {
+              maybeClone.map(
+                (clone) => (clone.innerHTML = edelweissPolicy.createHTML(html))
+              );
+            })
+            .then(() => {
+              stylePaths.forEach(loadCSS);
+              stylePathsToRemove.forEach(unloadCSS);
 
-                // Clear paths of styles
-                stylePaths.clear();
-                stylePathsToRemove.clear();
-              })
-              .then(() => maybeClone.map((clone) => diff(toElement, clone)))
-              .then(() =>
-                detachEventListenersList.forEach((detach) => detach())
-              )
-              // Delete old detach functions.
-              .then(() => (detachEventListenersList.length = 0))
-              .then(() =>
-                arrayFrom(toElement.children).forEach((element) =>
-                  attachEvents(element, true)
-                )
-              )
-          );
+              // Clear paths of styles
+              stylePaths.clear();
+              stylePathsToRemove.clear();
+            })
+            .then(() => {
+              maybeClone.map((clone) => diff(toElement, clone));
+            });
         })
         .extract() ||
       warn(`Page does not contain element with selector: "${to}"!`)
@@ -76,10 +64,5 @@ export async function renderWebComponent<T extends State>(
     true
   );
 
-  /**
-   * Custom element in Shadow DOM don't differs as usual DOM nodes,
-   * so we don't need to detach event listeners.
-   */
-  arrayFrom(clonedHTML.children).forEach((child) => attachEvents(child, false));
   maybeOf(element.shadowRoot).map((shadow) => diffChildren(shadow, clonedHTML));
 }

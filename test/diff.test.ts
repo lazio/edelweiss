@@ -1,17 +1,18 @@
+import './crypto_for_jest';
 import { html, Router, createState } from '../src';
 
-type PageCase = 'both' | 'element' | 'text';
+type PageCase = 'both' | 'button' | 'text';
 
 const state = createState({ clicks: 0, secondClicks: 0, thirdClicks: 0 });
 
 function page(pageCase: PageCase) {
-  return html`<div id="#app">
-    ${pageCase === 'element'
+  return html`
+    ${pageCase === 'button'
       ? `<p>${state.clicks}</p>`
       : pageCase === 'text'
       ? `Clicks - ${state.secondClicks}`
       : `<p>${state.thirdClicks}</p>Clicks - ${state.thirdClicks}`}
-  </div>`;
+  `;
 }
 
 describe('Diff DOM', () => {
@@ -27,10 +28,10 @@ describe('Diff DOM', () => {
         },
       },
       {
-        path: '/element',
+        path: '/button',
         container: '#app',
         view() {
-          return page('element');
+          return page('button');
         },
       },
       {
@@ -55,8 +56,8 @@ describe('Diff DOM', () => {
     ]);
   });
 
-  test('Update element nodes', async () => {
-    await Router.to('/element');
+  test('Update button nodes', async () => {
+    await Router.to('/button');
 
     const app = document.querySelector('#app');
 
@@ -89,7 +90,7 @@ describe('Diff DOM', () => {
     }
   });
 
-  test('Updating text node, when it has element nodes as siblings', async () => {
+  test('Updating text node, when it has button nodes as siblings', async () => {
     await Router.to('/');
 
     const app = document.querySelector('#app');
@@ -111,14 +112,79 @@ describe('Diff DOM', () => {
   test('Element is not changed if it has data-ignored attributes', async () => {
     await Router.to('/ignored');
 
-    const element = document.querySelector('.ign');
-    if (element) {
-      expect(element.childElementCount).toBe(0);
+    const button = document.querySelector('.ign');
+    if (button) {
+      expect(button.childElementCount).toBe(0);
 
-      element.append(document.createElement('span'));
+      button.append(document.createElement('span'));
       await Router.reload();
 
-      expect(element.childElementCount).toBe(1);
+      expect(button.childElementCount).toBe(1);
+    }
+  });
+
+  test('Set proper event listeners', async () => {
+    let firstResult = 0;
+    let secondResult = 0;
+
+    Router.add({
+      path: '/events:number:?',
+      container: '#app',
+      view() {
+        return html`
+          <div>
+            ${Router.current.parameters && Router.current.parameters[1]
+              ? html`<button @click=${() => firstResult++}>A</button>`
+              : html`<button @click=${() => secondResult++}>B</button>`}
+          </div>
+        `;
+      },
+    });
+
+    await Router.to('/events');
+
+    let button = document.querySelector('button');
+    if (button) {
+      button.click();
+      expect(firstResult).toBe(0);
+      expect(secondResult).toBe(1);
+
+      await Router.to('/events3');
+
+      button = document.querySelector('button');
+      if (button) {
+        button.click();
+
+        expect(firstResult).toBe(1);
+        expect(secondResult).toBe(1);
+      }
+    }
+  });
+
+  test('Adding events to children of new node', async () => {
+    let inner = false;
+
+    Router.add({
+      path: '/child-events',
+      container: '#app',
+      view() {
+        return html`
+          <main>
+            <div>
+              <button class="inner" @click=${() => (inner = true)}></button>
+            </div>
+          </main>
+        `;
+      },
+    });
+
+    await Router.to('/child-events');
+
+    const innerBtn = document.querySelector<HTMLButtonElement>('button.inner');
+
+    if (innerBtn) {
+      innerBtn.click();
+      expect(inner).toBe(true);
     }
   });
 });

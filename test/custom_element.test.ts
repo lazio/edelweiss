@@ -11,17 +11,38 @@ describe('Custom elements', () => {
   });
 
   test('Defining default autonomous custom element', () => {
-    defineWebComponent('my-defcom', class extends WebComponent {});
+    defineWebComponent(
+      'my-defcom',
+      class extends WebComponent {
+        template() {
+          return '';
+        }
+      }
+    );
 
     expect(customElements.get('my-defcom')).toBeTruthy();
   });
 
   test('Multiple defining of custom element will not cause an error', () => {
     expect(() =>
-      defineWebComponent('my-defcom', class extends WebComponent {})
+      defineWebComponent(
+        'my-defcom',
+        class extends WebComponent {
+          template() {
+            return '';
+          }
+        }
+      )
     ).not.toThrow();
     expect(() =>
-      defineWebComponent('my-defcom', class extends WebComponent {})
+      defineWebComponent(
+        'my-defcom',
+        class extends WebComponent {
+          template() {
+            return '';
+          }
+        }
+      )
     ).not.toThrow();
   });
 
