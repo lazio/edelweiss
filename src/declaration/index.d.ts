@@ -145,7 +145,13 @@ export function translate(
   variables?: { [key: string]: string }
 ): string;
 
-type StateValue = string | number | boolean | Array<StateValue> | State;
+type StateValue =
+  | State
+  | number
+  | string
+  | boolean
+  | Function
+  | Array<StateValue>;
 /** Common shape of state for application. */
 export interface State {
   [key: string]: StateValue;

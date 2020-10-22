@@ -1,7 +1,13 @@
 import { render } from '../dom/render';
 import { _current, _routerGlobalOptions } from '../router/router';
 
-type StateValue = string | number | boolean | Array<StateValue> | State;
+type StateValue =
+  | State
+  | number
+  | string
+  | boolean
+  | Function
+  | Array<StateValue>;
 export interface State {
   [key: string]: StateValue;
 }
