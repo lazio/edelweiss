@@ -1,3 +1,4 @@
+import { _isRouteChanged } from '../router/router';
 import { attachEvents, detachEvents } from './events';
 import { maybeOf, arrayFrom, isNothing } from '@fluss/core';
 import { mountedHook, removedHook, updatedHook } from './hooks';
@@ -34,7 +35,15 @@ export function diff(oldNode: Node, newNode: Node) {
       if (newNode.hasChildNodes()) {
         detachEvents(oldNode);
 
-        diffAttributes(oldNode, newNode) && updatedHook(oldNode);
+        if (diffAttributes(oldNode, newNode)) {
+          /**
+           * If route is changed, then DOM must be rebuilded.
+           * Due to diffing algorithm, some nodes can be left from
+           * old page and reused. In that case we need to know,
+           * whether page is changed in order to call proper hook.
+           */
+          _isRouteChanged ? mountedHook(oldNode) : updatedHook(oldNode);
+        }
 
         attachEvents(oldNode);
 
@@ -59,9 +68,14 @@ export function diff(oldNode: Node, newNode: Node) {
       removedHook(oldNode);
     }
   } else if (isTextNode(oldNode) && isTextNode(newNode)) {
-    oldNode.textContent !== newNode.textContent &&
-      ((oldNode.textContent = newNode.textContent),
-      maybeOf(oldNode.parentElement).map(updatedHook));
+    if (oldNode.textContent !== newNode.textContent) {
+      oldNode.textContent = newNode.textContent;
+
+      maybeOf(oldNode.parentElement).map((parent) => {
+        /** Same reason as above. */
+        _isRouteChanged ? mountedHook(parent) : updatedHook(parent);
+      });
+    }
   } else if (isCommentNode(oldNode) && isCommentNode(newNode)) {
     /**
      * Comment node is separated, because we do not need
