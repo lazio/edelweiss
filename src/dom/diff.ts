@@ -1,4 +1,5 @@
 import { _isRouteChanged } from '../router/router';
+import { isLibraryAttribute } from '../utils/library_attributes';
 import { attachEvents, detachEvents } from './events';
 import { maybeOf, arrayFrom, isNothing } from '@fluss/core';
 import { mountedHook, removedHook, updatedHook } from './hooks';
@@ -143,7 +144,14 @@ function diffAttributes(oldNode: Element, newNode: Element): boolean {
     arrayFrom(oldNode.attributes).forEach(({ name }) => {
       if (!hasAttribute(newNode, name)) {
         removeAttribute(oldNode, name);
-        areAttributesDifferent = true;
+
+        /**
+         * Library attributes used by edelweiss itself and
+         * they must not signals that element was updated.
+         */
+        if (!isLibraryAttribute(name)) {
+          areAttributesDifferent = true;
+        }
       }
     });
   }
@@ -152,7 +160,14 @@ function diffAttributes(oldNode: Element, newNode: Element): boolean {
   arrayFrom(newNode.attributes).forEach(({ name, value }) => {
     if (getAttribute(oldNode, name).extract() !== value) {
       setAttribute(oldNode, name, value);
-      areAttributesDifferent = true;
+
+      /**
+       * Library attributes used by edelweiss itself and
+       * they must not signals that element was updated.
+       */
+      if (!isLibraryAttribute(name)) {
+        areAttributesDifferent = true;
+      }
     }
   });
 

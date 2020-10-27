@@ -74,4 +74,13 @@ describe('Hooks', () => {
 
     defer(() => expect(isRemoved).toBe(true));
   });
+
+  test('Updated hook does not invokes on changing library attributes value', async () => {
+    await Router.to('/');
+    await Router.reload();
+    await Router.reload();
+    await Router.reload();
+
+    defer(() => expect(updateCount).toBe(1));
+  });
 });

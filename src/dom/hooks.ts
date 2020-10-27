@@ -1,7 +1,23 @@
 import { getAttribute } from '@fluss/web';
 import { isElementNode } from '../utils/predicates';
-import { Hooks, hooksManager } from '../template/template';
-import { arrayFrom, maybeOf, promiseOf, tupleOf } from '@fluss/core';
+import { createHookAttributeName } from '../utils/library_attributes';
+import { arrayFrom, freeze, maybeOf, promiseOf, tupleOf } from '@fluss/core';
+
+/** Hooks are defined in order they have been executed in element's lifecycle. */
+export enum Hooks {
+  Mounted = 'mounted',
+  Updated = 'updated',
+  Removed = 'removed',
+}
+
+type HookCallback = (self: Element) => void | Promise<void>;
+
+/** Holds callbacks for every element's hooks. */
+export const hooksManager = freeze({
+  [Hooks.Mounted]: new Map<string, HookCallback>(),
+  [Hooks.Updated]: new Map<string, HookCallback>(),
+  [Hooks.Removed]: new Map<string, HookCallback>(),
+});
 
 /** If parent node is mounted, so its children are also mounted. */
 export function mountedHook(node: Node) {
@@ -30,7 +46,7 @@ function applyHook(node: Node, type: Hooks) {
    */
   setTimeout(() => {
     if (isElementNode(node)) {
-      getAttribute(node, `data-${type}-hook-id`)
+      getAttribute(node, createHookAttributeName(type))
         .map((id) => tupleOf(id, maybeOf(hooksManager[type].get(id))))
         .map(([id, maybeFn]) =>
           maybeFn.map((fn) =>

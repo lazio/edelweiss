@@ -13,6 +13,11 @@
 - `cssRootFolder` is now static property of `Config` class.
 - Event listeners and values of boolean attributes (prepended by `?`) must not be surrounded by `'` or `"` now.
 - `Component` and `WebComponent` are now abstract classes with abstract `template` method.
+- Add **-** symbol between `data-event-id` prefix and event number.
+
+### Fixed
+
+- Invoking update hooks on changing library attributes: `data-hook-id` attributes and `data-event-id` attributes.
 
 ### Removed
 

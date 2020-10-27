@@ -1,7 +1,17 @@
 import { addEventListener } from '@fluss/web';
-import { eventListenersMap } from '../template/template';
 import { dataEventIdJSRegExp } from '../utils/regexps';
 import { arrayFrom, maybeOf } from '@fluss/core';
+
+/**
+ * Holds all listeners that will be attached to element.
+ * Elements are marked with event ids.
+ */
+export const eventListenersMap = new Map<
+  string,
+  {
+    [eventName: string]: EventListenerOrEventListenerObject;
+  }
+>();
 
 /** Holds all detach functions of every element's event listeners. */
 const detachEventListenersMap: Map<string, () => void> = new Map();

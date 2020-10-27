@@ -60,13 +60,13 @@ describe('Test template of "edelweiss"', () => {
     expect(valueTruthy).toMatch('<button disable>child</button>');
   });
 
-  test(`html() must set to an element "data-event-id[number]" attribute 
+  test(`html() must set to an element "data-event-id-[number]" attribute 
   if event handler is passed to element`, async () => {
     const button = await html`
       <button @click=${(event: MouseEvent) => {}}>child</button>
     `;
     expect(button).toMatch(
-      /<button data-event-id[\d]="?[\d]+"?>child<\/button>/
+      /<button data-event-id-[\d]="?[\d]+"?>child<\/button>/
     );
   });
 
