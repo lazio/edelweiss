@@ -98,7 +98,7 @@ export abstract class Component {
 /** Does routing of site. */
 export class Router {
   /** Returns info about current route. */
-  static get current(): Route;
+  static get current(): Readonly<Route>;
 
   /** Define settings for `Router`. */
   static configure(options: Partial<RouterOptions>): void;
@@ -118,7 +118,7 @@ export class Router {
 
 export class I18n {
   static get currentLanguage(): string | undefined;
-  static get languagesTags(): Array<string>;
+  static get languagesTags(): ReadonlyArray<string>;
 
   /** Add language pack. */
   static add(languages: I18nLanguagesSet, initial?: string): void;
@@ -218,14 +218,14 @@ export type Route = {
 };
 
 type RouterOptions = {
-  /** Prefix path that will be prepended to path of all user's defined routes. */
-  basePrefix: string;
+  /** Prefix path that will be prepended to path of all routes defined by user. */
+  prefix: string;
   /**
-   * Container for elements from all routes.
-   * If all routes will have the same container,
-   * then this variable may be set and used.
+   * Global container selector of root node of application.
+   * If most routes will have the same container,
+   * then this variable may be set.
    */
-  baseContainer: string;
+  container: string;
 };
 
 export type I18nLanguage = string | { [key: string]: I18nLanguage };

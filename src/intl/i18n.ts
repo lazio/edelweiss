@@ -2,7 +2,13 @@ import { warn } from '../utils/warn';
 import { render } from '../dom/render';
 import { setAttribute } from '@fluss/web';
 import { _current, _routerGlobalOptions } from '../router/router';
-import { maybeOf, isNothing, promiseOf, path as pathOf } from '@fluss/core';
+import {
+  freeze,
+  maybeOf,
+  isNothing,
+  promiseOf,
+  path as pathOf,
+} from '@fluss/core';
 
 export type I18nLanguage = {
   [key: string]: string | { [key: string]: I18nLanguage };
@@ -27,7 +33,7 @@ export default class I18n {
   }
 
   static get languagesTags(): ReadonlyArray<string> {
-    return Object.keys(_languages);
+    return freeze(Object.keys(_languages));
   }
 
   static add(languages: I18nLanguagesSet, initial?: string): void {
@@ -52,7 +58,7 @@ export default class I18n {
       _currentLanguage = tag;
 
       return render(
-        _current.container || _routerGlobalOptions.baseContainer,
+        _current.container || _routerGlobalOptions.container,
         _current.view()
       );
     } else {

@@ -6,7 +6,7 @@ describe('Custom elements', () => {
     document.body.innerHTML = '<div id="app"></div>';
 
     Router.configure({
-      baseContainer: '#app',
+      container: '#app',
     });
   });
 

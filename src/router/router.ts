@@ -2,7 +2,7 @@ import { warn } from '../utils/warn';
 import { render } from '../dom/render';
 import { matchPath } from './path_to_regexp';
 import { addEventListener } from '@fluss/web';
-import { promiseOf, isNothing, arrayFrom } from '@fluss/core';
+import { promiseOf, isNothing, arrayFrom, freeze } from '@fluss/core';
 import type Component from '../component/component';
 
 export type Route = {
@@ -41,33 +41,33 @@ export let _isRouteChanged: boolean = false;
 
 type RouterOptions = {
   /** Prefix path that will be prepended to path of all user's defined routes. */
-  basePrefix: string;
+  prefix: string;
   /**
    * Container for elements from all routes.
    * If all routes will have the same container, then this variable may be set and used.
    */
-  baseContainer: string;
+  container: string;
 };
 
 export const _routerGlobalOptions: RouterOptions = {
-  basePrefix: '',
-  baseContainer: '',
+  prefix: '',
+  container: '',
 };
 
 export default class Router {
-  static get current() {
-    return _current;
+  static get current(): Readonly<Route> {
+    return freeze(_current);
   }
 
   static configure(options: Partial<RouterOptions>): void {
-    const { basePrefix, baseContainer } = options;
+    const { prefix, container } = options;
 
-    if (!isNothing(basePrefix)) {
-      _routerGlobalOptions.basePrefix = basePrefix;
+    if (!isNothing(prefix)) {
+      _routerGlobalOptions.prefix = prefix;
     }
 
-    if (!isNothing(baseContainer)) {
-      _routerGlobalOptions.baseContainer = baseContainer;
+    if (!isNothing(container)) {
+      _routerGlobalOptions.container = container;
     }
   }
 
@@ -101,7 +101,7 @@ export default class Router {
       const pathMatch = matchPath(pathWithPrefix, prependPathPrefix(key));
 
       if (pathMatch.isJust()) {
-        const container = route.container || _routerGlobalOptions.baseContainer;
+        const container = route.container || _routerGlobalOptions.container;
 
         routeFound = pathMatch
           .map(async (parameters) => {
@@ -157,7 +157,7 @@ export default class Router {
       await promiseOf(before());
     }
 
-    await render(container || _routerGlobalOptions.baseContainer, view());
+    await render(container || _routerGlobalOptions.container, view());
 
     // After route render hook
     if (!isNothing(after)) {
@@ -186,7 +186,7 @@ addEventListener(window, 'popstate', (event) => {
 });
 
 function prependPathPrefix(path: string): string {
-  return path.startsWith(_routerGlobalOptions.basePrefix)
+  return path.startsWith(_routerGlobalOptions.prefix)
     ? path
-    : _routerGlobalOptions.basePrefix + path;
+    : _routerGlobalOptions.prefix + path;
 }

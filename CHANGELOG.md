@@ -14,6 +14,9 @@
 - Event listeners and values of boolean attributes (prepended by `?`) must not be surrounded by `'` or `"` now.
 - `Component` and `WebComponent` are now abstract classes with abstract `template` method.
 - Add **-** symbol between `data-event-id` prefix and event number.
+- _basePrefix_ of `Router` configuration property to _prefix_ and _baseContainer_ to _container_.
+- `Router.current` returns **Readonly<Route>** now.
+- `I18n.languagesTags` is of **ReadonlyArray<string>** now.
 
 ### Fixed
 

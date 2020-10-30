@@ -19,7 +19,7 @@ export function createState<T extends State = {}>(obj: T): T {
 
       if (isSuccessful) {
         render(
-          _current.container || _routerGlobalOptions.baseContainer,
+          _current.container || _routerGlobalOptions.container,
           _current.view()
         );
       }
@@ -32,7 +32,7 @@ export function createState<T extends State = {}>(obj: T): T {
 
         if (isSuccessful) {
           render(
-            _current.container || _routerGlobalOptions.baseContainer,
+            _current.container || _routerGlobalOptions.container,
             _current.view()
           );
         }

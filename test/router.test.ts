@@ -16,7 +16,7 @@ describe('Test "Router"', () => {
   });
 
   test('"Router.to" must use global "container" if there is no local one', () => {
-    Router.configure({ baseContainer: '.page ' });
+    Router.configure({ container: '.page ' });
     Router.add([
       {
         path: '/',
@@ -64,7 +64,7 @@ describe('Test "Router"', () => {
   });
 
   test('Prefix path must be checked internally and users can navigate to path with or without prefix', async () => {
-    Router.configure({ basePrefix: '/pre' });
+    Router.configure({ prefix: '/pre' });
     Router.add({
       path: '/pre/fix',
       view() {
