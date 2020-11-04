@@ -18,6 +18,7 @@
 - `Router.current` returns **Readonly<Route>** now.
 - `I18n.languagesTags` is of **ReadonlyArray<string>** now.
 - Values of `State` are `unknown` type now.
+- Convert `I18n` class to `i18n` namespace.
 
 ### Fixed
 
@@ -381,7 +382,7 @@
 
 - Make all methods and properties of `Router` and `I18n` classes static.
 - Add `Router.add(routes: Route | Route[])` method.
-- Add `I18n.add(languages: I18nLanguagesSet, initial?: string)` method.
+- Add `I18n.add(languages: Languages, initial?: string)` method.
 - Remove `onChange` function from state object. Now `createState` returns
   plain _state_ object.
 - Remove `render` function from export. Use `Router` instead.

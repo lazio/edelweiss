@@ -116,16 +116,29 @@ export class Router {
   static forward(): void;
 }
 
-export class I18n {
-  static get currentLanguage(): string | undefined;
-  static get languagesTags(): ReadonlyArray<string>;
+export namespace i18n {
+  type LanguageObject = string | { [key: string]: LanguageObject };
+
+  /**
+   * Describe languages object.
+   * Keys must be language identifiers (by example `en`, `uk`, `fr` etc.).
+   */
+  type Languages = {
+    [key: string]: LanguageObject;
+  };
+
+  const currentLanguage: string | undefined;
+  function languagesTags(): ReadonlyArray<string>;
 
   /** Add language pack. */
-  static add(languages: I18nLanguagesSet, initial?: string): void;
+  function add(languages: Languages, initial?: string): void;
   /** Change current language of view. */
-  static setLanguage(tag: string): Promise<void>;
+  function setLanguage(tag: string): Promise<void>;
   /** Returns translated text based on _path_. */
-  static translate(path: string, variables?: { [key: string]: string }): string;
+  function translate(
+    path: string,
+    variables?: { [key: string]: string }
+  ): string;
 }
 
 export class Config {
@@ -137,8 +150,8 @@ export class Config {
 }
 
 /**
- * Returns translated text based on _path_. Same as `I18n.translate` static
- * method.
+ * Returns translated text based on _path_.
+ * Same as `i18n.translate` function.
  */
 export function translate(
   path: string,
@@ -219,14 +232,4 @@ type RouterOptions = {
    * then this variable may be set.
    */
   container: string;
-};
-
-export type I18nLanguage = string | { [key: string]: I18nLanguage };
-
-/**
- * Describe languages object.
- * Keys must be language identifiers (by example `en`, `uk`, `fr` etc.).
- */
-export type I18nLanguagesSet = {
-  [key: string]: I18nLanguage;
 };

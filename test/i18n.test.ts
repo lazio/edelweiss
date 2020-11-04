@@ -1,5 +1,5 @@
 import { querySelector } from '@fluss/web';
-import { I18n, Router, html, translate } from '../src';
+import { i18n, Router, html, translate } from '../src';
 
 describe('Internationalization', () => {
   beforeAll(() => {
@@ -8,7 +8,7 @@ describe('Internationalization', () => {
       path: '/',
       container: '.main',
       view() {
-        return html`${I18n.translate('main')}`;
+        return html`${i18n.translate('main')}`;
       },
     });
     Router.to('/');
@@ -23,7 +23,7 @@ describe('Internationalization', () => {
   });
 
   test('adding translation languages with initial language make page with that translation', async () => {
-    I18n.add(
+    i18n.add(
       {
         en: {
           main: 'Hello',
@@ -46,7 +46,7 @@ describe('Internationalization', () => {
   });
 
   test('changing language cause rerender of the page', async () => {
-    await I18n.setLanguage('en');
+    await i18n.setLanguage('en');
 
     expect(
       querySelector('.main')
@@ -61,12 +61,12 @@ describe('Internationalization', () => {
       path: '/withVar',
       container: '.last',
       view() {
-        return html`${I18n.translate('withVar', { name: 'world' })}`;
+        return html`${i18n.translate('withVar', { name: 'world' })}`;
       },
     });
     await Router.to('/withVar');
 
-    expect(I18n.currentLanguage).toBe('en');
+    expect(i18n.currentLanguage).toBe('en');
     expect(
       querySelector('.last')
         .map((el) => el.innerHTML)
@@ -74,7 +74,7 @@ describe('Internationalization', () => {
     ).toMatch('Hello world');
   });
 
-  test('translate function behave as I18n.translate', async () => {
+  test('translate function behave as i18n.translate', async () => {
     document.body.insertAdjacentHTML('beforeend', '<div class="alias"></div>');
     Router.add({
       path: '/alias',
