@@ -1,15 +1,8 @@
 import { render } from '../dom/render';
 import { _current, _routerGlobalOptions } from '../router/router';
 
-type StateValue =
-  | State
-  | number
-  | string
-  | boolean
-  | Function
-  | Array<StateValue>;
 export interface State {
-  [key: string]: StateValue;
+  [key: string]: unknown;
 }
 
 export function createState<T extends State = {}>(obj: T): T {

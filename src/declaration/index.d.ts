@@ -145,16 +145,9 @@ export function translate(
   variables?: { [key: string]: string }
 ): string;
 
-type StateValue =
-  | State
-  | number
-  | string
-  | boolean
-  | Function
-  | Array<StateValue>;
 /** Common shape of state for application. */
 export interface State {
-  [key: string]: StateValue;
+  [key: string]: unknown;
 }
 
 /** Creates state based on object initial values. */

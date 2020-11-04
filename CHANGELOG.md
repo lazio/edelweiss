@@ -17,6 +17,7 @@
 - _basePrefix_ of `Router` configuration property to _prefix_ and _baseContainer_ to _container_.
 - `Router.current` returns **Readonly<Route>** now.
 - `I18n.languagesTags` is of **ReadonlyArray<string>** now.
+- Values of `State` are `unknown` type now.
 
 ### Fixed
 
