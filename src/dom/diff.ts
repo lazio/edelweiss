@@ -1,4 +1,4 @@
-import { _isRouteChanged } from '../router/router';
+import { _isRouteChanged } from '../router/markers';
 import { isLibraryAttribute } from '../utils/library_attributes';
 import { attachEvents, detachEvents } from './events';
 import { maybeOf, arrayFrom, isNothing } from '@fluss/core';

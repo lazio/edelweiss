@@ -2,6 +2,7 @@ import { warn } from '../utils/warn';
 import { render } from '../dom/render';
 import { matchPath } from './path_to_regexp';
 import { addEventListener } from '@fluss/web';
+import { setIsRouteChangedMarker } from './markers';
 import { promiseOf, isNothing, arrayFrom, freeze } from '@fluss/core';
 import type Component from '../component/component';
 
@@ -32,12 +33,6 @@ export let _current: Route = {
     return '';
   },
 };
-
-/**
- * Need for distinguish between diffing elements inside one page and
- * between two different pages.
- */
-export let _isRouteChanged: boolean = false;
 
 type RouterOptions = {
   /** Prefix path that will be prepended to path of all user's defined routes. */
@@ -105,7 +100,7 @@ export default class Router {
 
         routeFound = pathMatch
           .map(async (parameters) => {
-            _isRouteChanged = _current.path !== route.path;
+            setIsRouteChangedMarker(_current.path !== route.path);
 
             _current = {
               ...route,
@@ -138,7 +133,7 @@ export default class Router {
               await promiseOf(route.after());
             }
 
-            _isRouteChanged = false;
+            setIsRouteChangedMarker(false);
           })
           .extract();
       }
