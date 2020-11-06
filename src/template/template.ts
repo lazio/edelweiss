@@ -3,11 +3,16 @@ import { warn } from '../utils/warn';
 import { eventListenersMap } from '../dom/events';
 import { Hooks, hooksManager } from '../dom/hooks';
 import {
+  SpecialAttributes,
+  ValueableHTMLElement,
+} from '../dom/special_attributes';
+import {
   createHookAttributeName,
   createEventIdAttributeName,
 } from '../utils/library_attributes';
 import { promiseOf, isNothing, maybeOf } from '@fluss/core';
 import {
+  valueRegExp,
   eventListenerRegExp,
   hookAttributeRegExp,
   booleanAttributeRegExp,
@@ -65,7 +70,8 @@ async function formCurrentHTML(
   current: string,
   index: number
 ): Promise<string> {
-  const variable = await promiseWithVariable;
+  // Need to assign proper value in value handling block.
+  let variable = await promiseWithVariable;
 
   // Handle @event listener if there is any.
   const matchedElementEventListener = eventListenerRegExp.exec(current);
@@ -106,6 +112,39 @@ async function formCurrentHTML(
       variable ? matchBooleanAttribute[1] : ''
     );
   }
+
+  /** Handle special attribute. */
+  const matchSpecialAttribute = valueRegExp.exec(current);
+  if (!isNothing(matchSpecialAttribute)) {
+    let stateGetter = variable;
+    const attributeName = matchSpecialAttribute[1] as SpecialAttributes;
+
+    if (
+      typeof stateGetter !== 'function' &&
+      typeof stateGetter !== 'string' &&
+      typeof stateGetter !== 'number'
+    ) {
+      warn(`Value of "${attributeName}" attribute must have "string", "number" or "function" type,
+      but given "${typeof stateGetter}".`);
+      stateGetter = '';
+    }
+
+    const attributeValue: string =
+      typeof stateGetter === 'function' ? stateGetter() : `${stateGetter}`;
+
+    // We doesn't return value, because updated hook need to be handled.
+    current = current.replace(
+      valueRegExp,
+      `${attributeName}="${attributeValue}" :${Hooks.Updated}=`
+    );
+
+    // Assign updating function to variable.
+    variable = (element: ValueableHTMLElement) => {
+      element.setAttribute(attributeName, attributeValue);
+      element[attributeName] = attributeValue;
+    };
+  }
+
   /** Handle hook attribute. */
   const matchHookAttribute = hookAttributeRegExp.exec(current);
   if (!isNothing(matchHookAttribute)) {
@@ -130,7 +169,7 @@ async function formCurrentHTML(
 
     return current.replace(
       hookAttributeRegExp,
-      `${createHookAttributeName(hookName)}="${dataHookId}"`
+      `${createHookAttributeName(hookName, index)}="${dataHookId}"`
     );
   }
 

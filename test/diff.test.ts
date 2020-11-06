@@ -1,5 +1,11 @@
 import './crypto_for_jest';
-import { html, Router, createState } from '../src';
+import {
+  html,
+  Router,
+  createState,
+  WebComponent,
+  defineWebComponent,
+} from '../src';
 
 type PageCase = 'both' | 'button' | 'text';
 
@@ -185,6 +191,71 @@ describe('Diff DOM', () => {
     if (innerBtn) {
       innerBtn.click();
       expect(inner).toBe(true);
+    }
+  });
+
+  test('diff attributes of custom element', async () => {
+    class CustomElement extends WebComponent {
+      template() {
+        return html` <span>Custom Element</span> `;
+      }
+    }
+
+    defineWebComponent('my-custom', CustomElement);
+
+    let count = 0;
+
+    Router.add({
+      path: '/custom-element-diff',
+      container: '#app',
+      view() {
+        return html` <my-custom count="${count}"></my-custom> `;
+      },
+    });
+
+    await Router.to('/custom-element-diff');
+    expect(document.body.innerHTML).toMatch(/count="0"/);
+
+    count++;
+
+    await Router.reload();
+    expect(document.body.innerHTML).toMatch(/count="1"/);
+  });
+
+  test('Diffing value attribute', async () => {
+    let valueString = '';
+    let valueNumber = 0;
+    let valueFunction = () => valueString + valueNumber;
+
+    Router.add({
+      path: '/value-attr',
+      container: '#app',
+      view() {
+        return html`
+          <input id="a1" value=${valueString} />
+          <input id="a2" value=${valueNumber} />
+          <input id="a3" value=${valueFunction} />
+        `;
+      },
+    });
+
+    await Router.to('/value-attr');
+
+    expect(document.body.innerHTML).toMatch(/value=""/);
+    expect(document.body.innerHTML).toMatch(/value="0"/);
+
+    valueString = 'some';
+    valueNumber = 1;
+
+    await Router.reload();
+
+    expect(document.body.innerHTML).toMatch(/value="some"/);
+    expect(document.body.innerHTML).toMatch(/value="1"/);
+    expect(document.body.innerHTML).toMatch(/value="some1"/);
+
+    const input = document.querySelector<HTMLInputElement>('#a1');
+    if (input) {
+      expect(input.value).toBe('some');
     }
   });
 });

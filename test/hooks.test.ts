@@ -49,7 +49,7 @@ describe('Hooks', () => {
     expect(isMounted).toBe(false);
     await Router.to('/');
     defer(() => expect(isMounted).toBe(true));
-    defer(() => expect(element).toBeInstanceOf(HTMLElement));
+    defer(() => expect(element).toBeInstanceOf(HTMLParagraphElement));
 
     // If element is on the page, mounted hook must not be invoked.
     isMounted = false;

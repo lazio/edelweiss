@@ -62,4 +62,11 @@ describe('Test template of "edelweiss"', () => {
       /<button class="some-class other-class">child<\/button>/
     );
   });
+
+  test('add updated hook to element that has value attribute', async () => {
+    const input = await html` <input value=${() => 'Hoooo'} /> `;
+
+    expect(input).toMatch(/value/);
+    expect(input).toMatch(/data-hook-id-updated/);
+  });
 });

@@ -1,6 +1,4 @@
-import { getAttribute } from '@fluss/web';
-import { isElementNode } from '../utils/predicates';
-import { createHookAttributeName } from '../utils/library_attributes';
+import { dataHookIdJSRegExp } from '../utils/regexps';
 import { arrayFrom, freeze, maybeOf, promiseOf, tupleOf } from '@fluss/core';
 
 /** Hooks are defined in order they have been executed in element's lifecycle. */
@@ -45,14 +43,18 @@ function applyHook(node: Node, type: Hooks) {
    * of element and then apply hook.
    */
   setTimeout(() => {
-    if (isElementNode(node)) {
-      getAttribute(node, createHookAttributeName(type))
-        .map((id) => tupleOf(id, maybeOf(hooksManager[type].get(id))))
-        .map(([id, maybeFn]) =>
-          maybeFn.map((fn) =>
-            promiseOf(fn(node)).then(() => hooksManager[type].delete(id))
-          )
-        );
+    if (node instanceof HTMLElement) {
+      Object.entries(node.dataset)
+        .filter(([attrName, _]) => dataHookIdJSRegExp.test(attrName))
+        .forEach(([_, eventId]) => {
+          maybeOf(eventId)
+            .map((id) => tupleOf(id, maybeOf(hooksManager[type].get(id))))
+            .map(([id, maybeFn]) =>
+              maybeFn.map((fn) =>
+                promiseOf(fn(node)).then(() => hooksManager[type].delete(id))
+              )
+            );
+        });
     }
   }, 0);
 }

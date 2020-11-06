@@ -7,6 +7,7 @@
 - Order of render events (multiple invokation of `Router.to`, `Router.reload`, multiple state changing accomplish render in order they are called).
 - `Function` type to `State` interface.
 - Rerendering template of custom element on changing attribute.
+- Setting `value` attribute and property to elements (etc. `HTMLInputElement`) with direct reactivity.
 
 ### Changed
 
@@ -20,11 +21,13 @@
 - `I18n.languagesTags` is of **ReadonlyArray<string>** now.
 - Values of `State` are `unknown` type now.
 - Convert `I18n` class to `i18n` namespace.
+- Allow declaring multiple hooks of the same type.
 
 ### Fixed
 
 - Invoking update hooks on changing library attributes: `data-hook-id` attributes and `data-event-id` attributes.
 - Strict types of parameters that can be passed to `html` function.
+- Diffing elements that have no children.
 
 ### Removed
 

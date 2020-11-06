@@ -3,8 +3,8 @@ import { Hooks } from '../dom/hooks';
 const HOOK_ID_PREFIX = 'data-hook-id-';
 const EVENT_ID_PREFIX = 'data-event-id-';
 
-export function createHookAttributeName(name: Hooks): string {
-  return `${HOOK_ID_PREFIX}${name}`;
+export function createHookAttributeName(name: Hooks, eventId: number): string {
+  return `${HOOK_ID_PREFIX}${name}-${eventId}`;
 }
 
 export function createEventIdAttributeName(eventId: number): string {

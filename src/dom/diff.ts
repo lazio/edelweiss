@@ -57,8 +57,13 @@ export function diff(oldNode: Node, newNode: Node) {
         mountedHook(newNode);
         removedHook(oldNode);
       } else {
-        // Do nothing - both nodes haven't children and difference of attributes is
-        // already checked.
+        detachEvents(oldNode);
+
+        if (diffAttributes(oldNode, newNode)) {
+          _isRouteChanged ? mountedHook(oldNode) : updatedHook(oldNode);
+        }
+
+        attachEvents(oldNode);
       }
     } else {
       detachEvents(oldNode, true);
