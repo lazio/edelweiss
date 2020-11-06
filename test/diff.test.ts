@@ -222,7 +222,7 @@ describe('Diff DOM', () => {
     expect(document.body.innerHTML).toMatch(/count="1"/);
   });
 
-  test('Diffing value attribute', async () => {
+  test('Diffing value property', async () => {
     let valueString = '';
     let valueNumber = 0;
     let valueFunction = () => valueString + valueNumber;
@@ -232,30 +232,42 @@ describe('Diff DOM', () => {
       container: '#app',
       view() {
         return html`
-          <input id="a1" value=${valueString} />
-          <input id="a2" value=${valueNumber} />
-          <input id="a3" value=${valueFunction} />
+          <input id="a" .value=${valueString} />
+          <input id="b" .value=${valueNumber} />
+          <input id="c" .value=${valueFunction} />
         `;
       },
     });
 
     await Router.to('/value-attr');
 
-    expect(document.body.innerHTML).toMatch(/value=""/);
-    expect(document.body.innerHTML).toMatch(/value="0"/);
+    const input1 = document.querySelector<HTMLInputElement>('#a');
+    const input2 = document.querySelector<HTMLInputElement>('#b');
+    const input3 = document.querySelector<HTMLInputElement>('#c');
+
+    if (input1) {
+      expect(input1.value).toBe('');
+    }
+    if (input2) {
+      expect(input2.value).toBe('0');
+    }
+    if (input3) {
+      expect(input3.value).toBe('0');
+    }
 
     valueString = 'some';
     valueNumber = 1;
 
     await Router.reload();
 
-    expect(document.body.innerHTML).toMatch(/value="some"/);
-    expect(document.body.innerHTML).toMatch(/value="1"/);
-    expect(document.body.innerHTML).toMatch(/value="some1"/);
-
-    const input = document.querySelector<HTMLInputElement>('#a1');
-    if (input) {
-      expect(input.value).toBe('some');
+    if (input1) {
+      expect(input1.value).toBe('some');
+    }
+    if (input2) {
+      expect(input2.value).toBe('1');
+    }
+    if (input3) {
+      expect(input3.value).toBe('some1');
     }
   });
 });

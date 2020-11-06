@@ -7,7 +7,7 @@
 - Order of render events (multiple invokation of `Router.to`, `Router.reload`, multiple state changing accomplish render in order they are called).
 - `Function` type to `State` interface.
 - Rerendering template of custom element on changing attribute.
-- Setting `value` attribute and property to elements (etc. `HTMLInputElement`) with direct reactivity.
+- Ability to update properties and same attributes (by example `value` in `HTMLInputElement`) via attribute-like syntax.
 
 ### Changed
 

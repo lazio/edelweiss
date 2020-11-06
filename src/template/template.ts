@@ -3,9 +3,9 @@ import { warn } from '../utils/warn';
 import { eventListenersMap } from '../dom/events';
 import { Hooks, hooksManager } from '../dom/hooks';
 import {
-  SpecialAttributes,
+  SpecialProperty,
   ValueableHTMLElement,
-} from '../dom/special_attributes';
+} from '../dom/special_properties';
 import {
   createHookAttributeName,
   createEventIdAttributeName,
@@ -15,7 +15,7 @@ import {
   eventListenerRegExp,
   hookAttributeRegExp,
   booleanAttributeRegExp,
-  specialAttributesRegExp,
+  specialPropertiesRegExp,
 } from '../utils/regexps';
 import type { HookCallback } from '../dom/hooks';
 
@@ -113,35 +113,36 @@ async function formCurrentHTML(
     );
   }
 
-  /** Handle special attribute. */
-  const matchSpecialAttribute = specialAttributesRegExp.exec(current);
-  if (!isNothing(matchSpecialAttribute)) {
+  /** Handle special property and attribute. */
+  const matchSpecialProperty = specialPropertiesRegExp.exec(current);
+  if (!isNothing(matchSpecialProperty)) {
     let stateGetter = variable;
-    const attributeName = matchSpecialAttribute[1] as SpecialAttributes;
+    const propertyName = matchSpecialProperty[1] as SpecialProperty;
 
     if (
       typeof stateGetter !== 'function' &&
       typeof stateGetter !== 'string' &&
       typeof stateGetter !== 'number'
     ) {
-      warn(`Value of "${attributeName}" attribute must have "string", "number" or "function" type,
+      warn(`Value of "${propertyName}" property and attribute must have "string", "number" or "function" type,
       but given "${typeof stateGetter}".`);
       stateGetter = '';
     }
 
-    const attributeValue: string =
+    const propertyValue: string =
       typeof stateGetter === 'function' ? stateGetter() : `${stateGetter}`;
 
     // We doesn't return value, because updated hook need to be handled.
     current = current.replace(
-      specialAttributesRegExp,
-      `${attributeName}="${attributeValue}" :${Hooks.Updated}=`
+      specialPropertiesRegExp,
+      // Attribute is defined here, so we don't need to call
+      // setAttribute method.
+      `${propertyName}="${propertyValue}" :${Hooks.Updated}=`
     );
 
     // Assign updating function to variable.
     variable = (element: ValueableHTMLElement) => {
-      element.setAttribute(attributeName, attributeValue);
-      element[attributeName] = attributeValue;
+      element[propertyName] = propertyValue;
     };
   }
 
