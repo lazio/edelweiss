@@ -1,4 +1,3 @@
-import Component from '../component/component';
 import { uid } from '../utils/uid';
 import { warn } from '../utils/warn';
 import { eventListenersMap } from '../dom/events';
@@ -13,10 +12,21 @@ import {
   hookAttributeRegExp,
   booleanAttributeRegExp,
 } from '../utils/regexps';
+import type { HookCallback } from '../dom/hooks';
+
+type TemplateVariable =
+  | null
+  | undefined
+  | string
+  | boolean
+  | Promise<string>
+  // EventListener or HooksCallback
+  | Function
+  | EventListenerObject;
 
 export async function html(
   parts: TemplateStringsArray,
-  ...variables: Array<any>
+  ...variables: Array<TemplateVariable | Array<TemplateVariable>>
 ): Promise<string> {
   return parts.reduce((previous, current, index) => {
     return (
@@ -24,23 +34,15 @@ export async function html(
         // Wrap variable into Promise
         .map(promiseOf)
         .map((promiseWithVariable) =>
-          // Gets template from Component
-          promiseWithVariable.then((variable) => buildMaybeComponent(variable))
-        )
-        .map((promiseWithVariable) =>
           /**
-           * Variable may be an Array that contains string, Promise<string> and Component,
-           * so we must wait for resolving it and then return result. We do not handle other
-           * objects.
+           * TemplateVariable may be an Array that contains string, Promise<string>,
+           * so we must wait for resolving it and then return result.
+           * We do not handle other objects.
            * Also we prevent from inseting commas into template.
            */
           promiseWithVariable.then((variable) =>
             Array.isArray(variable)
-              ? Promise.all(
-                  variable.map((maybeComponent) =>
-                    buildMaybeComponent(maybeComponent)
-                  )
-                ).then((all) => all.join(''))
+              ? Promise.all(variable).then((all) => all.join(''))
               : variable
           )
         )
@@ -58,7 +60,7 @@ export async function html(
 }
 
 async function formCurrentHTML(
-  promiseWithVariable: Promise<any>,
+  promiseWithVariable: Promise<Exclude<TemplateVariable, Promise<string>>>,
   current: string,
   index: number
 ): Promise<string> {
@@ -69,7 +71,12 @@ async function formCurrentHTML(
   if (!isNothing(matchedElementEventListener)) {
     let listener = variable;
 
-    if (typeof listener !== 'function' && isNothing(listener.handleEvent)) {
+    if (
+      isNothing(listener) ||
+      typeof listener === 'string' ||
+      typeof listener === 'boolean' ||
+      (typeof listener !== 'function' && isNothing(listener.handleEvent))
+    ) {
       warn(`Event listener must be type of "function" or object with
   "handleEvent" method, but given "${typeof listener}".`);
       listener = () => {};
@@ -77,7 +84,8 @@ async function formCurrentHTML(
 
     const eventId = uid();
     eventListenersMap.set(eventId, {
-      [matchedElementEventListener[1]]: listener,
+      // It is up to user to set proper type of function as variable.
+      [matchedElementEventListener[1]]: listener as EventListenerOrEventListenerObject,
     });
 
     return current.replace(
@@ -100,6 +108,15 @@ async function formCurrentHTML(
   /** Handle hook attribute. */
   const matchHookAttribute = hookAttributeRegExp.exec(current);
   if (!isNothing(matchHookAttribute)) {
+    let hookCallback = variable;
+
+    if (typeof hookCallback !== 'function') {
+      warn(
+        `Event listener must be type of "function", but given "${typeof hookCallback}".`
+      );
+      hookCallback = () => {};
+    }
+
     const dataHookId = uid();
     /**
      * matchHookAttribute can contain only hook keywords, so we can not
@@ -107,7 +124,8 @@ async function formCurrentHTML(
      */
     const hookName = matchHookAttribute[1] as Hooks;
 
-    hooksManager[hookName].set(dataHookId, variable);
+    // It is up to user to set proper type of function as variable.
+    hooksManager[hookName].set(dataHookId, hookCallback as HookCallback);
 
     return current.replace(
       hookAttributeRegExp,
@@ -116,9 +134,4 @@ async function formCurrentHTML(
   }
 
   return current + variable;
-}
-
-/** Extract template from `Component`. */
-function buildMaybeComponent<T>(variable: T | Component): T | Promise<string> {
-  return variable instanceof Component ? variable._createNodes() : variable;
 }

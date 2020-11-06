@@ -30,7 +30,7 @@ describe('Hooks', () => {
               }}
               :updated=${() => updateCount++}
               :removed=${() => (isRemoved = true)}
-              class=${a}
+              class=${`${a}`}
             ></p>
           </div>`;
         },

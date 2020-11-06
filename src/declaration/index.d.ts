@@ -80,21 +80,6 @@ export function defineWebComponent<E extends WebComponentConstructor>(
   elementClass: E
 ): void;
 
-/**
- * Class that must be used to describe components of the page or page itself.
- * Can be replaced by plain function.
- */
-export abstract class Component {
-  /**
-   * Loads css files to page before `Component` is built.
-   * Looks for files in directory that is defined by `Config.cssRootFolder`.
-   */
-  styles(): string | Array<string>;
-  beforeBuild(): void | Promise<void>;
-  abstract template(): string | Promise<string>;
-  afterBuild(): void | Promise<void>;
-}
-
 /** Does routing of site. */
 export class Router {
   /** Returns info about current route. */
@@ -166,10 +151,21 @@ export interface State {
 /** Creates state based on object initial values. */
 export function createState<T extends State = {}>(object: T): T;
 
+export type HookCallback = (self: Element) => void | Promise<void>;
+
+export type TemplateVariable =
+  | null
+  | undefined
+  | string
+  | boolean
+  | Promise<string>
+  | Function
+  | EventListenerObject;
+
 /** Creates string template that will be evaluated as DOM elements. */
 export function html(
   parts: TemplateStringsArray,
-  ...variables: Array<any>
+  ...variables: Array<TemplateVariable | Array<TemplateVariable>>
 ): Promise<string>;
 
 /**
@@ -214,11 +210,7 @@ export type Route = {
   /** Hook is invoked before this route will render. */
   before?: () => void | Promise<void>;
   /** Returns HTML template for this route. */
-  view: () =>
-    | string
-    | Component
-    | Promise<string>
-    | Array<string | Component | Promise<string>>;
+  view: () => string | Promise<string> | Array<string | Promise<string>>;
   /** Hook is invoked after this route renders. */
   after?: () => void | Promise<void>;
 };

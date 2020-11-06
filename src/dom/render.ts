@@ -1,4 +1,3 @@
-import Component from '../component/component';
 import WebComponent from '../component/web_component';
 import { warn } from '../utils/warn';
 import { edelweissPolicy } from '../utils/trusted_types';
@@ -20,11 +19,7 @@ let renderOrder: Promise<void> = promiseOf(undefined);
 /** Render templates on the page. */
 export function render(
   to: string,
-  nodes:
-    | string
-    | Component
-    | Promise<string>
-    | Array<string | Component | Promise<string>>
+  nodes: string | Promise<string> | Array<string | Promise<string>>
 ): Promise<void> {
   return (renderOrder = renderOrder.then(() => {
     return (

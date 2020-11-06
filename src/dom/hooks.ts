@@ -10,7 +10,7 @@ export enum Hooks {
   Removed = 'removed',
 }
 
-type HookCallback = (self: Element) => void | Promise<void>;
+export type HookCallback = (self: Element) => void | Promise<void>;
 
 /** Holds callbacks for every element's hooks. */
 export const hooksManager = freeze({

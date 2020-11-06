@@ -27,6 +27,7 @@
 ### Removed
 
 - CommonJS bundle.
+- `Component` class.
 
 ## [1.5.0] - 2020-10-08
 

@@ -1,5 +1,5 @@
 import './crypto_for_jest';
-import { html, Component } from '../src';
+import { html } from '../src';
 
 describe('Test template of "edelweiss"', () => {
   test('html() must return Promise<string>', () => {
@@ -21,27 +21,11 @@ describe('Test template of "edelweiss"', () => {
     expect(value).toMatch(/\s*<p><\/p>\s*/);
   });
 
-  test('html() must return Promise<string> with inserted "Component" into test.', async () => {
-    class TestComponent extends Component {
-      template() {
-        return html` <p>Component</p> `;
-      }
-    }
-
-    const value = await html` <div>${new TestComponent()}</div> `;
-    expect(value).toMatch(/<div>\s*<p>Component<\/p>\s*<\/div>/);
-  });
-
-  test('html() must return Promise<string> with inserted "Array<string | Component | Promise<string>>" into test', () => {
-    class TestComponent extends Component {
-      template() {
-        return html` <p>Component</p> `;
-      }
-    }
-    const array = ['<p>1</p>', '<p>2</p>', new TestComponent(), html`<p>3</p>`];
+  test('html() must return Promise<string> with inserted "Array<string | Promise<string>>" into test', () => {
+    const array = ['<p>1</p>', '<p>2</p>', html`<p>3</p>`];
 
     expect(html` <p>${array}</p> `).resolves.toMatch(
-      '<p><p>1</p><p>2</p> <p>Component</p> <p>3</p></p>'
+      '<p><p>1</p><p>2</p><p>3</p></p>'
     );
   });
 

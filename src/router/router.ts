@@ -4,18 +4,13 @@ import { matchPath } from './path_to_regexp';
 import { addEventListener } from '@fluss/web';
 import { setIsRouteChangedMarker } from './markers';
 import { promiseOf, isNothing, arrayFrom, freeze } from '@fluss/core';
-import type Component from '../component/component';
 
 export type Route = {
   readonly path: string;
   readonly container?: string;
   readonly parameters?: RegExpMatchArray;
   before?: () => Promise<void> | void;
-  view: () =>
-    | string
-    | Component
-    | Promise<string>
-    | Array<string | Component | Promise<string>>;
+  view: () => string | Promise<string> | Array<string | Promise<string>>;
   after?: () => Promise<void> | void;
 };
 

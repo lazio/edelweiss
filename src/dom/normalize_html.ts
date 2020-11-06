@@ -1,14 +1,9 @@
-import Component from '../component/component';
 import { promiseOf } from '@fluss/core';
 import { edelweissPolicy } from '../utils/trusted_types';
 import { createElement, querySelector } from '@fluss/web';
 
 export async function normalizeHTML(
-  nodes:
-    | string
-    | Component
-    | Promise<string>
-    | Array<string | Component | Promise<string>>
+  nodes: string | Promise<string> | Array<string | Promise<string>>
 ): Promise<string> {
   if (Array.isArray(nodes)) {
     return nodes.reduce(
@@ -21,7 +16,7 @@ export async function normalizeHTML(
       promiseOf('')
     );
   } else {
-    return nodes instanceof Component ? nodes._createNodes() : nodes;
+    return nodes;
   }
 }
 
