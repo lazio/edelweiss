@@ -30,6 +30,18 @@ export default abstract class WebComponent<
     return this.#state;
   }
 
+  /**
+   * If user want override this method, then at first `super.attributeChangedCallback`
+   * must be called. Otherwise reactivity will be lost.
+   */
+  attributeChangedCallback(
+    name: string,
+    oldValue: string,
+    newValue: string
+  ): void {
+    this.#renderOrder = this.#renderOrder.then(() => renderWebComponent(this));
+  }
+
   changeState(parts: Partial<T>): Promise<void> {
     this.#state = {
       ...this.#state,

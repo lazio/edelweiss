@@ -6,6 +6,7 @@
 - `state` getter and `changeState` method to `WebComponent` class.
 - Order of render events (multiple invokation of `Router.to`, `Router.reload`, multiple state changing accomplish render in order they are called).
 - `Function` type to `State` interface.
+- Rerendering template of custom element on changing attribute.
 
 ### Changed
 

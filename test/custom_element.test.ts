@@ -1,5 +1,5 @@
 import './crypto_for_jest';
-import { defineWebComponent, html, Router, WebComponent } from '../src';
+import { html, Router, WebComponent, defineWebComponent } from '../src';
 
 describe('Custom elements', () => {
   beforeAll(() => {
@@ -240,6 +240,48 @@ describe('Custom elements', () => {
       customElement.shadowRoot?.querySelector('button')?.click();
 
       setTimeout(() => expect(customElement.state.word).toMatch('set'), 0);
+    }
+  });
+
+  test('Testing reactivity on attribute changes', async () => {
+    Router.add({
+      path: '/reactive-attributes',
+      view() {
+        return html` <reactive-attributes></reactive-attributes> `;
+      },
+    });
+
+    class ReactiveAttributesElement extends WebComponent {
+      renderCount = 0;
+
+      static get observedAttributes() {
+        return ['disabled'];
+      }
+
+      get disabled(): boolean {
+        return this.getAttribute('disabled') !== null;
+      }
+
+      template() {
+        this.renderCount++;
+        return html` ${this.disabled} `;
+      }
+    }
+
+    defineWebComponent('reactive-attributes', ReactiveAttributesElement);
+
+    await Router.to('/reactive-attributes');
+
+    const customElement = document.querySelector<ReactiveAttributesElement>(
+      'reactive-attributes'
+    );
+
+    if (customElement) {
+      expect(customElement.renderCount).toBe(1);
+
+      customElement.setAttribute('disabled', '');
+
+      setTimeout(() => expect(customElement.renderCount).toBe(2), 0);
     }
   });
 });

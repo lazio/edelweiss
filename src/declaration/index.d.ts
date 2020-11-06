@@ -43,6 +43,9 @@ export abstract class WebComponent<T extends State = {}> extends HTMLElement {
   disconnectedCallback(): void;
   /**
    * Called when one of attributes returned by `observedAttributes` is modified.
+   *
+   * Calling `super.attributeChangedCallback` while overriding this
+   * method is necessary. Otherwise reactivity will be lost.
    */
   attributeChangedCallback(
     name: string,

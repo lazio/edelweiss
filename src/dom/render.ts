@@ -25,24 +25,21 @@ export function render(
     return (
       querySelector(to)
         .map((toElement) => tupleOf(toElement, cloneNode(toElement)))
-        .map(([toElement, maybeClone]) => {
-          return normalizeHTML(nodes)
-            .then((html) => {
-              maybeClone.map(
-                (clone) => (clone.innerHTML = edelweissPolicy.createHTML(html))
-              );
-            })
-            .then(() => {
-              stylePaths.forEach(loadCSS);
-              stylePathsToRemove.forEach(unloadCSS);
+        .map(async ([toElement, maybeClone]) => {
+          const html = await normalizeHTML(nodes);
 
-              // Clear paths of styles
-              stylePaths.clear();
-              stylePathsToRemove.clear();
+          stylePaths.forEach(loadCSS);
+          stylePathsToRemove.forEach(unloadCSS);
+          // Clear paths of styles
+          stylePaths.clear();
+          stylePathsToRemove.clear();
+
+          maybeClone
+            .map((clone) => {
+              clone.innerHTML = edelweissPolicy.createHTML(html);
+              return clone;
             })
-            .then(() => {
-              maybeClone.map((clone) => diff(toElement, clone));
-            });
+            .map((element) => diff(toElement, element));
         })
         .extract() ||
       warn(`Page does not contain element with selector: "${to}"!`)
