@@ -10,4 +10,4 @@ export const dataHookIdJSRegExp = /hookId(Mounted|Updated|Removed)-[\d]{1,}$/;
 
 export const pathVariableRegExp = /:.+:(\?)?/g;
 
-export const valueRegExp = /(value)=$/;
+export const specialAttributesRegExp = /(value)=$/;

@@ -12,10 +12,10 @@ import {
 } from '../utils/library_attributes';
 import { promiseOf, isNothing, maybeOf } from '@fluss/core';
 import {
-  valueRegExp,
   eventListenerRegExp,
   hookAttributeRegExp,
   booleanAttributeRegExp,
+  specialAttributesRegExp,
 } from '../utils/regexps';
 import type { HookCallback } from '../dom/hooks';
 
@@ -26,7 +26,7 @@ type TemplateVariable =
   | number
   | boolean
   | Promise<string>
-  // EventListener or HooksCallback
+  // EventListener, HooksCallback or () => string | number
   | Function
   | EventListenerObject;
 
@@ -114,7 +114,7 @@ async function formCurrentHTML(
   }
 
   /** Handle special attribute. */
-  const matchSpecialAttribute = valueRegExp.exec(current);
+  const matchSpecialAttribute = specialAttributesRegExp.exec(current);
   if (!isNothing(matchSpecialAttribute)) {
     let stateGetter = variable;
     const attributeName = matchSpecialAttribute[1] as SpecialAttributes;
@@ -134,7 +134,7 @@ async function formCurrentHTML(
 
     // We doesn't return value, because updated hook need to be handled.
     current = current.replace(
-      valueRegExp,
+      specialAttributesRegExp,
       `${attributeName}="${attributeValue}" :${Hooks.Updated}=`
     );
 
