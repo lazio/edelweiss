@@ -23,6 +23,7 @@
 ### Fixed
 
 - Invoking update hooks on changing library attributes: `data-hook-id` attributes and `data-event-id` attributes.
+- Strict types of parameters that can be passed to `html` function.
 
 ### Removed
 

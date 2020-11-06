@@ -157,6 +157,7 @@ export type TemplateVariable =
   | null
   | undefined
   | string
+  | number
   | boolean
   | Promise<string>
   | Function

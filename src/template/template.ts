@@ -18,6 +18,7 @@ type TemplateVariable =
   | null
   | undefined
   | string
+  | number
   | boolean
   | Promise<string>
   // EventListener or HooksCallback
@@ -73,9 +74,9 @@ async function formCurrentHTML(
 
     if (
       isNothing(listener) ||
-      typeof listener === 'string' ||
-      typeof listener === 'boolean' ||
-      (typeof listener !== 'function' && isNothing(listener.handleEvent))
+      (typeof listener !== 'function' &&
+        typeof listener === 'object' &&
+        isNothing(listener.handleEvent))
     ) {
       warn(`Event listener must be type of "function" or object with
   "handleEvent" method, but given "${typeof listener}".`);
