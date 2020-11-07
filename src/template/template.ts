@@ -3,10 +3,6 @@ import { warn } from '../utils/warn';
 import { eventListenersMap } from '../dom/events';
 import { Hooks, hooksManager } from '../dom/hooks';
 import {
-  SpecialProperty,
-  ValueableHTMLElement,
-} from '../dom/special_properties';
-import {
   createHookAttributeName,
   createEventIdAttributeName,
 } from '../utils/library_attributes';
@@ -117,7 +113,7 @@ async function formCurrentHTML(
   const matchSpecialProperty = specialPropertiesRegExp.exec(current);
   if (!isNothing(matchSpecialProperty)) {
     let stateGetter = variable;
-    const propertyName = matchSpecialProperty[1] as SpecialProperty;
+    const propertyName = matchSpecialProperty[1];
 
     if (
       typeof stateGetter !== 'function' &&
@@ -141,7 +137,7 @@ async function formCurrentHTML(
     );
 
     // Assign updating function to variable.
-    variable = (element: ValueableHTMLElement) => {
+    variable = (element: HTMLElement & { [key: string]: string }) => {
       element[propertyName] = propertyValue;
     };
   }
