@@ -28,6 +28,7 @@
 - Invoking update hooks on changing library attributes: `data-hook-id` attributes and `data-event-id` attributes.
 - Strict types of parameters that can be passed to `html` function.
 - Diffing elements that have no children.
+- Assinging same value (if value is object) and same literal to state will not cause rerendering.
 
 ### Removed
 
