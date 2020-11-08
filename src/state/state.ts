@@ -50,11 +50,12 @@ export function createState<T extends State = {}>(obj: T): T {
         return isSuccessful;
       } else {
         /**
-         * If user is trying delete property that doesn't exists
-         * the TypeError must be thrown. It is a convention - delete
-         * only existed property.
+         * If property does not exists in target,
+         * simply do nothing. An error will not be
+         * thrown (rid of unnecessary check for property
+         * existence).
          */
-        return false;
+        return true;
       }
     },
   });
