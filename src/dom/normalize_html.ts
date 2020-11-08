@@ -36,11 +36,7 @@ export function normalizeHTMLForWebComponent(
 
   return (
     querySelector('template', wrapperElement).extract() ||
-    /**
-     * Template element must be directly defined in HTML.
-     * Content can't be added to it in JS.
-     * So function returns empty element as fallback.
-     */
+    // Just fallback.
     createElement('template').extract()
   );
 }
