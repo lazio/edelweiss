@@ -8,6 +8,7 @@
 - `Function` type to `State` interface.
 - Rerendering template of custom element on changing attribute.
 - Ability to update properties and same attributes (by example `value` in `HTMLInputElement`) via attribute-like syntax.
+- Ability to prevent navigation to route in `before` route hook.
 
 ### Changed
 

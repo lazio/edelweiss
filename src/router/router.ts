@@ -9,7 +9,7 @@ export type Route = {
   readonly path: string;
   readonly container?: string;
   readonly parameters?: RegExpMatchArray;
-  before?: () => Promise<void> | void;
+  before?: () => void | boolean | Promise<void | boolean>;
   view: () => string | Promise<string> | Array<string | Promise<string>>;
   after?: () => Promise<void> | void;
 };
@@ -97,6 +97,18 @@ export default class Router {
           .map(async (parameters) => {
             setIsRouteChangedMarker(_current.path !== route.path);
 
+            // Before route render hook
+            if (!isNothing(route.before)) {
+              if ((await promiseOf(route.before())) === false) {
+                /**
+                 * Navigating to route can be prevented by
+                 * returning `false` from `route.before` function.
+                 * Also we must reset route changed marker.
+                 */
+                return setIsRouteChangedMarker(false);
+              }
+            }
+
             _current = {
               ...route,
               /**
@@ -107,11 +119,6 @@ export default class Router {
                */
               parameters,
             };
-
-            // Before route render hook
-            if (!isNothing(route.before)) {
-              await promiseOf(route.before());
-            }
 
             await render(container, route.view());
 

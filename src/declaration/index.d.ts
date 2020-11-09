@@ -211,8 +211,13 @@ export type Route = {
    * Second value (index **1**) and go on are path's variables.
    */
   readonly parameters?: RegExpMatchArray;
-  /** Hook is invoked before this route will render. */
-  before?: () => void | Promise<void>;
+  /**
+   * Hook is invoked before this route will render.
+   *
+   * For preventing navigation to route return `false`
+   * from method.
+   */
+  before?: () => void | boolean | Promise<void | boolean>;
   /** Returns HTML template for this route. */
   view: () => string | Promise<string> | Array<string | Promise<string>>;
   /** Hook is invoked after this route renders. */
