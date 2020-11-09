@@ -2,12 +2,12 @@
 
 ### Added
 
-- `data-ignored` boolean attribute for detecting elements, that must not be checked for structure difference.
+- `data-ignored` boolean attribute for marking elements, that must not be checked for structure difference.
 - `state` getter and `changeState` method to `WebComponent` class.
 - Order of render events (multiple invokation of `Router.to`, `Router.reload`, multiple state changing accomplish render in order they are called).
 - `Function` type to `State` interface.
-- Rerendering template of custom element on changing attribute.
-- Ability to update properties and same attributes (by example `value` in `HTMLInputElement`) via attribute-like syntax.
+- Rerendering template of custom element on changing attributes.
+- Ability to update properties of html element and related attributes (by example `value` in `HTMLInputElement`) via attribute-like syntax.
 - Ability to prevent navigation to route in `before` route hook.
 
 ### Changed
@@ -15,20 +15,20 @@
 - `template` method of `WebComponent` can return only `string` and `Promise<string>` now.
 - `cssRootFolder` is now static property of `Config` class.
 - Event listeners and values of boolean attributes (prepended by `?`) must not be surrounded by `'` or `"` now.
-- `Component` and `WebComponent` are now abstract classes with abstract `template` method.
+- `WebComponent` is now abstract class with abstract `template` method.
 - Add **-** symbol between `data-event-id` prefix and event number.
-- _basePrefix_ of `Router` configuration property to _prefix_ and _baseContainer_ to _container_.
+- Rename _basePrefix_ of `Router` configuration property to _prefix_ and _baseContainer_ to _container_.
 - `Router.current` returns **Readonly<Route>** now.
 - `I18n.languagesTags` is of **ReadonlyArray<string>** now.
-- Values of `State` are `unknown` type now.
+- Values of `State` have `unknown` type now.
 - Convert `I18n` class to `i18n` namespace.
-- Allow declaring multiple hooks of the same type.
+- Allow declaring multiple hooks of the same type in one element.
 
 ### Fixed
 
 - Invoking update hooks on changing library attributes: `data-hook-id` attributes and `data-event-id` attributes.
-- Strict types of parameters that can be passed to `html` function.
-- Diffing elements that have no children.
+- Make types of parameters that can be passed to `html` function stricter.
+- Updating elements that have no children.
 - Assinging same value (if value is object) and same literal to state will not cause rerendering.
 - Deleting absent property from state does not throw an error and does not cause rerendering.
 
@@ -385,7 +385,7 @@
 
 ## 0.5.1
 
-- Fix typo in `flor-typed/edelweiss.js`
+- Fix typo in `flow-typed/edelweiss.js`
 
 ## 0.5.0
 
