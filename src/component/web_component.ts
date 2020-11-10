@@ -3,7 +3,7 @@ import { alternation, promiseOf } from '@fluss/core';
 import type { State } from '../state/state';
 
 export default abstract class WebComponent<
-  T extends State = {}
+  T extends State = State
 > extends HTMLElement {
   /**
    * Contains the rendering order. This property is similar to `renderOrder`

@@ -4,7 +4,7 @@
  * Other properties and custom element's callbacks you can define as
  * usual.
  */
-export abstract class WebComponent<T extends State = {}> extends HTMLElement {
+export abstract class WebComponent<T extends State = State> extends HTMLElement {
   /**
    * When overriding constructor always call **super()** at start,
    * so that the correct prototype chain will be established.
@@ -147,12 +147,10 @@ export function translate(
 ): string;
 
 /** Common shape of state for application. */
-export interface State {
-  [key: string]: unknown;
-}
+export interface State {}
 
 /** Creates state based on object initial values. */
-export function createState<T extends State = {}>(object: T): T;
+export function createState<T extends State = State>(object: T): T;
 
 export type HookCallback = (self: Element) => void | Promise<void>;
 

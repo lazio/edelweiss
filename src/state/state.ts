@@ -1,11 +1,9 @@
 import { render } from '../dom/render';
 import { _current, _routerGlobalOptions } from '../router/router';
 
-export interface State {
-  [key: string]: unknown;
-}
+export interface State {}
 
-export function createState<T extends State = {}>(obj: T): T {
+export function createState<T extends State = State>(obj: T): T {
   return new Proxy<T>(obj, {
     set(target, property, value, receiver) {
       /**
@@ -15,7 +13,7 @@ export function createState<T extends State = {}>(obj: T): T {
        * new object. If value is primitive, there is no
        * need to rerender page as page view will be the same.
        */
-      if (Object.is(target[property as string], value)) {
+      if (Object.is(target[property as keyof State], value)) {
         /**
          * If value is the same as in target there is not need to set
          * value to target, but we must return true to

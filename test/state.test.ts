@@ -1,6 +1,12 @@
 import { createState, Router } from '../src';
+import type { State } from '../src/state/state';
 
-const testState: { clicks: number; deletable?: boolean } = createState({
+interface TestState extends State {
+  clicks: number;
+  deletable?: boolean;
+}
+
+const testState = createState<TestState>({
   clicks: 0,
   deletable: true,
 });
@@ -30,9 +36,7 @@ describe('Tests for state', () => {
   });
 
   test('Deleting property from state', () => {
-    if (testState.deletable) {
-      delete testState.deletable;
-    }
+    delete testState.deletable;
     expect(testState.deletable).toBe(undefined);
   });
 });

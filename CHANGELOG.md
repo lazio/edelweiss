@@ -20,7 +20,6 @@
 - Rename _basePrefix_ of `Router` configuration property to _prefix_ and _baseContainer_ to _container_.
 - `Router.current` returns **Readonly<Route>** now.
 - `I18n.languagesTags` is of **ReadonlyArray<string>** now.
-- Values of `State` have `unknown` type now.
 - Convert `I18n` class to `i18n` namespace.
 - Allow declaring multiple hooks of the same type in one element.
 
@@ -36,6 +35,7 @@
 
 - CommonJS bundle.
 - `Component` class.
+- Index signature from `State` interface.
 
 ## [1.5.0] - 2020-10-08
 
