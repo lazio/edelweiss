@@ -4,10 +4,9 @@ import { edelweissPolicy } from '../utils/trusted_types';
 import { diff, diffChildren } from './diff';
 import { loadCSS, unloadCSS } from '../utils/styles';
 import { querySelector, cloneNode } from '@fluss/web';
+import { maybeOf, promiseOf, tupleOf } from '@fluss/core';
 import { stylePaths, stylePathsToRemove } from '../css';
 import { normalizeHTML, normalizeHTMLForWebComponent } from './normalize_html';
-import { maybeOf, promiseOf, tupleOf } from '@fluss/core';
-import type { State } from '../state/state';
 
 /**
  * Contains the rendering order. The field ensures that
@@ -47,7 +46,7 @@ export function render(
   }));
 }
 
-export async function renderWebComponent<T extends State>(
+export async function renderWebComponent<T extends object>(
   element: WebComponent<T>
 ): Promise<void> {
   const html = await promiseOf(element.template());

@@ -1,7 +1,6 @@
 import { createState, Router } from '../src';
-import type { State } from '../src/state/state';
 
-interface TestState extends State {
+interface TestState {
   clicks: number;
   deletable?: boolean;
 }
@@ -11,6 +10,8 @@ const testState = createState<TestState>({
   deletable: true,
 });
 
+let renderCount = 0;
+
 describe('Tests for state', () => {
   beforeAll(() => {
     document.body.innerHTML = `<div class="app"></div>`;
@@ -19,24 +20,39 @@ describe('Tests for state', () => {
       path: '/',
       container: '.app',
       view() {
+        renderCount++;
         return 'View';
       },
     });
 
+    // First render.
     Router.to('/');
   });
 
-  test('Getting from state value', () => {
+  test('Getting value from state.', () => {
     expect(testState.clicks).toBe(0);
   });
 
-  test('Setting new value to state', () => {
+  test('Setting new value to state.', () => {
+    // Second render.
     testState.clicks++;
     expect(testState.clicks).toBe(1);
   });
 
-  test('Deleting property from state', () => {
+  test('Setting same value to state does not cause rerender.', () => {
+    // No render.
+    testState.clicks = testState.clicks;
+    expect(renderCount).toBe(2);
+  });
+
+  test('Deleting property from state.', () => {
+    // Third render.
     delete testState.deletable;
     expect(testState.deletable).toBe(undefined);
+  });
+
+  test('Deleting non existent property from state does not cause an error and rerender.', () => {
+    expect(() => delete testState.deletable).not.toThrow();
+    expect(renderCount).toBe(3);
   });
 });

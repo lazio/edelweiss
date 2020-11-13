@@ -1,9 +1,8 @@
 import { renderWebComponent } from '../dom/render';
 import { alternation, promiseOf } from '@fluss/core';
-import type { State } from '../state/state';
 
 export default abstract class WebComponent<
-  T extends State = State
+  T extends object = object
 > extends HTMLElement {
   /**
    * Contains the rendering order. This property is similar to `renderOrder`

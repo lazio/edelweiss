@@ -5,7 +5,6 @@
 - `data-ignored` boolean attribute for marking elements, that must not be checked for structure difference.
 - `state` getter and `changeState` method to `WebComponent` class.
 - Order of render events (multiple invokation of `Router.to`, `Router.reload`, multiple state changing accomplish render in order they are called).
-- `Function` type to `State` interface.
 - Rerendering template of custom element on changing attributes.
 - Ability to update properties of html element and related attributes (by example `value` in `HTMLInputElement`) via attribute-like syntax.
 - Ability to prevent navigation to route in `before` route hook.
@@ -35,7 +34,7 @@
 
 - CommonJS bundle.
 - `Component` class.
-- Index signature from `State` interface.
+- `State` interface, now parent type of state is `object`.
 
 ## [1.5.0] - 2020-10-08
 
