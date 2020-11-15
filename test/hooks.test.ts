@@ -14,6 +14,8 @@ describe('Hooks', () => {
   let isRemoved = false;
   let element: Element | null = null;
 
+  let hookIsInvoked = false;
+
   beforeAll(() => {
     document.body.innerHTML = '<div id="outer"></div>';
 
@@ -40,6 +42,13 @@ describe('Hooks', () => {
         container: '#outer',
         view() {
           return html`Hello`;
+        },
+      },
+      {
+        path: '/only',
+        container: '#outer',
+        view() {
+          return html` <div :mounted=${() => (hookIsInvoked = true)}></div> `;
         },
       },
     ]);
@@ -82,5 +91,13 @@ describe('Hooks', () => {
     await Router.reload();
 
     defer(() => expect(updateCount).toBe(1));
+  });
+
+  test('Mounted are applied, if they are only attributes of elements', async () => {
+    expect(hookIsInvoked).toBe(false);
+
+    await Router.to('/only');
+
+    defer(() => expect(hookIsInvoked).toBe(true));
   });
 });

@@ -1,6 +1,6 @@
 import { addEventListener } from '@fluss/web';
-import { dataEventIdJSRegExp } from '../utils/regexps';
 import { arrayFrom, maybeOf } from '@fluss/core';
+import { dataEventIdJSRegExp } from '../utils/regexps';
 
 /**
  * Holds all listeners that will be attached to element.

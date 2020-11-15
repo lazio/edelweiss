@@ -44,6 +44,13 @@ export function diff(oldNode: Node, newNode: Node) {
            * whether page is changed in order to call proper hook.
            */
           _isRouteChanged ? mountedHook(oldNode) : updatedHook(oldNode);
+        } else {
+          /**
+           * Mounted hook need to be called if route is changed,
+           * but attributes do not. This is the case, when element
+           * has only hook attribute.
+           */
+          _isRouteChanged && mountedHook(oldNode);
         }
 
         attachEvents(oldNode);
@@ -59,8 +66,11 @@ export function diff(oldNode: Node, newNode: Node) {
       } else {
         detachEvents(oldNode);
 
+        // Same reason as above.
         if (diffAttributes(oldNode, newNode)) {
           _isRouteChanged ? mountedHook(oldNode) : updatedHook(oldNode);
+        } else {
+          _isRouteChanged && mountedHook(oldNode);
         }
 
         attachEvents(oldNode);
@@ -78,7 +88,10 @@ export function diff(oldNode: Node, newNode: Node) {
       oldNode.textContent = newNode.textContent;
 
       maybeOf(oldNode.parentElement).map((parent) => {
-        /** Same reason as above. */
+        /**
+         * Same reason as above, but here diffing attributes
+         * did not aplly.
+         */
         _isRouteChanged ? mountedHook(parent) : updatedHook(parent);
       });
     }
