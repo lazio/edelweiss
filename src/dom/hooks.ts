@@ -1,12 +1,6 @@
-import { dataHookIdJSRegExp } from '../utils/regexps';
-import { arrayFrom, freeze, maybeOf, promiseOf, tupleOf } from '@fluss/core';
-
-/** Hooks are defined in order they have been executed in element's lifecycle. */
-export enum Hooks {
-  Mounted = 'mounted',
-  Updated = 'updated',
-  Removed = 'removed',
-}
+import { isElementNode } from '../utils/predicates';
+import { isHookAttribute, Hooks } from '../utils/library_attributes';
+import { arrayFrom, freeze, maybeOf, promiseOf } from '@fluss/core';
 
 export type HookCallback = (self: Element) => void | Promise<void>;
 
@@ -43,17 +37,13 @@ function applyHook(node: Node, type: Hooks) {
    * of element and then apply hook.
    */
   setTimeout(() => {
-    if (node instanceof HTMLElement) {
-      Object.entries(node.dataset)
-        .filter(([attrName, _]) => dataHookIdJSRegExp.test(attrName))
-        .forEach(([_, eventId]) => {
-          maybeOf(eventId)
-            .map((id) => tupleOf(id, maybeOf(hooksManager[type].get(id))))
-            .map(([id, maybeFn]) =>
-              maybeFn.map((fn) =>
-                promiseOf(fn(node)).then(() => hooksManager[type].delete(id))
-              )
-            );
+    if (isElementNode(node)) {
+      arrayFrom(node.attributes)
+        .filter(({ name }) => isHookAttribute(name))
+        .forEach(({ value: id }) => {
+          maybeOf(hooksManager[type].get(id)).map((hook) =>
+            promiseOf(hook(node)).then(() => hooksManager[type].delete(id))
+          );
         });
     }
   }, 0);

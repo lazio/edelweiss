@@ -1,7 +1,12 @@
-import { Hooks } from '../dom/hooks';
-
 const HOOK_ID_PREFIX = 'data-hook-id-';
 const EVENT_ID_PREFIX = 'data-event-id-';
+
+/** Hooks are defined in order they have been executed in element's lifecycle. */
+export enum Hooks {
+  Mounted = 'mounted',
+  Updated = 'updated',
+  Removed = 'removed',
+}
 
 export function createHookAttributeName(name: Hooks, eventId: number): string {
   return `${HOOK_ID_PREFIX}${name}-${eventId}`;
@@ -12,8 +17,13 @@ export function createEventIdAttributeName(eventId: number): string {
 }
 
 export function isLibraryAttribute(attributeName: string): boolean {
-  return (
-    attributeName.startsWith(HOOK_ID_PREFIX) ||
-    attributeName.startsWith(EVENT_ID_PREFIX)
-  );
+  return isHookAttribute(attributeName) || isEventAttribute(attributeName);
+}
+
+export function isHookAttribute(attributeName: string): boolean {
+  return attributeName.startsWith(HOOK_ID_PREFIX);
+}
+
+export function isEventAttribute(attributeName: string): boolean {
+  return attributeName.startsWith(EVENT_ID_PREFIX);
 }

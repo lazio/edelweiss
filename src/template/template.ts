@@ -1,12 +1,13 @@
 import { uid } from '../utils/uid';
 import { warn } from '../utils/warn';
+import { hooksManager } from '../dom/hooks';
 import { eventListenersMap } from '../dom/events';
-import { Hooks, hooksManager } from '../dom/hooks';
+import { promiseOf, isNothing, maybeOf } from '@fluss/core';
 import {
+  Hooks,
   createHookAttributeName,
   createEventIdAttributeName,
 } from '../utils/library_attributes';
-import { promiseOf, isNothing, maybeOf } from '@fluss/core';
 import {
   eventListenerRegExp,
   hookAttributeRegExp,

@@ -270,4 +270,27 @@ describe('Diff DOM', () => {
       expect(input3.value).toBe('some1');
     }
   });
+
+  test('Event listener is added to element, if there is only event attributes', async () => {
+    let clicked = false;
+
+    Router.add({
+      path: '/one-listener',
+      container: '#app',
+      view() {
+        return html` <button @click=${() => (clicked = true)}>click</button> `;
+      },
+    });
+
+    await Router.to('/one-listener');
+
+    expect(clicked).toBe(false);
+
+    const button = document.querySelector<HTMLButtonElement>('button');
+    if (button) {
+      button.click();
+    }
+
+    expect(clicked).toBe(true);
+  });
 });
