@@ -134,7 +134,7 @@ export namespace i18n {
 export class Config {
   /**
    * Path to directory where must be css files that will be loaded
-   * by `registerCss` function or by `Component.styles` method.
+   * by `registerCss` function.
    */
   static cssRootFolder(): string;
 }
@@ -185,13 +185,7 @@ export function registerCss(
 export type Route = {
   /**
    * Path of the route. It will be implicitly converted to `RegExp`,
-   * so you can write valid RegExp in string.
-   * For convinience "(.+)" means _variable_ and can be
-   * writed as ":any-name:". This is **variable**.
-   * Also variables can be optional, in such case they must end with question
-   * mark - `:any-name:?`.
-   *
-   * For example: `/docs-?:section:?` equals to `new Regexp('^/docs-?(.+)?$')`.
+   * so you must write valid RegExp in string.
    *
    * Variables will be available in _parameters_ field.
    */
@@ -203,7 +197,7 @@ export type Route = {
    */
   readonly container?: string;
   /**
-   * Holds variables that are defined inside _path_.
+   * Holds variables (capture groups) that are defined inside _path_.
    * First value of array is whole matched string.
    * Second value (index **1**) and go on are path's variables.
    */
