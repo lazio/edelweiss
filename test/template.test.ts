@@ -29,6 +29,14 @@ describe('Test template of "edelweiss"', () => {
     );
   });
 
+  test('html function must get rid of null and undefined inside array', () => {
+    const array = ['<p>1</p>', null, '<p>2</p>', undefined, html`<p>3</p>`];
+
+    expect(html` <p>${array}</p> `).resolves.toMatch(
+      '<p><p>1</p><p>2</p><p>3</p></p>'
+    );
+  });
+
   test('html() must return Promise<string> with inserted "Promise<string>" into test', () => {
     const child = html` <span>Child</span> `;
     expect(html` <p>${child}</p> `).resolves.toMatch(

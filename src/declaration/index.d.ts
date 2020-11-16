@@ -153,20 +153,24 @@ export function createState<T extends object = object>(object: T): T;
 
 export type HookCallback = (self: Element) => void | Promise<void>;
 
-export type TemplateVariable =
+type AllowedValues =
   | null
   | undefined
   | string
   | number
   | boolean
-  | Promise<string>
   | Function
   | EventListenerObject;
+
+type TemplateVariables =
+  | AllowedValues
+  | Array<AllowedValues | Promise<AllowedValues>>
+  | Promise<AllowedValues | Array<AllowedValues | Promise<AllowedValues>>>;
 
 /** Creates string template that will be evaluated as DOM elements. */
 export function html(
   parts: TemplateStringsArray,
-  ...variables: Array<TemplateVariable | Array<TemplateVariable>>
+  ...variables: Array<TemplateVariables>
 ): Promise<string>;
 
 /**

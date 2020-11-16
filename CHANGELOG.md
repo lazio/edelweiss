@@ -29,6 +29,7 @@
 - Updating elements that have no children.
 - Assinging same value (if value is object) and same literal to state will not cause rerendering.
 - Deleting absent property from state does not throw an error and does not cause rerendering.
+- Removing `null` and `undefined` inside variables array (`html` function).
 
 ### Removed
 

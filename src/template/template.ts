@@ -16,20 +16,24 @@ import {
 } from '../utils/regexps';
 import type { HookCallback } from '../dom/hooks';
 
-type TemplateVariable =
+type AllowedValues =
   | null
   | undefined
   | string
   | number
   | boolean
-  | Promise<string>
   // EventListener, HooksCallback or () => string | number
   | Function
   | EventListenerObject;
 
+type TemplateVariables =
+  | AllowedValues
+  | Array<AllowedValues | Promise<AllowedValues>>
+  | Promise<AllowedValues | Array<AllowedValues | Promise<AllowedValues>>>;
+
 export async function html(
   parts: TemplateStringsArray,
-  ...variables: Array<TemplateVariable | Array<TemplateVariable>>
+  ...variables: Array<TemplateVariables>
 ): Promise<string> {
   return parts.reduce((previous, current, index) => {
     return (
@@ -37,15 +41,22 @@ export async function html(
         // Wrap variable into Promise
         .map(promiseOf)
         .map((promiseWithVariable) =>
+          // Get rid of null and undefined
+          promiseWithVariable.then((variable) => variable ?? '')
+        )
+        .map((promiseWithVariable) =>
           /**
-           * TemplateVariable may be an Array that contains string, Promise<string>,
+           * TemplateVariables may be an Array that contains Promise,
            * so we must wait for resolving it and then return result.
            * We do not handle other objects.
            * Also we prevent from inseting commas into template.
            */
           promiseWithVariable.then((variable) =>
             Array.isArray(variable)
-              ? Promise.all(variable).then((all) => all.join(''))
+              ? Promise.all(variable).then((all) =>
+                  // Get rid of null and undefined in array.
+                  all.filter((value) => !isNothing(value)).join('')
+                )
               : variable
           )
         )
@@ -63,7 +74,7 @@ export async function html(
 }
 
 async function formCurrentHTML(
-  promiseWithVariable: Promise<Exclude<TemplateVariable, Promise<string>>>,
+  promiseWithVariable: Promise<Exclude<AllowedValues, null | undefined>>,
   current: string,
   index: number
 ): Promise<string> {
