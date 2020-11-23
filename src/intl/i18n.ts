@@ -31,7 +31,7 @@ export function languagesTags(): ReadonlyArray<string> {
 export function add(languages: Languages, initial?: string): void {
   Object.keys(languages).forEach((lang, index) => {
     if (isNothing(currentLanguage) && index === 0) {
-      currentLanguage = initial || lang;
+      currentLanguage = initial ?? lang;
     }
 
     _languages[lang] = languages[lang];
@@ -48,7 +48,7 @@ export function setLanguage(tag: string): Promise<void> {
     currentLanguage = tag;
 
     return render(
-      _current.container || _routerGlobalOptions.container,
+      _current.container ?? _routerGlobalOptions.container,
       _current.view()
     );
   } else {
@@ -84,7 +84,7 @@ export function translate(
           text
         );
       })
-      .extract() || ''
+      .extract() ?? ''
   );
 }
 

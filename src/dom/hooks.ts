@@ -12,17 +12,17 @@ export const hooksManager = freeze({
 });
 
 /** If parent node is mounted, so its children are also mounted. */
-export function mountedHook(node: Node) {
+export function mountedHook(node: Node): void {
   applyHook(node, Hooks.Mounted);
   arrayFrom(node.childNodes).forEach(mountedHook);
 }
 
-export function updatedHook(node: Node) {
+export function updatedHook(node: Node): void {
   applyHook(node, Hooks.Updated);
 }
 
 /** If parent node is removed, so its children are also removed. */
-export function removedHook(node: Node) {
+export function removedHook(node: Node): void {
   applyHook(node, Hooks.Removed);
   arrayFrom(node.childNodes).forEach(removedHook);
 }
@@ -31,7 +31,7 @@ export function removedHook(node: Node) {
  * Hook id does not be deleted from element, because
  * some of them require its.
  */
-function applyHook(node: Node, type: Hooks) {
+function applyHook(node: Node, type: Hooks): void {
   /**
    * This trick is used in order to render "initial" state
    * of element and then apply hook.

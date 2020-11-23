@@ -35,7 +35,7 @@ export function normalizeHTMLForWebComponent(
     .extract();
 
   return (
-    querySelector('template', wrapperElement).extract() ||
+    querySelector('template', wrapperElement).extract() ??
     // Just fallback.
     createElement('template').extract()
   );

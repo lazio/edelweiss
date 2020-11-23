@@ -68,7 +68,7 @@ export async function html(
             )
           )
         )
-        .extract() || previous.then((prevHtml) => prevHtml + current)
+        .extract() ?? previous.then((prevHtml) => prevHtml + current)
     );
   }, promiseOf(''));
 }

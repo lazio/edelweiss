@@ -91,7 +91,7 @@ export default class Router {
       const pathMatch = matchPath(pathWithPrefix, prependPathPrefix(key));
 
       if (pathMatch.isJust()) {
-        const container = route.container || _routerGlobalOptions.container;
+        const container = route.container ?? _routerGlobalOptions.container;
 
         routeFound = pathMatch
           .map(async (parameters) => {
@@ -154,7 +154,7 @@ export default class Router {
       await promiseOf(before());
     }
 
-    await render(container || _routerGlobalOptions.container, view());
+    await render(container ?? _routerGlobalOptions.container, view());
 
     // After route render hook
     if (!isNothing(after)) {
