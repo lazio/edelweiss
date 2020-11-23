@@ -4,14 +4,14 @@
 
 - `data-ignored` boolean attribute for marking elements, that must not be checked for structure difference.
 - `state` getter and `changeState` method to `WebComponent` class.
-- Order of render events (multiple invokation of `Router.to`, `Router.reload`, multiple state changing accomplish render in order they are called).
 - Rerendering template of custom element on changing attributes.
 - Ability to update properties of html element and related attributes (by example `value` in `HTMLInputElement`) via attribute-like syntax.
 - Ability to prevent navigation to route in `before` route hook.
 
 ### Changed
 
-- `template` method of `WebComponent` can return only `string` and `Promise<string>` now.
+- `html` function returns now only `string` value.
+- `template` method of `WebComponent` can return only `string` now.
 - Event listeners and values of boolean attributes (prepended by `?`) must not be surrounded by `'` or `"` now.
 - `WebComponent` is now abstract class with abstract `template` method.
 - Add **-** symbol between `data-event-id` prefix and event number.
@@ -28,7 +28,6 @@
 - Updating elements that have no children.
 - Assinging same value (if value is object) and same literal to state will not cause rerendering.
 - Deleting absent property from state does not throw an error and does not cause rerendering.
-- Removing `null` and `undefined` inside variables array (`html` function).
 
 ### Removed
 

@@ -16,7 +16,7 @@ import {
 
 const IGNORED_ATTRIBUTE_NAME = 'data-ignored';
 
-export function diff(oldNode: Node, newNode: Node) {
+export function diff(oldNode: Node, newNode: Node): void {
   if (isElementNode(oldNode) && isElementNode(newNode)) {
     if (oldNode.tagName === newNode.tagName) {
       /**
@@ -90,7 +90,7 @@ export function diff(oldNode: Node, newNode: Node) {
       maybeOf(oldNode.parentElement).map((parent) => {
         /**
          * Same reason as above, but here diffing attributes
-         * did not aplly.
+         * did not apply.
          */
         _isRouteChanged ? mountedHook(parent) : updatedHook(parent);
       });

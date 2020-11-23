@@ -2,13 +2,7 @@ import { warn } from '../utils/warn';
 import { render } from '../dom/render';
 import { setAttribute } from '@fluss/web';
 import { _current, _routerGlobalOptions } from '../router/router';
-import {
-  freeze,
-  maybeOf,
-  isNothing,
-  promiseOf,
-  path as pathOf,
-} from '@fluss/core';
+import { freeze, maybeOf, isNothing, path as pathOf } from '@fluss/core';
 
 type LanguageObject = {
   [key: string]: string | { [key: string]: LanguageObject };
@@ -38,7 +32,7 @@ export function add(languages: Languages, initial?: string): void {
   });
 }
 
-export function setLanguage(tag: string): Promise<void> {
+export function setLanguage(tag: string): void {
   if (!isNothing(_languages[tag])) {
     /**
      * Change lang attribute of html element.
@@ -47,12 +41,12 @@ export function setLanguage(tag: string): Promise<void> {
     setAttribute(document.documentElement, 'lang', tag);
     currentLanguage = tag;
 
-    return render(
+    render(
       _current.container ?? _routerGlobalOptions.container,
       _current.view()
     );
   } else {
-    return promiseOf(undefined);
+    warn(`There is no translations for '${tag}' language!`);
   }
 }
 

@@ -134,7 +134,7 @@ describe('Diff DOM', () => {
     let secondResult = 0;
 
     Router.add({
-      path: '/events:number:?',
+      path: '/events(\\d+)?',
       container: '#app',
       view() {
         return html`

@@ -1,49 +1,35 @@
 import WebComponent from '../component/web_component';
 import { warn } from '../utils/warn';
 import { edelweissPolicy } from '../utils/trusted_types';
+import { maybeOf, tupleOf } from '@fluss/core';
 import { diff, diffChildren } from './diff';
 import { querySelector, cloneNode } from '@fluss/web';
-import { maybeOf, promiseOf, tupleOf } from '@fluss/core';
-import { normalizeHTML, normalizeHTMLForWebComponent } from './normalize_html';
-
-/**
- * Contains the rendering order. The field ensures that
- * the rendering will take place in the order in which
- * the relevant functions are called.
- */
-let renderOrder: Promise<void> = promiseOf(undefined);
+import { normalizeHTMLForWebComponent } from './normalize_html';
 
 /** Render templates on the page. */
-export function render(
-  to: string,
-  nodes: string | Promise<string> | Array<string | Promise<string>>
-): Promise<void> {
-  return (renderOrder = renderOrder.then(() => {
-    return (
-      querySelector(to)
-        .map((toElement) => tupleOf(toElement, cloneNode(toElement)))
-        .map(async ([toElement, maybeClone]) => {
-          const html = await normalizeHTML(nodes);
-
-          maybeClone
-            .map((clone) => {
-              clone.innerHTML = edelweissPolicy.createHTML(html);
-              return clone;
-            })
-            .map((element) => diff(toElement, element));
+export function render(to: string, nodes: string): void {
+  querySelector(to)
+    .map((toElement) => tupleOf(toElement, cloneNode(toElement)))
+    .chain(([toElement, maybeClone]) =>
+      maybeClone
+        .map((clone) => {
+          clone.innerHTML = edelweissPolicy.createHTML(nodes);
+          return clone;
         })
-        .extract() ??
-      warn(`Page does not contain element with selector: "${to}"!`)
-    );
-  }));
+        .map((element) => {
+          diff(toElement, element);
+          // Need for prevent logging warning if render finished successfully.
+          return true;
+        })
+    )
+    .extract() ?? warn(`Page does not contain element with selector: "${to}"!`);
 }
 
-export async function renderWebComponent<T extends object>(
+export function renderWebComponent<T extends object>(
   element: WebComponent<T>
-): Promise<void> {
-  const html = await promiseOf(element.template());
+): void {
   const clonedHTML = document.importNode(
-    normalizeHTMLForWebComponent(html).content,
+    normalizeHTMLForWebComponent(element.template()).content,
     true
   );
 

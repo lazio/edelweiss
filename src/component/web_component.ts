@@ -1,18 +1,8 @@
 import { renderWebComponent } from '../dom/render';
-import { alternation, promiseOf } from '@fluss/core';
 
 export default abstract class WebComponent<
   T extends object = object
 > extends HTMLElement {
-  /**
-   * Contains the rendering order. This property is similar to `renderOrder`
-   * field in **render.ts** file. The property ensures that the rendering
-   * will take place in the order in which the relevant functions are called.
-   * But due to the fact that the Shadow DOM is updated only with changes
-   * in the internal state, each instance of the custom element has its
-   * own order of rendering.
-   */
-  #renderOrder: Promise<void> = promiseOf(undefined);
   #state: T = {} as T;
 
   constructor() {
@@ -22,7 +12,7 @@ export default abstract class WebComponent<
       mode: 'open',
     });
 
-    this.#renderOrder = this.#renderOrder.then(() => renderWebComponent(this));
+    renderWebComponent(this);
   }
 
   get state(): T {
@@ -38,21 +28,19 @@ export default abstract class WebComponent<
     oldValue: string,
     newValue: string
   ): void {
-    this.#renderOrder = this.#renderOrder.then(() => renderWebComponent(this));
+    renderWebComponent(this);
   }
 
-  changeState(parts: Partial<T>): Promise<void> {
+  changeState(parts: Partial<T>): void {
     this.#state = {
       ...this.#state,
       ...parts,
     };
 
-    return (this.#renderOrder = this.#renderOrder.then(() =>
-      renderWebComponent(this)
-    ));
+    renderWebComponent(this);
   }
 
-  abstract template(): string | Promise<string>;
+  abstract template(): string;
 }
 
 type WebComponentConstructor = {
@@ -65,10 +53,5 @@ export function defineWebComponent<E extends WebComponentConstructor>(
   tagName: string,
   elementClass: E
 ): void {
-  alternation(
-    () => customElements.get(tagName),
-    () => {
-      customElements.define(tagName, elementClass);
-    }
-  )();
+  customElements.get(tagName) ?? customElements.define(tagName, elementClass);
 }

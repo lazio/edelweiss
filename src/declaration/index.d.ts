@@ -26,7 +26,7 @@ export abstract class WebComponent<
    * Change part of state of custom element.
    * Every change is reactive.
    */
-  changeState(parts: Partial<T>): Promise<void>;
+  changeState(parts: Partial<T>): void;
 
   /**
    * Called when the element is moved to a new document
@@ -61,7 +61,7 @@ export abstract class WebComponent<
    * Returned HTML will be wrapped with `HTMLTemplateElement`,
    * if method returns HTML that are not wrapped with top-level `<template>`.
    */
-  abstract template(): string | Promise<string>;
+  abstract template(): string;
 }
 
 type WebComponentConstructor = {
@@ -123,7 +123,7 @@ export namespace i18n {
   /** Add language pack. */
   function add(languages: Languages, initial?: string): void;
   /** Change current language of view. */
-  function setLanguage(tag: string): Promise<void>;
+  function setLanguage(tag: string): void;
   /** Returns translated text based on _path_. */
   function translate(
     path: string,
@@ -152,18 +152,14 @@ type AllowedValues =
   | number
   | boolean
   | Function
+  | Array<string>
   | EventListenerObject;
-
-type TemplateVariables =
-  | AllowedValues
-  | Array<AllowedValues | Promise<AllowedValues>>
-  | Promise<AllowedValues | Array<AllowedValues | Promise<AllowedValues>>>;
 
 /** Creates string template that will be evaluated as DOM elements. */
 export function html(
   parts: TemplateStringsArray,
-  ...variables: Array<TemplateVariables>
-): Promise<string>;
+  ...variables: Array<AllowedValues>
+): string;
 
 export type Route = {
   /**
@@ -193,7 +189,7 @@ export type Route = {
    */
   before?: () => void | boolean | Promise<void | boolean>;
   /** Returns HTML template for this route. */
-  view: () => string | Promise<string> | Array<string | Promise<string>>;
+  view: () => string;
   /** Hook is invoked after this route renders. */
   after?: () => void | Promise<void>;
 };

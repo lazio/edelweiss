@@ -10,7 +10,7 @@ export type Route = {
   readonly container?: string;
   readonly parameters?: RegExpMatchArray;
   before?: () => void | boolean | Promise<void | boolean>;
-  view: () => string | Promise<string> | Array<string | Promise<string>>;
+  view: () => string;
   after?: () => Promise<void> | void;
 };
 
@@ -120,7 +120,7 @@ export default class Router {
               parameters,
             };
 
-            await render(container, route.view());
+            render(container, route.view());
 
             if (isNothing(options.willStateChange) || options.willStateChange) {
               window.history.pushState(
@@ -154,7 +154,7 @@ export default class Router {
       await promiseOf(before());
     }
 
-    await render(container ?? _routerGlobalOptions.container, view());
+    render(container ?? _routerGlobalOptions.container, view());
 
     // After route render hook
     if (!isNothing(after)) {

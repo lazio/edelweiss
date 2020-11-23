@@ -1,5 +1,6 @@
 import './crypto_for_jest';
 import { html, Router, WebComponent, defineWebComponent } from '../src';
+import { updatedHook } from '../src/dom/hooks';
 
 describe('Custom elements', () => {
   beforeAll(() => {
@@ -51,7 +52,7 @@ describe('Custom elements', () => {
       'my-desccom',
       class extends WebComponent {
         template() {
-          return html`<template> <p>Hello</p></template>`;
+          return html`<template><p>Hello</p></template>`;
         }
       }
     );
@@ -116,7 +117,9 @@ describe('Custom elements', () => {
                 isChanged: !this.state.isChanged,
               });
             }}
-          ></button>
+          >
+            ${this.state.isChanged + ''}
+          </button>
         </template>`;
       }
     }
@@ -130,13 +133,16 @@ describe('Custom elements', () => {
     if (customElement) {
       customElement.shadowRoot?.querySelector('button')?.click();
 
-      setTimeout(() => expect(customElement.state.isChanged).toBe(true), 0);
+      expect(customElement.state.isChanged).toBe(true);
+      expect(
+        customElement.shadowRoot?.querySelector('button')?.innerHTML
+      ).toMatch('true');
     }
   });
 
   test('Diffing similar elements with different event listeners', async () => {
     Router.add({
-      path: '/listeners:digit:?',
+      path: '/listeners(\\d+)?',
       view() {
         return html` <my-listener></my-listener> `;
       },
@@ -181,21 +187,18 @@ describe('Custom elements', () => {
 
     if (customElement) {
       customElement.shadowRoot?.querySelector('button')?.click();
+      expect(customElement.state.word).toMatch('first');
 
-      setTimeout(async () => {
-        expect(customElement.state.word).toMatch('first');
-        await Router.to('/listeners1');
+      await Router.to('/listeners1');
 
-        customElement.shadowRoot?.querySelector('button')?.click();
-
-        setTimeout(() => expect(customElement.state.word).toMatch('second'), 0);
-      }, 0);
+      customElement.shadowRoot?.querySelector('button')?.click();
+      setTimeout(() => expect(customElement.state.word).toMatch('second'), 0);
     }
   });
 
   test('Diffing element with text node', async () => {
     Router.add({
-      path: '/diff-element-text-node:digit:?',
+      path: '/diff-element-text-node(\\d+)?',
       view() {
         return html` <my-diff></my-diff> `;
       },
@@ -213,7 +216,7 @@ describe('Custom elements', () => {
       template() {
         return html`<template>
           ${Router.current.parameters &&
-          Router.current.parameters[1] === undefined
+          Router.current.parameters[1] !== undefined
             ? html`<button
                 @click=${() => {
                   this.changeState({
@@ -259,7 +262,7 @@ describe('Custom elements', () => {
       }
 
       get disabled(): boolean {
-        return this.getAttribute('disabled') !== null;
+        return this.hasAttribute('disabled');
       }
 
       template() {
@@ -277,9 +280,9 @@ describe('Custom elements', () => {
     );
 
     if (customElement) {
-      expect(customElement.renderCount).toBe(1);
+      setTimeout(() => expect(customElement.renderCount).toBe(1), 0);
 
-      customElement.setAttribute('disabled', '');
+      customElement.setAttribute('disabled', 'true');
 
       setTimeout(() => expect(customElement.renderCount).toBe(2), 0);
     }

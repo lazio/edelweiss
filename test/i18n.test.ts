@@ -45,8 +45,8 @@ describe('Internationalization', () => {
     ).toMatch('Привіт');
   });
 
-  test('changing language cause rerender of the page', async () => {
-    await i18n.setLanguage('en');
+  test('changing language cause rerender of the page', () => {
+    i18n.setLanguage('en');
 
     expect(
       querySelector('.main')

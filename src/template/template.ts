@@ -2,7 +2,7 @@ import { uid } from '../utils/uid';
 import { warn } from '../utils/warn';
 import { hooksManager } from '../dom/hooks';
 import { eventListenersMap } from '../dom/events';
-import { promiseOf, isNothing, maybeOf } from '@fluss/core';
+import { isNothing, maybeOf } from '@fluss/core';
 import {
   Hooks,
   createHookAttributeName,
@@ -24,63 +24,34 @@ type AllowedValues =
   | boolean
   // EventListener, HooksCallback or () => string | number
   | Function
+  | Array<string>
   | EventListenerObject;
 
-type TemplateVariables =
-  | AllowedValues
-  | Array<AllowedValues | Promise<AllowedValues>>
-  | Promise<AllowedValues | Array<AllowedValues | Promise<AllowedValues>>>;
-
-export async function html(
+export function html(
   parts: TemplateStringsArray,
-  ...variables: Array<TemplateVariables>
-): Promise<string> {
+  ...variables: Array<AllowedValues>
+): string {
   return parts.reduce((previous, current, index) => {
     return (
       maybeOf(variables[index])
-        // Wrap variable into Promise
-        .map(promiseOf)
-        .map((promiseWithVariable) =>
-          // Get rid of null and undefined
-          promiseWithVariable.then((variable) => variable ?? '')
+        .map((variable) =>
+          Array.isArray(variable) ? variable.join('') : variable
         )
-        .map((promiseWithVariable) =>
-          /**
-           * TemplateVariables may be an Array that contains Promise,
-           * so we must wait for resolving it and then return result.
-           * We do not handle other objects.
-           * Also we prevent from inseting commas into template.
-           */
-          promiseWithVariable.then((variable) =>
-            Array.isArray(variable)
-              ? Promise.all(variable).then((all) =>
-                  // Get rid of null and undefined in array.
-                  all.filter((value) => !isNothing(value)).join('')
-                )
-              : variable
-          )
+        .map(
+          (variable) =>
+            // Consume current part with previous part
+            previous + formCurrentHTML(variable, current, index)
         )
-        .map((promiseWithVariable) =>
-          // Consume current part with previous part
-          previous.then((textHTML) =>
-            formCurrentHTML(promiseWithVariable, current, index).then(
-              (currentHTML) => textHTML + currentHTML
-            )
-          )
-        )
-        .extract() ?? previous.then((prevHtml) => prevHtml + current)
+        .extract() ?? previous + current // End of template
     );
-  }, promiseOf(''));
+  }, '');
 }
 
-async function formCurrentHTML(
-  promiseWithVariable: Promise<Exclude<AllowedValues, null | undefined>>,
+function formCurrentHTML(
+  variable: Exclude<AllowedValues, null | undefined | Array<string>>,
   current: string,
   index: number
-): Promise<string> {
-  // Need to assign proper value in value handling block.
-  let variable = await promiseWithVariable;
-
+): string {
   // Handle @event listener if there is any.
   const matchedElementEventListener = eventListenerRegExp.exec(current);
   if (!isNothing(matchedElementEventListener)) {
