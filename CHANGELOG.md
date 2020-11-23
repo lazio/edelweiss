@@ -11,6 +11,7 @@
 ### Changed
 
 - `html` function returns now only `string` value.
+- `Route.view` method returns now only `string` value.
 - `template` method of `WebComponent` can return only `string` now.
 - Event listeners and values of boolean attributes (prepended by `?`) must not be surrounded by `'` or `"` now.
 - `WebComponent` is now abstract class with abstract `template` method.
