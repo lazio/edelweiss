@@ -2,10 +2,8 @@ import WebComponent from '../component/web_component';
 import { warn } from '../utils/warn';
 import { edelweissPolicy } from '../utils/trusted_types';
 import { diff, diffChildren } from './diff';
-import { loadCSS, unloadCSS } from '../utils/styles';
 import { querySelector, cloneNode } from '@fluss/web';
 import { maybeOf, promiseOf, tupleOf } from '@fluss/core';
-import { stylePaths, stylePathsToRemove } from '../css';
 import { normalizeHTML, normalizeHTMLForWebComponent } from './normalize_html';
 
 /**
@@ -27,12 +25,6 @@ export function render(
         .map(async ([toElement, maybeClone]) => {
           const html = await normalizeHTML(nodes);
 
-          stylePaths.forEach(loadCSS);
-          stylePathsToRemove.forEach(unloadCSS);
-          // Clear paths of styles
-          stylePaths.clear();
-          stylePathsToRemove.clear();
-
           maybeClone
             .map((clone) => {
               clone.innerHTML = edelweissPolicy.createHTML(html);
@@ -40,7 +32,7 @@ export function render(
             })
             .map((element) => diff(toElement, element));
         })
-        .extract() ||
+        .extract() ??
       warn(`Page does not contain element with selector: "${to}"!`)
     );
   }));

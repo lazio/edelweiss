@@ -12,7 +12,6 @@
 ### Changed
 
 - `template` method of `WebComponent` can return only `string` and `Promise<string>` now.
-- `cssRootFolder` is now static property of `Config` class.
 - Event listeners and values of boolean attributes (prepended by `?`) must not be surrounded by `'` or `"` now.
 - `WebComponent` is now abstract class with abstract `template` method.
 - Add **-** symbol between `data-event-id` prefix and event number.
@@ -36,6 +35,7 @@
 - CommonJS bundle.
 - `Component` class.
 - `State` interface, now parent type of state is `object`.
+- `registerCss` function and `Config` class.
 
 ## [1.5.0] - 2020-10-08
 

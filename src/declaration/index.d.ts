@@ -131,14 +131,6 @@ export namespace i18n {
   ): string;
 }
 
-export class Config {
-  /**
-   * Path to directory where must be css files that will be loaded
-   * by `registerCss` function.
-   */
-  static cssRootFolder(): string;
-}
-
 /**
  * Returns translated text based on _path_.
  * Same as `i18n.translate` function.
@@ -172,19 +164,6 @@ export function html(
   parts: TemplateStringsArray,
   ...variables: Array<TemplateVariables>
 ): Promise<string>;
-
-/**
- * Lazingly load CSS to page.
- * @param css - name of css files that need to be
- * lazy loaded.
- * @returns function that unload registered css
- * (removes from the page). If _immediately_ is `true`, then css will be removed
- * in time of function's invoking, otherwise css will be removed on next
- * rendering step (`Router.to`, `Router.reload` etc).
- */
-export function registerCss(
-  css: string | Array<string>
-): (immediately?: boolean) => void;
 
 export type Route = {
   /**
