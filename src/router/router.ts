@@ -120,8 +120,6 @@ export default class Router {
               parameters,
             };
 
-            render(container, route.view());
-
             if (isNothing(options.willStateChange) || options.willStateChange) {
               window.history.pushState(
                 { path: pathWithPrefix, container },
@@ -129,6 +127,8 @@ export default class Router {
                 pathWithPrefix
               );
             }
+
+            render(container, route.view());
 
             // After route render hook
             if (!isNothing(route.after)) {
