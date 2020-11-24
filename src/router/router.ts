@@ -8,7 +8,7 @@ import { promiseOf, isNothing, arrayFrom, freeze } from '@fluss/core';
 export type Route = {
   readonly path: string;
   readonly container?: string;
-  readonly parameters?: RegExpMatchArray;
+  readonly parameters: RegExpMatchArray;
   before?: () => void | boolean | Promise<void | boolean>;
   view: () => string;
   after?: () => Promise<void> | void;
@@ -24,6 +24,7 @@ const _routes: Map<string, Route> = new Map();
 export let _current: Route = {
   path: '',
   container: '',
+  parameters: [],
   view() {
     return '';
   },
@@ -61,10 +62,14 @@ export default class Router {
     }
   }
 
-  static add(routes: Route | Array<Route>): void {
+  static add(
+    routes: Omit<Route, 'parameters'> | Array<Omit<Route, 'parameters'>>
+  ): void {
     Array.isArray(routes)
-      ? routes.forEach((route) => _routes.set(route.path, route))
-      : _routes.set(routes.path, routes);
+      ? routes.forEach((route) =>
+          _routes.set(route.path, { ...route, parameters: [] })
+        )
+      : _routes.set(routes.path, { ...routes, parameters: [] });
   }
 
   static to(

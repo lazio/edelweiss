@@ -93,7 +93,9 @@ export class Router {
   /** Define settings for `Router`. */
   static configure(options: Partial<RouterOptions>): void;
   /** Makes routes known for `Router`.  */
-  static add(routes: Route | Array<Route>): void;
+  static add(
+    routes: Omit<Route, 'parameters'> | Array<Omit<Route, 'parameters'>>
+  ): void;
   /** Navigates to route based on `path`. */
   static to(
     path: string,
@@ -180,7 +182,7 @@ export type Route = {
    * First value of array is whole matched string.
    * Second value (index **1**) and go on are path's variables.
    */
-  readonly parameters?: RegExpMatchArray;
+  readonly parameters: RegExpMatchArray;
   /**
    * Hook is invoked before this route will render.
    *

@@ -21,6 +21,7 @@
 - `I18n.languagesTags` is of **ReadonlyArray<string>** now.
 - Convert `I18n` class to `i18n` namespace.
 - Allow declaring multiple hooks of the same type in one element.
+- Make `parameters` property of `Route` object obligatory.
 
 ### Fixed
 
