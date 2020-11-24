@@ -94,7 +94,7 @@ export class Router {
   static configure(options: Partial<RouterOptions>): void;
   /** Makes routes known for `Router`.  */
   static add(
-    routes: Omit<Route, 'parameters'> | Array<Omit<Route, 'parameters'>>
+    routes: Omit<Route, 'parameters'> | ReadonlyArray<Omit<Route, 'parameters'>>
   ): void;
   /** Navigates to route based on `path`. */
   static to(
@@ -154,13 +154,13 @@ type AllowedValues =
   | number
   | boolean
   | Function
-  | Array<string>
+  | ReadonlyArray<string>
   | EventListenerObject;
 
 /** Creates string template that will be evaluated as DOM elements. */
 export function html(
   parts: TemplateStringsArray,
-  ...variables: Array<AllowedValues>
+  ...variables: ReadonlyArray<AllowedValues>
 ): string;
 
 export type Route = {

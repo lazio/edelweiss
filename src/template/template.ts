@@ -24,12 +24,12 @@ type AllowedValues =
   | boolean
   // EventListener, HooksCallback or () => string | number
   | Function
-  | Array<string>
+  | ReadonlyArray<string>
   | EventListenerObject;
 
 export function html(
   parts: TemplateStringsArray,
-  ...variables: Array<AllowedValues>
+  ...variables: ReadonlyArray<AllowedValues>
 ): string {
   return parts.reduce((previous, current, index) => {
     return (
@@ -61,7 +61,7 @@ function formCurrentHTML(
       isNothing(listener) ||
       (typeof listener !== 'function' &&
         typeof listener === 'object' &&
-        isNothing(listener.handleEvent))
+        !('handleEvent' in listener))
     ) {
       warn(`Event listener must be type of "function" or object with
   "handleEvent" method, but given "${typeof listener}".`);

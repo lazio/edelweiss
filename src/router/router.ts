@@ -63,7 +63,7 @@ export default class Router {
   }
 
   static add(
-    routes: Omit<Route, 'parameters'> | Array<Omit<Route, 'parameters'>>
+    routes: Omit<Route, 'parameters'> | ReadonlyArray<Omit<Route, 'parameters'>>
   ): void {
     Array.isArray(routes)
       ? routes.forEach((route) =>
