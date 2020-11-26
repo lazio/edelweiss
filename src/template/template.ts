@@ -48,7 +48,7 @@ export function html(
 }
 
 function formCurrentHTML(
-  variable: Exclude<AllowedValues, null | undefined | Array<string>>,
+  variable: Exclude<AllowedValues, null | undefined | ReadonlyArray<string>>,
   current: string,
   index: number
 ): string {
@@ -58,10 +58,9 @@ function formCurrentHTML(
     let listener = variable;
 
     if (
-      isNothing(listener) ||
-      (typeof listener !== 'function' &&
-        typeof listener === 'object' &&
-        !('handleEvent' in listener))
+      typeof listener !== 'function' &&
+      typeof listener === 'object' &&
+      !('handleEvent' in listener)
     ) {
       warn(`Event listener must be type of "function" or object with
   "handleEvent" method, but given "${typeof listener}".`);
