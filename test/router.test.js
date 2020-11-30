@@ -1,5 +1,5 @@
 import './crypto_for_jest';
-import { html, Router } from '../src';
+import { html, Router } from '../build';
 
 describe('Test "Router"', () => {
   beforeAll(() => {
@@ -107,7 +107,7 @@ describe('Test "Router"', () => {
 
     await Router.to('/conditional');
 
-    const button = document.querySelector<HTMLButtonElement>('.btn');
+    const button = document.querySelector('.btn');
     expect(button).toBeTruthy();
 
     if (button) {

@@ -1,8 +1,6 @@
 export default {
-  transform: {
-    '^.+\\.ts$': 'ts-jest',
-    '^.+\\.js$': 'babel-jest',
-  },
-  transformIgnorePatterns: ['<rootDir>/node_modules/@fluss/(?!core|web)'],
+  // TODO: review this section, when jest's support of
+  // ES modules will be stable.
+  transform: {},
   testEnvironment: 'jsdom',
 };

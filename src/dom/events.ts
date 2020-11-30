@@ -49,11 +49,13 @@ export function attachEvents(element: Node, attachToChildren: boolean = false) {
             Object.entries
           )
           .map(([listener]) => {
-            addEventListener<EventTarget, string>(
+            const detachFn = addEventListener<EventTarget, string>(
               element,
               listener[0],
               listener[1]
-            ).map((detachFn) => detachEventListenersMap.set(id, detachFn));
+            );
+
+            detachEventListenersMap.set(id, detachFn);
 
             eventListenersMap.delete(id);
           });

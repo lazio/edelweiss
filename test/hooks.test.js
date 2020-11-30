@@ -1,10 +1,10 @@
 import './crypto_for_jest';
-import { html, Router } from '../src';
+import { html, Router } from '../build';
 
 let a = 1;
 
 /** Hooks are deffered, so expect function must be also deffered. */
-function defer(fn: () => void): void {
+function defer(fn) {
   setTimeout(fn, 0);
 }
 
@@ -12,7 +12,7 @@ describe('Hooks', () => {
   let isMounted = false;
   let updateCount = 0;
   let isRemoved = false;
-  let element: Element | null = null;
+  let element = null;
 
   let hookIsInvoked = false;
 
@@ -26,7 +26,7 @@ describe('Hooks', () => {
         view() {
           return html`<div>
             <p
-              :mounted=${(node: HTMLParagraphElement) => {
+              :mounted=${(node) => {
                 element = node;
                 isMounted = true;
               }}

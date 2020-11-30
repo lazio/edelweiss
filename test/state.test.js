@@ -1,11 +1,6 @@
-import { createState, Router } from '../src';
+import { createState, Router } from '../build';
 
-interface TestState {
-  clicks: number;
-  deletable?: boolean;
-}
-
-const testState = createState<TestState>({
+const testState = createState({
   clicks: 0,
   deletable: true,
 });

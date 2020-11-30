@@ -1,5 +1,5 @@
 import { querySelector } from '@fluss/web';
-import { i18n, Router, html, translate } from '../src';
+import { i18n, Router, html, translate } from '../build';
 
 describe('Internationalization', () => {
   beforeAll(() => {

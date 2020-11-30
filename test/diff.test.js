@@ -5,13 +5,11 @@ import {
   createState,
   WebComponent,
   defineWebComponent,
-} from '../src';
-
-type PageCase = 'both' | 'button' | 'text';
+} from '../build';
 
 const state = createState({ clicks: 0, secondClicks: 0, thirdClicks: 0 });
 
-function page(pageCase: PageCase) {
+function page(pageCase) {
   return html`
     ${pageCase === 'button'
       ? `<p>${state.clicks}</p>`
@@ -186,7 +184,7 @@ describe('Diff DOM', () => {
 
     await Router.to('/child-events');
 
-    const innerBtn = document.querySelector<HTMLButtonElement>('button.inner');
+    const innerBtn = document.querySelector('button.inner');
 
     if (innerBtn) {
       innerBtn.click();
@@ -241,9 +239,9 @@ describe('Diff DOM', () => {
 
     await Router.to('/value-attr');
 
-    const input1 = document.querySelector<HTMLInputElement>('#a');
-    const input2 = document.querySelector<HTMLInputElement>('#b');
-    const input3 = document.querySelector<HTMLInputElement>('#c');
+    const input1 = document.querySelector('#a');
+    const input2 = document.querySelector('#b');
+    const input3 = document.querySelector('#c');
 
     if (input1) {
       expect(input1.value).toBe('');
@@ -286,7 +284,7 @@ describe('Diff DOM', () => {
 
     expect(clicked).toBe(false);
 
-    const button = document.querySelector<HTMLButtonElement>('button');
+    const button = document.querySelector('button');
     if (button) {
       button.click();
     }

@@ -1,6 +1,5 @@
 import './crypto_for_jest';
-import { html, Router, WebComponent, defineWebComponent } from '../src';
-import { updatedHook } from '../src/dom/hooks';
+import { html, Router, WebComponent, defineWebComponent } from '../build';
 
 describe('Custom elements', () => {
   beforeAll(() => {
@@ -68,7 +67,7 @@ describe('Custom elements', () => {
       },
     });
 
-    class MyA extends WebComponent<{ isDefined: boolean }> {
+    class MyA extends WebComponent {
       constructor() {
         super();
 
@@ -86,7 +85,7 @@ describe('Custom elements', () => {
 
     await Router.to('/def-state');
 
-    const myA = document.querySelector<MyA>('my-a');
+    const myA = document.querySelector('my-a');
     if (myA) {
       expect(myA.state.isDefined).toBe(true);
     }
@@ -100,7 +99,7 @@ describe('Custom elements', () => {
       },
     });
 
-    class MyDescCom extends WebComponent<{ isChanged: boolean }> {
+    class MyDescCom extends WebComponent {
       constructor() {
         super();
 
@@ -128,7 +127,7 @@ describe('Custom elements', () => {
 
     await Router.to('/state');
 
-    const customElement = document.querySelector<MyDescCom>('my-desc');
+    const customElement = document.querySelector('my-desc');
 
     if (customElement) {
       customElement.shadowRoot?.querySelector('button')?.click();
@@ -148,7 +147,7 @@ describe('Custom elements', () => {
       },
     });
 
-    class MyListener extends WebComponent<{ word: string }> {
+    class MyListener extends WebComponent {
       constructor() {
         super();
 
@@ -183,7 +182,7 @@ describe('Custom elements', () => {
 
     await Router.to('/listeners');
 
-    const customElement = document.querySelector<MyListener>('my-listener');
+    const customElement = document.querySelector('my-listener');
 
     if (customElement) {
       customElement.shadowRoot?.querySelector('button')?.click();
@@ -204,7 +203,7 @@ describe('Custom elements', () => {
       },
     });
 
-    class MyDiff extends WebComponent<{ word: string }> {
+    class MyDiff extends WebComponent {
       constructor() {
         super();
 
@@ -233,7 +232,7 @@ describe('Custom elements', () => {
 
     await Router.to('/diff-element-text-node');
 
-    const customElement = document.querySelector<MyDiff>('my-diff');
+    const customElement = document.querySelector('my-diff');
 
     if (customElement) {
       expect(customElement.shadowRoot?.querySelector('button')).toBeFalsy();
@@ -261,7 +260,7 @@ describe('Custom elements', () => {
         return ['disabled'];
       }
 
-      get disabled(): boolean {
+      get disabled() {
         return this.hasAttribute('disabled');
       }
 
@@ -275,9 +274,7 @@ describe('Custom elements', () => {
 
     await Router.to('/reactive-attributes');
 
-    const customElement = document.querySelector<ReactiveAttributesElement>(
-      'reactive-attributes'
-    );
+    const customElement = document.querySelector('reactive-attributes');
 
     if (customElement) {
       setTimeout(() => expect(customElement.renderCount).toBe(1), 0);

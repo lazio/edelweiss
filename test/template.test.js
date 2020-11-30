@@ -1,5 +1,5 @@
 import './crypto_for_jest';
-import { html } from '../src';
+import { html } from '../build';
 
 describe('Test template of "edelweiss"', () => {
   test('html() must return "string"', () => {
@@ -37,9 +37,7 @@ describe('Test template of "edelweiss"', () => {
 
   test(`html() must set to an element "data-event-id-[number]" attribute 
   if event handler is passed to element`, () => {
-    const button = html`
-      <button @click=${(event: MouseEvent) => {}}>child</button>
-    `;
+    const button = html` <button @click=${(event) => {}}>child</button> `;
     expect(button).toMatch(
       /<button data-event-id-[\d]="?[\d]+"?>child<\/button>/
     );

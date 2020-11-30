@@ -1,23 +1,17 @@
+import { querySelector } from '@fluss/web';
 import { edelweissPolicy } from '../utils/trusted_types';
-import { createElement, querySelector } from '@fluss/web';
 
 export function normalizeHTMLForWebComponent(
   html: string
 ): HTMLTemplateElement {
-  const wrapperElement = createElement('div')
-    .map((div) => {
-      div.innerHTML = edelweissPolicy.createHTML(
-        html.trim().startsWith('<template')
-          ? html
-          : `<template>${html}</template>`
-      );
-      return div;
-    })
-    .extract();
+  const template = document.createElement('div');
+  template.innerHTML = edelweissPolicy.createHTML(
+    html.trim().startsWith('<template') ? html : `<template>${html}</template>`
+  );
 
   return (
-    querySelector('template', wrapperElement).extract() ??
+    querySelector('template', template).extract() ??
     // Just fallback.
-    createElement('template').extract()
+    document.createElement('template')
   );
 }

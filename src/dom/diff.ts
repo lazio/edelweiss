@@ -5,9 +5,6 @@ import { maybeOf, arrayFrom, isNothing } from '@fluss/core';
 import { mountedHook, removedHook, updatedHook } from './hooks';
 import { isCommentNode, isElementNode, isTextNode } from '../utils/predicates';
 import {
-  removeNode,
-  appendNodes,
-  replaceNode,
   hasAttribute,
   setAttribute,
   getAttribute,
@@ -60,7 +57,7 @@ export function diff(oldNode: Node, newNode: Node): void {
         detachEvents(oldNode, true);
         attachEvents(newNode, true);
 
-        replaceNode(oldNode, newNode);
+        oldNode.replaceWith(newNode);
         mountedHook(newNode);
         removedHook(oldNode);
       } else {
@@ -79,7 +76,7 @@ export function diff(oldNode: Node, newNode: Node): void {
       detachEvents(oldNode, true);
       attachEvents(newNode, true);
 
-      replaceNode(oldNode, newNode);
+      oldNode.replaceWith(newNode);
       mountedHook(newNode);
       removedHook(oldNode);
     }
@@ -106,7 +103,7 @@ export function diff(oldNode: Node, newNode: Node): void {
     detachEvents(oldNode, true);
     attachEvents(newNode, true);
 
-    replaceNode(oldNode as ChildNode, newNode);
+    (oldNode as ChildNode).replaceWith(newNode);
     mountedHook(newNode);
     removedHook(oldNode);
   }
@@ -119,7 +116,7 @@ export function diff(oldNode: Node, newNode: Node): void {
 export function diffChildren(
   oldNode: Element | ShadowRoot,
   newNode: Element | DocumentFragment
-) {
+): void {
   const oldChildNodes = arrayFrom(oldNode.childNodes);
   const newChildNodes = arrayFrom(newNode.childNodes);
 
@@ -133,14 +130,12 @@ export function diffChildren(
 
     if (!isNothing(nNode)) {
       isNothing(oNode)
-        ? (attachEvents(nNode, true),
-          appendNodes(oldNode, nNode),
-          mountedHook(nNode))
+        ? (attachEvents(nNode, true), oldNode.append(nNode), mountedHook(nNode))
         : diff(oNode, nNode);
     } else if (!isNothing(oNode)) {
       detachEvents(oNode, true);
 
-      removeNode(oNode);
+      oNode.remove();
       removedHook(oNode);
     } else {
       // Do nothing - old and new node is null or undefined.

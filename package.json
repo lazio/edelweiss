@@ -21,25 +21,21 @@
     "copy:settings": "cp package.json build/",
     "copy:typings": "cp src/declaration/index.d.ts build/",
     "release": "npm run build; npm publish build/ --access public",
-    "test": "jest"
+    "test": "NODE_OPTIONS=--experimental-vm-modules npx jest"
   },
   "author": "Kapelianovych Yevhen",
   "license": "MIT",
   "devDependencies": {
-    "@babel/core": "^7.12.8",
-    "@babel/preset-env": "^7.12.7",
     "@rollup/plugin-typescript": "^6.1.0",
     "@types/jest": "^26.0.15",
-    "babel-jest": "^26.6.3",
     "jest": "^26.6.3",
     "rollup": "^2.33.3",
     "rollup-plugin-terser": "^7.0.2",
-    "ts-jest": "^26.4.4",
     "tslib": "^2.0.3",
     "typescript": "^4.1.2"
   },
   "dependencies": {
-    "@fluss/core": "^0.8.0",
-    "@fluss/web": "^0.7.0"
+    "@fluss/core": "^0.9.1",
+    "@fluss/web": "^0.8.0"
   }
 }

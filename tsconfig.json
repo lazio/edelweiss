@@ -3,10 +3,12 @@
     "strict": true,
     "target": "ES2018",
     "noImplicitAny": true,
-    "removeComments": true,
-    "esModuleInterop": true,
-    "moduleResolution": "node"
+    "strictNullChecks": true,
+    "moduleResolution": "node",
+    "strictBindCallApply": true,
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true
   },
-  "include": ["src/**/*"],
+  "include": ["src"],
   "exclude": ["node_modules", "**/*.spec.ts"]
 }
