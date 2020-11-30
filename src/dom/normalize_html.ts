@@ -1,4 +1,3 @@
-import { querySelector } from '@fluss/web';
 import { edelweissPolicy } from '../utils/trusted_types';
 
 export function normalizeHTMLForWebComponent(
@@ -10,7 +9,7 @@ export function normalizeHTMLForWebComponent(
   );
 
   return (
-    querySelector('template', template).extract() ??
+    template.querySelector('template') ??
     // Just fallback.
     document.createElement('template')
   );

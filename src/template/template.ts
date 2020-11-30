@@ -68,10 +68,14 @@ function formCurrentHTML(
     }
 
     const eventId = uid();
-    eventListenersMap.set(eventId, {
+    eventListenersMap.set(
+      eventId,
       // It is up to user to set proper type of function as variable.
-      [matchedElementEventListener[1]]: listener as EventListenerOrEventListenerObject,
-    });
+      [
+        matchedElementEventListener[1],
+        listener as EventListenerOrEventListenerObject,
+      ]
+    );
 
     return current.replace(
       matchedElementEventListener[0],

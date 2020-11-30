@@ -1,6 +1,5 @@
 import { warn } from '../utils/warn';
 import { render } from '../dom/render';
-import { setAttribute } from '@fluss/web';
 import { _current, _routerGlobalOptions } from '../router/router';
 import { freeze, maybeOf, isNothing, path as pathOf } from '@fluss/core';
 
@@ -38,7 +37,7 @@ export function setLanguage(tag: string): void {
      * Change lang attribute of html element.
      * https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/lang
      */
-    setAttribute(document.documentElement, 'lang', tag);
+    document.documentElement.setAttribute('lang', tag);
     currentLanguage = tag;
 
     render(

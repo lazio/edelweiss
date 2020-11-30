@@ -4,12 +4,6 @@ import { attachEvents, detachEvents } from './events';
 import { maybeOf, arrayFrom, isNothing } from '@fluss/core';
 import { mountedHook, removedHook, updatedHook } from './hooks';
 import { isCommentNode, isElementNode, isTextNode } from '../utils/predicates';
-import {
-  hasAttribute,
-  setAttribute,
-  getAttribute,
-  removeAttribute,
-} from '@fluss/web';
 
 const IGNORED_ATTRIBUTE_NAME = 'data-ignored';
 
@@ -24,8 +18,8 @@ export function diff(oldNode: Node, newNode: Node): void {
        * template differing (by example JS animation).
        */
       if (
-        hasAttribute(oldNode, IGNORED_ATTRIBUTE_NAME) &&
-        hasAttribute(newNode, IGNORED_ATTRIBUTE_NAME)
+        oldNode.hasAttribute(IGNORED_ATTRIBUTE_NAME) &&
+        newNode.hasAttribute(IGNORED_ATTRIBUTE_NAME)
       ) {
         return;
       }
@@ -54,7 +48,6 @@ export function diff(oldNode: Node, newNode: Node): void {
 
         diffChildren(oldNode, newNode);
       } else if (oldNode.hasChildNodes()) {
-        detachEvents(oldNode, true);
         attachEvents(newNode, true);
 
         oldNode.replaceWith(newNode);
@@ -73,7 +66,6 @@ export function diff(oldNode: Node, newNode: Node): void {
         attachEvents(oldNode);
       }
     } else {
-      detachEvents(oldNode, true);
       attachEvents(newNode, true);
 
       oldNode.replaceWith(newNode);
@@ -100,7 +92,6 @@ export function diff(oldNode: Node, newNode: Node): void {
     oldNode.textContent !== newNode.textContent &&
       (oldNode.textContent = newNode.textContent);
   } else {
-    detachEvents(oldNode, true);
     attachEvents(newNode, true);
 
     (oldNode as ChildNode).replaceWith(newNode);
@@ -133,8 +124,6 @@ export function diffChildren(
         ? (attachEvents(nNode, true), oldNode.append(nNode), mountedHook(nNode))
         : diff(oNode, nNode);
     } else if (!isNothing(oNode)) {
-      detachEvents(oNode, true);
-
       oNode.remove();
       removedHook(oNode);
     } else {
@@ -155,8 +144,8 @@ function diffAttributes(oldNode: Element, newNode: Element): boolean {
   if (oldNode.attributes.length !== newNode.attributes.length) {
     // Remove exessive attributes
     arrayFrom(oldNode.attributes).forEach(({ name }) => {
-      if (!hasAttribute(newNode, name)) {
-        removeAttribute(oldNode, name);
+      if (!newNode.hasAttribute(name)) {
+        oldNode.removeAttribute(name);
 
         /**
          * Library attributes used by edelweiss itself and
@@ -171,8 +160,8 @@ function diffAttributes(oldNode: Element, newNode: Element): boolean {
 
   // Add missing attributes and update changed
   arrayFrom(newNode.attributes).forEach(({ name, value }) => {
-    if (getAttribute(oldNode, name).extract() !== value) {
-      setAttribute(oldNode, name, value);
+    if (oldNode.getAttribute(name) !== value) {
+      oldNode.setAttribute(name, value);
 
       /**
        * Library attributes used by edelweiss itself and

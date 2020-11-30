@@ -9,56 +9,42 @@ import { arrayFrom, maybeOf } from '@fluss/core';
  */
 export const eventListenersMap = new Map<
   string,
-  {
-    [eventName: string]: EventListenerOrEventListenerObject;
-  }
+  [eventName: string, listener: EventListenerOrEventListenerObject]
 >();
 
 /** Holds all detach functions of every element's event listeners. */
-const detachEventListenersMap: Map<string, () => void> = new Map();
+const detachEventListenersMap: WeakMap<
+  Node,
+  ReadonlyArray<() => void>
+> = new WeakMap();
 
-export function detachEvents(
-  element: Node,
-  detachFromChildren: boolean = false
-) {
-  if (isElementNode(element)) {
-    arrayFrom(element.attributes)
-      .filter(({ name }) => isEventAttribute(name))
-      .forEach(({ value: id }) =>
-        maybeOf(detachEventListenersMap.get(id)).map((detachFn) => {
-          detachEventListenersMap.delete(id);
-          detachFn();
-        })
-      );
-
-    if (detachFromChildren && element.childElementCount > 0) {
-      arrayFrom(element.children).forEach((child) =>
-        detachEvents(child, detachFromChildren)
-      );
-    }
-  }
+export function detachEvents(element: Node): void {
+  (detachEventListenersMap.get(element) ?? []).forEach((fn) => fn());
+  detachEventListenersMap.delete(element);
 }
 
-export function attachEvents(element: Node, attachToChildren: boolean = false) {
+export function attachEvents(
+  element: Node,
+  attachToChildren: boolean = false
+): void {
   if (isElementNode(element)) {
     arrayFrom(element.attributes)
       .filter(({ name }) => isEventAttribute(name))
       .map(({ value: id }) => {
-        maybeOf(eventListenersMap.get(id))
-          .map<ReadonlyArray<[string, EventListenerOrEventListenerObject]>>(
-            Object.entries
-          )
-          .map(([listener]) => {
-            const detachFn = addEventListener<EventTarget, string>(
-              element,
-              listener[0],
-              listener[1]
-            );
+        maybeOf(eventListenersMap.get(id)).map(([event, listener]) => {
+          const detachFn = addEventListener<EventTarget, string>(
+            element,
+            event,
+            listener
+          );
 
-            detachEventListenersMap.set(id, detachFn);
+          detachEventListenersMap.set(element, [
+            ...(detachEventListenersMap.get(element) ?? []),
+            detachFn,
+          ]);
 
-            eventListenersMap.delete(id);
-          });
+          eventListenersMap.delete(id);
+        });
       });
 
     if (attachToChildren && element.childElementCount > 0) {

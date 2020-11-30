@@ -1,7 +1,6 @@
 import { warn } from '../utils/warn';
 import { render } from '../dom/render';
 import { matchPath } from './path_to_regexp';
-import { addEventListener } from '@fluss/web';
 import { setIsRouteChangedMarker } from './markers';
 import { promiseOf, isNothing, arrayFrom, freeze } from '@fluss/core';
 
@@ -181,7 +180,7 @@ export default class Router {
  * but not via elements that changes url without setting "state"
  * (default behavior of <a> etc.).
  */
-addEventListener(window, 'popstate', (event) => {
+window.addEventListener('popstate', (event) => {
   if (!isNothing(event.state)) {
     Router.to(event.state.path, { willStateChange: false });
   }
