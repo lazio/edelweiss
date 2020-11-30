@@ -7,6 +7,7 @@
 - Rerendering template of custom element on changing attributes.
 - Ability to update properties of html element and related attributes (by example `value` in `HTMLInputElement`) via attribute-like syntax.
 - Ability to prevent navigation to route in `before` route hook.
+- `adopted`, `connected`, `disconnected` and `attributeChanged` hooks to `WebComponent` as reactive versions of custom element's lifecycle hooks.
 
 ### Changed
 
@@ -31,6 +32,7 @@
 - Assinging same value (if value is object) and same literal to state will not cause rerendering.
 - Deleting absent property from state does not throw an error and does not cause rerendering.
 - Fetch stylesheets on new route with proper route's path.
+- `changeState` method of `WebComponent` cause rerendering only if at least one state's value is changed.
 
 ### Removed
 

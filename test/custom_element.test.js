@@ -284,4 +284,58 @@ describe('Custom elements', () => {
       setTimeout(() => expect(customElement.renderCount).toBe(2), 0);
     }
   });
+
+  test("Shadow DOM of custom element must not be rebuilded if state's value did not change.", async () => {
+    Router.add({
+      path: '/not-reactive-values',
+      view() {
+        return html` <nonreactive-values></nonreactive-values> `;
+      },
+    });
+
+    class NonReactiveValuesElement extends WebComponent {
+      renderCount = 0;
+
+      constructor() {
+        super();
+
+        this.changeState({
+          h: 0,
+        });
+      }
+
+      template() {
+        this.renderCount++;
+        return html`
+          <button
+            @click=${() =>
+              this.changeState({
+                h: 0,
+              })}
+          ></button>
+        `;
+      }
+    }
+
+    defineWebComponent('nonreactive-values', NonReactiveValuesElement);
+
+    await Router.to('/nonreactive-values');
+
+    const customElement = document.querySelector('nonreactive-values');
+
+    if (customElement) {
+      setTimeout(() => expect(customElement.renderCount).toBe(1), 0);
+
+      const button = customElement.shadowRoot.querySelector('button');
+
+      if (button) {
+        button.click();
+        button.click();
+        button.click();
+        button.click();
+
+        setTimeout(() => expect(customElement.renderCount).toBe(1), 0);
+      }
+    }
+  });
 });

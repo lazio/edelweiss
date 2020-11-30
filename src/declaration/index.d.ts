@@ -32,28 +32,22 @@ export abstract class WebComponent<
    * Called when the element is moved to a new document
    * (happens in `document.adoptNode`, very rarely used).
    */
-  adoptedCallback(): void;
+  adopted(): void;
   /**
-   * Browser calls this method when the element is added to the document
+   * Called this method when the element is added to the document
    * (can be called many times if an element is repeatedly added/removed).
    */
-  connectedCallback(): void;
+  connected(): void;
   /**
-   * Browser calls this method when the element is removed from the document
+   * Called this method when the element is removed from the document
    * (can be called many times if an element is repeatedly added/removed).
    */
-  disconnectedCallback(): void;
+  disconnected(): void;
   /**
-   * Called when one of attributes returned by `observedAttributes` is modified.
-   *
-   * Calling `super.attributeChangedCallback` while overriding this
-   * method is necessary. Otherwise reactivity will be lost.
+   * Called when one of attributes returned by `observedAttributes`
+   * is modified.
    */
-  attributeChangedCallback(
-    name: string,
-    oldValue: string,
-    newValue: string
-  ): void;
+  attributeChanged(name: string, oldValue: string, newValue: string): void;
 
   /**
    * Defines inner DOM of custom element as Shadow DOM.
