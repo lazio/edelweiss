@@ -1,147 +1,160 @@
-import Component from '../component/component';
 import { uid } from '../utils/uid';
 import { warn } from '../utils/warn';
+import { hooksManager } from '../dom/hooks';
+import { eventListenersMap } from '../dom/events';
+import { isNothing, maybeOf } from '@fluss/core';
+import {
+  Hooks,
+  createHookAttributeName,
+  createEventIdAttributeName,
+} from '../utils/library_attributes';
 import {
   eventListenerRegExp,
   hookAttributeRegExp,
   booleanAttributeRegExp,
+  specialPropertiesRegExp,
 } from '../utils/regexps';
-import { freeze, promiseOf, isNothing, maybeOf } from '@fluss/core';
+import type { HookCallback } from '../dom/hooks';
 
-/**
- * Holds all listeners that will be attached to element.
- * Elements are marked with event ids.
- */
-export const eventListenersMap = new Map<
-  string,
-  {
-    [eventName: string]: EventListenerOrEventListenerObject;
-  }
->();
+type AllowedValues =
+  | null
+  | undefined
+  | string
+  | number
+  | boolean
+  // EventListener, HooksCallback or () => string | number
+  | Function
+  | ReadonlyArray<string>
+  | EventListenerObject;
 
-/** Hooks are defined in order they have been executed in element's lifecycle. */
-export enum Hooks {
-  Mounted = 'mounted',
-  Updated = 'updated',
-  Removed = 'removed',
-}
-
-type HookCallback = (self: Element) => void | Promise<void>;
-
-/** Holds callbacks for every element's hooks. */
-export const hooksManager = freeze({
-  [Hooks.Mounted]: new Map<string, HookCallback>(),
-  [Hooks.Updated]: new Map<string, HookCallback>(),
-  [Hooks.Removed]: new Map<string, HookCallback>(),
-});
-
-export async function html(
+export function html(
   parts: TemplateStringsArray,
-  ...variables: Array<any>
-): Promise<string> {
+  ...variables: ReadonlyArray<AllowedValues>
+): string {
   return parts.reduce((previous, current, index) => {
     return (
       maybeOf(variables[index])
-        // Wrap variable into Promise
-        .map(promiseOf)
-        .map((promiseWithVariable) =>
-          // Gets template from Component
-          promiseWithVariable.then((variable) => buildMaybeComponent(variable))
+        .map((variable) =>
+          Array.isArray(variable) ? variable.join('') : variable
         )
-        .map((promiseWithVariable) =>
-          /**
-           * Variable may be an Array that contains string, Promise<string> and Component,
-           * so we must wait for resolving it and then return result. We do not handle other
-           * objects.
-           * Also we prevent from inseting commas into template.
-           */
-          promiseWithVariable.then((variable) =>
-            Array.isArray(variable)
-              ? Promise.all(
-                  variable.map((maybeComponent) =>
-                    buildMaybeComponent(maybeComponent)
-                  )
-                ).then((all) => all.join(''))
-              : variable
-          )
+        .map(
+          (variable) =>
+            // Consume current part with previous part
+            previous + formCurrentHTML(variable, current, index)
         )
-        .map((promiseWithVariable) =>
-          // Consume current part with previous part
-          previous.then((textHTML) =>
-            formCurrentHTML(promiseWithVariable, current, index).then(
-              (currentHTML) => textHTML + currentHTML
-            )
-          )
-        )
-        .extract() || previous.then((prevHtml) => prevHtml + current)
+        .extract() ?? previous + current // End of template
     );
-  }, promiseOf(''));
+  }, '');
 }
 
 function formCurrentHTML(
-  promiseWithVariable: Promise<any>,
+  variable: Exclude<AllowedValues, null | undefined | ReadonlyArray<string>>,
   current: string,
   index: number
-): Promise<string> {
-  return promiseWithVariable.then((variable) => {
-    // Handle @event listener if there is any.
-    const matchedElementEventListener = eventListenerRegExp.exec(current);
-    if (!isNothing(matchedElementEventListener)) {
-      let listener = variable;
+): string {
+  // Handle @event listener if there is any.
+  const matchedElementEventListener = eventListenerRegExp.exec(current);
+  if (!isNothing(matchedElementEventListener)) {
+    let listener = variable;
 
-      if (typeof listener !== 'function' && isNothing(listener.handleEvent)) {
-        warn(`Event listener must be type of "function" or object with
+    if (
+      typeof listener !== 'function' &&
+      typeof listener === 'object' &&
+      !('handleEvent' in listener)
+    ) {
+      warn(`Event listener must be type of "function" or object with
   "handleEvent" method, but given "${typeof listener}".`);
-        listener = () => {};
-      }
-
-      const eventId = uid();
-      eventListenersMap.set(eventId, {
-        [matchedElementEventListener[1]]: listener,
-      });
-
-      return current.replace(
-        matchedElementEventListener[0],
-        `data-event-id${index}="${eventId}"`
-      );
+      listener = () => {};
     }
 
-    // Handle ?attribute
-    const matchBooleanAttribute = booleanAttributeRegExp.exec(current);
-    if (!isNothing(matchBooleanAttribute)) {
-      /**
-       * It accepts all values and check if it is falsy or truthy.
-       * There are 7 falsy values in JS: [values](https://developer.mozilla.org/en-US/docs/Glossary/Falsy)
-       */
-      return current.replace(
-        matchBooleanAttribute[0],
-        variable ? matchBooleanAttribute[1] : ''
-      );
+    const eventId = uid();
+    eventListenersMap.set(
+      eventId,
+      // It is up to user to set proper type of function as variable.
+      [
+        matchedElementEventListener[1],
+        listener as EventListenerOrEventListenerObject,
+      ]
+    );
+
+    return current.replace(
+      matchedElementEventListener[0],
+      `${createEventIdAttributeName(index)}="${eventId}"`
+    );
+  }
+  // Handle ?attribute
+  const matchBooleanAttribute = booleanAttributeRegExp.exec(current);
+  if (!isNothing(matchBooleanAttribute)) {
+    /**
+     * It accepts all values and check if it is falsy or truthy.
+     * There are 7 falsy values in JS: [values](https://developer.mozilla.org/en-US/docs/Glossary/Falsy)
+     */
+    return current.replace(
+      matchBooleanAttribute[0],
+      variable ? matchBooleanAttribute[1] : ''
+    );
+  }
+
+  /** Handle special property and attribute. */
+  const matchSpecialProperty = specialPropertiesRegExp.exec(current);
+  if (!isNothing(matchSpecialProperty)) {
+    let stateGetter = variable;
+    const propertyName = matchSpecialProperty[1];
+
+    if (
+      typeof stateGetter !== 'function' &&
+      typeof stateGetter !== 'string' &&
+      typeof stateGetter !== 'number'
+    ) {
+      warn(`Value of "${propertyName}" property and attribute must have "string", "number" or "function" type,
+      but given "${typeof stateGetter}".`);
+      stateGetter = '';
     }
 
-    /** Handle hook attribute. */
-    const matchHookAttribute = hookAttributeRegExp.exec(current);
-    if (!isNothing(matchHookAttribute)) {
-      const dataHookId = uid();
-      /**
-       * matchHookAttribute can contain only hook keywords, so we can not
-       * check its value.
-       */
-      const hookName = matchHookAttribute[1] as Hooks;
+    const propertyValue: string =
+      typeof stateGetter === 'function' ? stateGetter() : `${stateGetter}`;
 
-      hooksManager[hookName].set(dataHookId, variable);
+    // We doesn't return value, because updated hook need to be handled.
+    current = current.replace(
+      specialPropertiesRegExp,
+      // Attribute is defined here, so we don't need to call
+      // setAttribute method.
+      `${propertyName}="${propertyValue}" :${Hooks.Updated}=`
+    );
 
-      return current.replace(
-        hookAttributeRegExp,
-        `data-${hookName}-hook-id="${dataHookId}"`
+    // Assign updating function to variable.
+    variable = (element: HTMLElement & { [key: string]: string }) => {
+      element[propertyName] = propertyValue;
+    };
+  }
+
+  /** Handle hook attribute. */
+  const matchHookAttribute = hookAttributeRegExp.exec(current);
+  if (!isNothing(matchHookAttribute)) {
+    let hookCallback = variable;
+
+    if (typeof hookCallback !== 'function') {
+      warn(
+        `Event listener must be type of "function", but given "${typeof hookCallback}".`
       );
+      hookCallback = () => {};
     }
 
-    return current + variable;
-  });
-}
+    const dataHookId = uid();
+    /**
+     * matchHookAttribute can contain only hook keywords, so we can not
+     * check its value.
+     */
+    const hookName = matchHookAttribute[1] as Hooks;
 
-/** Extract template from `Component`. */
-function buildMaybeComponent<T>(variable: T | Component): T | Promise<string> {
-  return variable instanceof Component ? variable._createNodes() : variable;
+    // It is up to user to set proper type of function as variable.
+    hooksManager[hookName].set(dataHookId, hookCallback as HookCallback);
+
+    return current.replace(
+      hookAttributeRegExp,
+      `${createHookAttributeName(hookName, index)}="${dataHookId}"`
+    );
+  }
+
+  return current + variable;
 }

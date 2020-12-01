@@ -1,6 +1,6 @@
 # Edelweiss
 
-This is web framework that can be used with _ES modules_ or with _CommonJS_.
+This is web framework that is bundled as _ES module_.
 
 ## Installation
 

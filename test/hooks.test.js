@@ -1,10 +1,10 @@
 import './crypto_for_jest';
-import { html, Router } from '../src';
+import { html, Router } from '../build';
 
 let a = 1;
 
 /** Hooks are deffered, so expect function must be also deffered. */
-function defer(fn: () => void): void {
+function defer(fn) {
   setTimeout(fn, 0);
 }
 
@@ -12,7 +12,9 @@ describe('Hooks', () => {
   let isMounted = false;
   let updateCount = 0;
   let isRemoved = false;
-  let element: Element | null = null;
+  let element = null;
+
+  let hookIsInvoked = false;
 
   beforeAll(() => {
     document.body.innerHTML = '<div id="outer"></div>';
@@ -24,13 +26,13 @@ describe('Hooks', () => {
         view() {
           return html`<div>
             <p
-              :mounted=${(node: HTMLParagraphElement) => {
+              :mounted=${(node) => {
                 element = node;
                 isMounted = true;
               }}
               :updated=${() => updateCount++}
               :removed=${() => (isRemoved = true)}
-              class=${a}
+              class=${`${a}`}
             ></p>
           </div>`;
         },
@@ -42,6 +44,13 @@ describe('Hooks', () => {
           return html`Hello`;
         },
       },
+      {
+        path: '/only',
+        container: '#outer',
+        view() {
+          return html` <div :mounted=${() => (hookIsInvoked = true)}></div> `;
+        },
+      },
     ]);
   });
 
@@ -49,7 +58,7 @@ describe('Hooks', () => {
     expect(isMounted).toBe(false);
     await Router.to('/');
     defer(() => expect(isMounted).toBe(true));
-    defer(() => expect(element).toBeInstanceOf(HTMLElement));
+    defer(() => expect(element).toBeInstanceOf(HTMLParagraphElement));
 
     // If element is on the page, mounted hook must not be invoked.
     isMounted = false;
@@ -73,5 +82,22 @@ describe('Hooks', () => {
     await Router.to('/r');
 
     defer(() => expect(isRemoved).toBe(true));
+  });
+
+  test('Updated hook does not invokes on changing library attributes value', async () => {
+    await Router.to('/');
+    await Router.reload();
+    await Router.reload();
+    await Router.reload();
+
+    defer(() => expect(updateCount).toBe(1));
+  });
+
+  test('Mounted are applied, if they are only attributes of elements', async () => {
+    expect(hookIsInvoked).toBe(false);
+
+    await Router.to('/only');
+
+    defer(() => expect(hookIsInvoked).toBe(true));
   });
 });

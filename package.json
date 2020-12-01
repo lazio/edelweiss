@@ -1,13 +1,13 @@
 {
   "name": "@prostory/edelweiss",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Small framework that builds HTML from JS.",
   "keywords": [
     "Edelweiss",
     "UI framework"
   ],
   "main": "index.js",
-  "module": "index.mjs",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "https://github.com/YevhenKap/edelweiss"
@@ -21,23 +21,21 @@
     "copy:settings": "cp package.json build/",
     "copy:typings": "cp src/declaration/index.d.ts build/",
     "release": "npm run build; npm publish build/ --access public",
-    "test": "jest"
+    "test": "NODE_OPTIONS=--experimental-vm-modules npx jest"
   },
   "author": "Kapelianovych Yevhen",
   "license": "MIT",
   "devDependencies": {
-    "@rollup/plugin-node-resolve": "^9.0.0",
-    "@rollup/plugin-typescript": "^6.0.0",
-    "@types/jest": "^26.0.14",
-    "jest": "^26.5.2",
-    "rollup": "^2.28.2",
+    "@rollup/plugin-typescript": "^8.0.0",
+    "@types/jest": "^26.0.15",
+    "jest": "^26.6.3",
+    "rollup": "^2.34.0",
     "rollup-plugin-terser": "^7.0.2",
-    "ts-jest": "^26.4.1",
-    "tslib": "^2.0.2",
-    "typescript": "^4.0.3"
+    "tslib": "^2.0.3",
+    "typescript": "^4.1.2"
   },
   "dependencies": {
-    "@fluss/core": "^0.7.0",
-    "@fluss/web": "^0.6.1"
+    "@fluss/core": "^0.9.1",
+    "@fluss/web": "^0.8.0"
   }
 }

@@ -1,11 +1,6 @@
-import { pathVariableRegExp } from '../utils/regexps';
 import { Maybe, maybeOf } from '@fluss/core';
 
-/**
- * Test path against defined path template.
- * Variable is created by preceeding colon before paths part name `:name:`.
- * Optional variable is created by appending question mark to it `:name:?`.
- */
+/** Test path against defined path regexp. */
 export function matchPath(
   path: string,
   templatePath: string
@@ -17,7 +12,5 @@ export function matchPath(
     ? boundedTemplatePath
     : `${boundedTemplatePath}$`;
 
-  return maybeOf(
-    path.match(boundedTemplatePath.replace(pathVariableRegExp, '(.+)$1'))
-  );
+  return maybeOf(path.match(boundedTemplatePath));
 }

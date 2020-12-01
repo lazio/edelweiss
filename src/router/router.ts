@@ -1,20 +1,15 @@
 import { warn } from '../utils/warn';
-import { render } from '../render';
+import { render } from '../dom/render';
 import { matchPath } from './path_to_regexp';
-import { querySelector, addEventListener } from '@fluss/web';
-import { promiseOf, isNothing, arrayFrom } from '@fluss/core';
-import type Component from '../component/component';
+import { setIsRouteChangedMarker } from './markers';
+import { promiseOf, isNothing, arrayFrom, freeze } from '@fluss/core';
 
 export type Route = {
   readonly path: string;
   readonly container?: string;
-  readonly parameters?: RegExpMatchArray;
-  before?: () => Promise<void> | void;
-  view: () =>
-    | string
-    | Component
-    | Promise<string>
-    | Array<string | Component | Promise<string>>;
+  readonly parameters: RegExpMatchArray;
+  before?: () => void | boolean | Promise<void | boolean>;
+  view: () => string;
   after?: () => Promise<void> | void;
 };
 
@@ -25,9 +20,10 @@ const _routes: Map<string, Route> = new Map();
 /**
  * Holds current route.
  */
-let _current: Route = {
+export let _current: Route = {
   path: '',
   container: '',
+  parameters: [],
   view() {
     return '';
   },
@@ -35,40 +31,44 @@ let _current: Route = {
 
 type RouterOptions = {
   /** Prefix path that will be prepended to path of all user's defined routes. */
-  basePrefix: string;
+  prefix: string;
   /**
    * Container for elements from all routes.
    * If all routes will have the same container, then this variable may be set and used.
    */
-  baseContainer: string;
+  container: string;
 };
 
-const _routerOptions: RouterOptions = {
-  basePrefix: '',
-  baseContainer: '',
+export const _routerGlobalOptions: RouterOptions = {
+  prefix: '',
+  container: '',
 };
 
 export default class Router {
-  static get current() {
-    return _current;
+  static get current(): Readonly<Route> {
+    return freeze(_current);
   }
 
   static configure(options: Partial<RouterOptions>): void {
-    const { basePrefix, baseContainer } = options;
+    const { prefix, container } = options;
 
-    if (!isNothing(basePrefix)) {
-      _routerOptions.basePrefix = basePrefix;
+    if (!isNothing(prefix)) {
+      _routerGlobalOptions.prefix = prefix;
     }
 
-    if (!isNothing(baseContainer)) {
-      _routerOptions.baseContainer = baseContainer;
+    if (!isNothing(container)) {
+      _routerGlobalOptions.container = container;
     }
   }
 
-  static add(routes: Route | Array<Route>): void {
+  static add(
+    routes: Omit<Route, 'parameters'> | ReadonlyArray<Omit<Route, 'parameters'>>
+  ): void {
     Array.isArray(routes)
-      ? routes.forEach((route) => _routes.set(route.path, route))
-      : _routes.set(routes.path, routes);
+      ? routes.forEach((route) =>
+          _routes.set(route.path, { ...route, parameters: [] })
+        )
+      : _routes.set(routes.path, { ...routes, parameters: [] });
   }
 
   static to(
@@ -95,56 +95,59 @@ export default class Router {
       const pathMatch = matchPath(pathWithPrefix, prependPathPrefix(key));
 
       if (pathMatch.isJust()) {
-        const container = route.container || _routerOptions.baseContainer;
+        const container = route.container ?? _routerGlobalOptions.container;
 
         routeFound = pathMatch
-          .chain((parameters) => {
-            return querySelector(container).map(async () => {
-              _current = {
-                ...route,
+          .map(async (parameters) => {
+            setIsRouteChangedMarker(_current.path !== route.path);
+
+            // Before route render hook
+            if (!isNothing(route.before)) {
+              if ((await promiseOf(route.before())) === false) {
                 /**
-                 * If match exists in path, then result is array, where first item is
-                 * the whole matched string.
-                 * If parameters exist in path (they must be surrounded by brackets), then
-                 * second item and go on to end of array are parameters.
+                 * Navigating to route can be prevented by
+                 * returning `false` from `route.before` function.
+                 * Also we must reset route changed marker.
                  */
-                parameters,
-              };
-
-              // Before route render hook
-              if (!isNothing(route.before)) {
-                await promiseOf(route.before());
+                return setIsRouteChangedMarker(false);
               }
+            }
 
-              await render(container, route.view());
+            _current = {
+              ...route,
+              /**
+               * If match exists in path, then result is array, where first item is
+               * the whole matched string.
+               * If parameters exist in path (they must be surrounded by brackets), then
+               * second item and go on to end of array are parameters.
+               */
+              parameters,
+            };
 
-              if (
-                isNothing(options.willStateChange) ||
-                options.willStateChange
-              ) {
-                window.history.pushState(
-                  { path: pathWithPrefix, container },
-                  '',
-                  pathWithPrefix
-                );
-              }
+            if (isNothing(options.willStateChange) || options.willStateChange) {
+              window.history.pushState(
+                { path: pathWithPrefix, container },
+                '',
+                pathWithPrefix
+              );
+            }
 
-              // After route render hook
-              if (!isNothing(route.after)) {
-                await promiseOf(route.after());
-              }
-            });
+            render(container, route.view());
+
+            // After route render hook
+            if (!isNothing(route.after)) {
+              await promiseOf(route.after());
+            }
+
+            setIsRouteChangedMarker(false);
           })
           .extract();
       }
     });
 
-    if (isNothing(routeFound)) {
-      warn(`No route is specified for path: ${pathWithPrefix}!`);
-      return promiseOf(undefined);
-    } else {
-      return routeFound;
-    }
+    return isNothing(routeFound)
+      ? promiseOf(warn(`No route is specified for path: ${pathWithPrefix}!`))
+      : routeFound;
   }
 
   static async reload(): Promise<void> {
@@ -155,7 +158,7 @@ export default class Router {
       await promiseOf(before());
     }
 
-    await render(container || _routerOptions.baseContainer, view());
+    render(container ?? _routerGlobalOptions.container, view());
 
     // After route render hook
     if (!isNothing(after)) {
@@ -177,14 +180,14 @@ export default class Router {
  * but not via elements that changes url without setting "state"
  * (default behavior of <a> etc.).
  */
-addEventListener(window, 'popstate', (event) => {
+window.addEventListener('popstate', (event) => {
   if (!isNothing(event.state)) {
     Router.to(event.state.path, { willStateChange: false });
   }
 });
 
 function prependPathPrefix(path: string): string {
-  return path.startsWith(_routerOptions.basePrefix)
+  return path.startsWith(_routerGlobalOptions.prefix)
     ? path
-    : _routerOptions.basePrefix + path;
+    : _routerGlobalOptions.prefix + path;
 }

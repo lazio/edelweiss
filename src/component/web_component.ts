@@ -1,111 +1,112 @@
-import { edelweissPolicy } from '../utils/trusted_types';
-import { alternation, isNothing, promiseOf } from '@fluss/core';
+import { renderWebComponent } from '../dom/render';
 
-type HTMLElementDescriptionObject = {
-  observedAttributes?: Array<string>;
-  hooks?: {
-    connected?: (rootElement: HTMLElement) => void;
-    disconnected?: (rootElement: HTMLElement) => void;
-    adopted?: (rootElement: HTMLElement) => void;
-    attributeChanged?: (
-      rootElement: HTMLElement,
-      name: string,
-      oldValue: string,
-      newValue: string
-    ) => void;
-  };
-  extends?: {
-    constructor: CustomElementConstructor;
-    tagName?: string;
-  };
-};
+export default abstract class WebComponent<
+  T extends object = object
+> extends HTMLElement {
+  #state: T = {} as T;
 
-/**
- * Defines custom element.
- * @param tagName name of the custom tag. Must contain dash symbol.
- * @param template creates inner HTML of custom element.
- * Accept created custom element as parameter.
- * @param componentOptionsOrClass is either tuple of custom element class
- * or object that describes behavior of custom element.
- */
-export function defineWebComponent(
-  tagName: string,
-  template: (rootElement: HTMLElement) => string | Promise<string>,
-  componentOptionsOrClass:
-    | HTMLElementDescriptionObject
-    | [constructor: CustomElementConstructor, tagName?: string] = [HTMLElement]
-): void {
-  let componentClass: CustomElementConstructor;
-  let extendsElementOptions: {
-    constructor: CustomElementConstructor;
-    tagName?: string;
-  } = { constructor: HTMLElement, tagName: undefined };
+  constructor() {
+    super();
 
-  if (Array.isArray(componentOptionsOrClass)) {
-    componentClass = class extends componentOptionsOrClass[0] {};
-    extendsElementOptions.tagName = componentOptionsOrClass[1];
-  } else {
-    const {
-      observedAttributes = [],
-      hooks = {},
-      extends: extendsClause,
-    } = componentOptionsOrClass;
-
-    if (!isNothing(extendsClause)) {
-      extendsElementOptions = extendsClause;
-    }
-
-    componentClass = class extends extendsElementOptions.constructor {
-      static get observedAttributes(): Array<string> {
-        return observedAttributes;
-      }
-
-      constructor() {
-        super();
-
-        promiseOf(template(this)).then((html) => {
-          this.attachShadow({
-            mode: 'open',
-          }).innerHTML = edelweissPolicy.createHTML(html);
-        });
-      }
-
-      connectedCallback() {
-        if (!isNothing(hooks.connected)) {
-          hooks.connected(this);
-        }
-      }
-
-      disconnectedCallback() {
-        if (!isNothing(hooks.disconnected)) {
-          hooks.disconnected(this);
-        }
-      }
-
-      adoptedCallback() {
-        if (!isNothing(hooks.adopted)) {
-          hooks.adopted(this);
-        }
-      }
-
-      attributeChangedCallback(
-        name: string,
-        oldValue: string,
-        newValue: string
-      ) {
-        if (!isNothing(hooks.attributeChanged)) {
-          hooks.attributeChanged(this, name, oldValue, newValue);
-        }
-      }
-    };
+    this.attachShadow({
+      mode: 'open',
+    });
   }
 
-  alternation(
-    () => customElements.get(tagName),
-    () => {
-      customElements.define(tagName, componentClass, {
-        extends: extendsElementOptions.tagName,
-      });
+  get state(): T {
+    return this.#state;
+  }
+
+  /**
+   * Users must override this method instead of
+   * `connectedCallback`.
+   */
+  connected(): void {}
+
+  /**
+   * Users must override this method instead of
+   * `disconnectedCallback`.
+   */
+  disconnected(): void {}
+
+  /**
+   * Users must override this method instead of
+   * `adoptedCallback`.
+   */
+  adopted(): void {}
+
+  /**
+   * Users must override this method instead of
+   * `attributeChangedCallback`.
+   */
+  attributeChanged(
+    attributeName: string,
+    oldValue: string,
+    newValue: string
+  ): void {}
+
+  /** Users must not override this method! */
+  connectedCallback(): void {
+    // This method may be called once element is no longer connected
+    // to DOM, so it must be checked.
+    // [MDN](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements)
+    if (this.isConnected) {
+      this.connected();
+      renderWebComponent(this);
     }
-  )();
+  }
+
+  /** Users must not override this method! */
+  disconnectedCallback(): void {
+    this.disconnected();
+  }
+
+  /** Users must not override this method! */
+  adoptedCallback(): void {
+    this.adopted();
+    renderWebComponent(this);
+  }
+
+  /** Users must not override this method! */
+  attributeChangedCallback(
+    name: string,
+    oldValue: string,
+    newValue: string
+  ): void {
+    this.attributeChanged(name, oldValue, newValue);
+    renderWebComponent(this);
+  }
+
+  changeState(parts: Partial<T>): void {
+    // TODO: get rid of any.
+    const innerState = this.#state as any;
+
+    let isStateChanged = false;
+
+    Object.entries(parts).forEach(([key, value]) => {
+      if (!Object.is(innerState[key], value)) {
+        innerState[key] = value;
+        isStateChanged = true;
+      }
+    });
+
+    if (isStateChanged) {
+      renderWebComponent(this);
+    }
+  }
+
+  abstract template(): string;
+}
+
+type WebComponentConstructor = {
+  new (): WebComponent;
+  prototype: WebComponent;
+};
+
+/** Defines custom element. */
+export function defineWebComponent<E extends WebComponentConstructor>(
+  tagName: string,
+  elementClass: E
+): void {
+  customElements.get(tagName) ?? customElements.define(tagName, elementClass);
 }

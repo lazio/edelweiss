@@ -1,5 +1,5 @@
 import './crypto_for_jest';
-import { html, Router } from '../src';
+import { html, Router } from '../build';
 
 describe('Test "Router"', () => {
   beforeAll(() => {
@@ -16,7 +16,7 @@ describe('Test "Router"', () => {
   });
 
   test('"Router.to" must use global "container" if there is no local one', () => {
-    Router.configure({ baseContainer: '.page ' });
+    Router.configure({ container: '.page ' });
     Router.add([
       {
         path: '/',
@@ -64,7 +64,7 @@ describe('Test "Router"', () => {
   });
 
   test('Prefix path must be checked internally and users can navigate to path with or without prefix', async () => {
-    Router.configure({ basePrefix: '/pre' });
+    Router.configure({ prefix: '/pre' });
     Router.add({
       path: '/pre/fix',
       view() {
@@ -107,7 +107,7 @@ describe('Test "Router"', () => {
 
     await Router.to('/conditional');
 
-    const button = document.querySelector<HTMLButtonElement>('.btn');
+    const button = document.querySelector('.btn');
     expect(button).toBeTruthy();
 
     if (button) {
