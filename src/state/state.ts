@@ -24,7 +24,7 @@ export function createState<T extends object = object>(obj: T): T {
 
         if (isSuccessful) {
           render(
-            _current.container || _routerGlobalOptions.container,
+            _current.container ?? _routerGlobalOptions.container,
             _current.view()
           );
         }
@@ -38,7 +38,7 @@ export function createState<T extends object = object>(obj: T): T {
 
         if (isSuccessful) {
           render(
-            _current.container || _routerGlobalOptions.container,
+            _current.container ?? _routerGlobalOptions.container,
             _current.view()
           );
         }
