@@ -1,21 +1,18 @@
-# Unreleased
+# [1.5.0] - 2020-12-01
 
 ### Added
 
+- Abstract `WebComponent` class for creating custom components.
 - `data-ignored` boolean attribute for marking elements, that must not be checked for structure difference.
-- `state` getter and `changeState` method to `WebComponent` class.
 - Rerendering template of custom element on changing attributes.
 - Ability to update properties of html element and related attributes (by example `value` in `HTMLInputElement`) via attribute-like syntax.
 - Ability to prevent navigation to route in `before` route hook.
-- `adopted`, `connected`, `disconnected` and `attributeChanged` hooks to `WebComponent` as reactive versions of custom element's lifecycle hooks.
 
 ### Changed
 
 - `html` function returns now only `string` value.
 - `Route.view` method returns now only `string` value.
-- `template` method of `WebComponent` can return only `string` now.
 - Event listeners and values of boolean attributes (prepended by `?`) must not be surrounded by `'` or `"` now.
-- `WebComponent` is now abstract class with abstract `template` method.
 - Add **-** symbol between `data-event-id` prefix and event number.
 - Rename _basePrefix_ of `Router` configuration property to _prefix_ and _baseContainer_ to _container_.
 - `Router.current` returns **Readonly<Route>** now.
@@ -23,6 +20,7 @@
 - Convert `I18n` class to `i18n` namespace.
 - Allow declaring multiple hooks of the same type in one element.
 - Make `parameters` property of `Route` object obligatory.
+- `defineWebComponent` has only two parameters: custom element's name and class (`WebComponent`) that describe its behavior.
 
 ### Fixed
 
@@ -32,7 +30,6 @@
 - Assinging same value (if value is object) and same literal to state will not cause rerendering.
 - Deleting absent property from state does not throw an error and does not cause rerendering.
 - Fetch stylesheets on new route with proper route's path.
-- `changeState` method of `WebComponent` cause rerendering only if at least one state's value is changed.
 
 ### Removed
 
@@ -40,17 +37,6 @@
 - `Component` class.
 - `State` interface, now parent type of state is `object`.
 - `registerCss` function and `Config` class.
-
-## [1.5.0] - 2020-10-08
-
-### Added
-
-- `WebComponent` for creating custom components.
-
-### Changed
-
-- `defineWebComponent` has only two parameters: custom element's name and class (`WebComponent`) that describe its behavior.
-- `attachEvents` removes unneded listeners by itself now and selectively saves _detach_ functions.
 
 ## [1.4.0] - 2020-10-07
 

@@ -127,7 +127,7 @@ export function diffChildren(
       oNode.remove();
       removedHook(oNode);
     } else {
-      // Do nothing - old and new node is null or undefined.
+      // Do nothing - old and new node are null or undefined.
     }
   }
 }
@@ -151,7 +151,7 @@ function diffAttributes(oldNode: Element, newNode: Element): boolean {
          * Library attributes used by edelweiss itself and
          * they must not signals that element was updated.
          */
-        if (!isLibraryAttribute(name)) {
+        if (!areAttributesDifferent && !isLibraryAttribute(name)) {
           areAttributesDifferent = true;
         }
       }
@@ -167,7 +167,7 @@ function diffAttributes(oldNode: Element, newNode: Element): boolean {
        * Library attributes used by edelweiss itself and
        * they must not signals that element was updated.
        */
-      if (!isLibraryAttribute(name)) {
+      if (!areAttributesDifferent && !isLibraryAttribute(name)) {
         areAttributesDifferent = true;
       }
     }
