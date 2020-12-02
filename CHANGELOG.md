@@ -6,7 +6,7 @@
 - `container` property of `Route` object cannot be type of `undefined`. Though while adding routes to `router` this property is optional.
 - Signature of `router.add` function: `router.add(...routes)`.
 
-# [1.5.0] - 2020-12-01
+## [1.5.0] - 2020-12-01
 
 ### Added
 

@@ -207,5 +207,5 @@ type RouterOptions = {
  * Creates object based on original with provided property names
  * as partial.
  */
-type SomePartial<T, P extends keyof T = keyof T> = Required<Omit<T, P>> &
+type SomePartial<T, P extends keyof T = keyof T> = Omit<T, P> &
   Partial<Pick<T, P>>;
