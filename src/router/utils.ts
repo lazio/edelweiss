@@ -16,7 +16,3 @@ function addBoundariesTo(path: string): string {
     ? boundedTemplatePath
     : `${boundedTemplatePath}$`;
 }
-
-export function prependPathPrefix(prefix: string, path: string): string {
-  return path.startsWith(prefix) ? path : prefix + path;
-}

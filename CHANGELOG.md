@@ -1,4 +1,10 @@
-# [1.6.0] - 2020-12-02
+# [1.7.0] - 2020-12-02
+
+### Removed
+
+- `prefix` property from `router` global configuration.
+
+## [1.6.0] - 2020-12-02
 
 ### Changed
 
