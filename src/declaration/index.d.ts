@@ -193,8 +193,6 @@ export type Route = {
 };
 
 type RouterOptions = {
-  /** Prefix path that will be prepended to path of all routes defined by user. */
-  prefix: string;
   /**
    * Global container selector of root node of application.
    * If most routes will have the same container,

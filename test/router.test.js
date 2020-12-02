@@ -14,7 +14,7 @@ describe('Test "router"', () => {
   });
 
   test('"router.to" must use global "container" if there is no local one', async () => {
-    router.configure({ container: '.page ', prefix: '/pre' });
+    router.configure({ container: '.page ' });
     router.add(
       {
         path: '/',
@@ -58,25 +58,6 @@ describe('Test "router"', () => {
     const a = document.querySelector('a');
 
     expect(() => a.click()).not.toThrow();
-  });
-
-  test('Prefix path must be checked internally and users can navigate to path with or without prefix', async () => {
-    router.add({
-      path: '/pre/fix',
-      view() {
-        return 'Prefix page';
-      },
-    });
-
-    await router.to('/pre/fix');
-    const pageElement = document.body.querySelector('.page');
-
-    expect(pageElement.innerHTML).toBe('Prefix page');
-
-    await router.to('/');
-    await router.to('/fix');
-
-    expect(pageElement.innerHTML).toBe('Prefix page');
   });
 
   test('Conditional rendering', async () => {

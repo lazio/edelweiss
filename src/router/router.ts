@@ -1,7 +1,7 @@
 import { render } from '../dom/render';
 import { setIsRouteChangedMarker } from './markers';
+import { isMatched, extractParameters } from './utils';
 import { promiseOf, isNothing, maybeOf } from '@fluss/core';
-import { isMatched, extractParameters, prependPathPrefix } from './utils';
 import type { SomePartial } from '../utils/types';
 
 export type Route = {
@@ -14,8 +14,6 @@ export type Route = {
 };
 
 type RouterOptions = {
-  /** Prefix path that will be prepended to path of all user's defined routes. */
-  prefix: string;
   /**
    * Container for elements from all routes.
    * If all routes will have the same container, then this variable may be set and used.
@@ -25,7 +23,6 @@ type RouterOptions = {
 
 /** Store global options for router namespace. */
 const _routerGlobalOptions: RouterOptions = {
-  prefix: '',
   container: '',
 };
 
@@ -49,8 +46,7 @@ export let current: Route = DEFAULT_ROUTE;
  * Set global options for router.
  * Must be called before all `router.add`.
  */
-export function configure({ prefix, container }: Partial<RouterOptions>): void {
-  _routerGlobalOptions.prefix = prefix ?? '';
+export function configure({ container }: Partial<RouterOptions>): void {
   _routerGlobalOptions.container = container ?? '';
 }
 
@@ -60,7 +56,6 @@ export function add(
   routes.forEach((route) =>
     _routes.push({
       ...route,
-      path: prependPathPrefix(_routerGlobalOptions.prefix, route.path),
       container: route.container ?? _routerGlobalOptions.container,
       parameters: [],
     })
@@ -77,19 +72,13 @@ export function to(
     willStateChange?: boolean;
   } = {}
 ): Promise<void> {
-  const pathWithPrefix = prependPathPrefix(_routerGlobalOptions.prefix, path);
-
   if (_routes.length === 0) {
-    console.warn(`You cannot navigate to ${pathWithPrefix} because you didn't define any routes!
+    console.warn(`You cannot navigate to ${path} because you didn't define any routes!
     At first call "router.add(...)".`);
     return promiseOf(undefined);
   }
 
-  return navigate(
-    pathWithPrefix,
-    findRoute(pathWithPrefix),
-    options.willStateChange
-  );
+  return navigate(path, findRoute(path), options.willStateChange);
 }
 
 export async function reload(): Promise<void> {
@@ -127,14 +116,14 @@ window.addEventListener('popstate', (event) => {
   }
 });
 
-function findRoute(pathWithPrefix: string): Route {
+function findRoute(pathname: string): Route {
   return (
-    maybeOf(_routes.find(({ path }) => isMatched(pathWithPrefix, path)))
+    maybeOf(_routes.find(({ path }) => isMatched(pathname, path)))
       .map((route) => ({
         ...route,
         // Parameters need to be updated to hold current path
         // variables if there is any.
-        parameters: extractParameters(pathWithPrefix, route.path),
+        parameters: extractParameters(pathname, route.path),
       }))
       .extract() ?? DEFAULT_ROUTE
   );
@@ -142,7 +131,7 @@ function findRoute(pathWithPrefix: string): Route {
 
 /** Navigates to _pathWithPrefix_. */
 async function navigate(
-  pathWithPrefix: string,
+  path: string,
   route: Route,
   willStateChange: boolean = true
 ): Promise<void> {
@@ -165,11 +154,11 @@ async function navigate(
   if (willStateChange) {
     window.history.pushState(
       {
-        path: pathWithPrefix,
+        path,
         container: route.container,
       },
       '',
-      pathWithPrefix
+      path
     );
   }
 
