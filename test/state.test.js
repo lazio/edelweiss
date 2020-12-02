@@ -1,4 +1,4 @@
-import { createState, Router } from '../build';
+import { createState, router } from '../build';
 
 const testState = createState({
   clicks: 0,
@@ -11,7 +11,7 @@ describe('Tests for state', () => {
   beforeAll(() => {
     document.body.innerHTML = `<div class="app"></div>`;
 
-    Router.add({
+    router.add({
       path: '/',
       container: '.app',
       view() {
@@ -21,7 +21,7 @@ describe('Tests for state', () => {
     });
 
     // First render.
-    Router.to('/');
+    router.to('/');
   });
 
   test('Getting value from state.', () => {

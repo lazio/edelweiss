@@ -1,17 +1,17 @@
 import { querySelector } from '@fluss/web';
-import { i18n, Router, html, translate } from '../build';
+import { i18n, router, html, translate } from '../build';
 
 describe('Internationalization', () => {
   beforeAll(() => {
     document.body.innerHTML = '<div class="main"></div>';
-    Router.add({
+    router.add({
       path: '/',
       container: '.main',
       view() {
         return html`${i18n.translate('main')}`;
       },
     });
-    Router.to('/');
+    router.to('/');
   });
 
   test('translate method without adding translation object returns undefined and innerHTML is empty', () => {
@@ -36,7 +36,7 @@ describe('Internationalization', () => {
       },
       'uk'
     );
-    await Router.reload();
+    await router.reload();
 
     expect(
       querySelector('.main')
@@ -57,14 +57,14 @@ describe('Internationalization', () => {
 
   test('translate method inserts variable correctly', async () => {
     document.body.insertAdjacentHTML('beforeend', '<div class="last"></div>');
-    Router.add({
+    router.add({
       path: '/withVar',
       container: '.last',
       view() {
         return html`${i18n.translate('withVar', { name: 'world' })}`;
       },
     });
-    await Router.to('/withVar');
+    await router.to('/withVar');
 
     expect(i18n.currentLanguage).toBe('en');
     expect(
@@ -76,14 +76,14 @@ describe('Internationalization', () => {
 
   test('translate function behave as i18n.translate', async () => {
     document.body.insertAdjacentHTML('beforeend', '<div class="alias"></div>');
-    Router.add({
+    router.add({
       path: '/alias',
       container: '.alias',
       view() {
         return html`${translate('withVar', { name: 'alias' })}`;
       },
     });
-    await Router.to('/alias');
+    await router.to('/alias');
 
     expect(
       querySelector('.alias')

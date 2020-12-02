@@ -1,7 +1,7 @@
 import './crypto_for_jest';
 import {
   html,
-  Router,
+  router,
   createState,
   WebComponent,
   defineWebComponent,
@@ -23,24 +23,25 @@ describe('Diff DOM', () => {
   beforeAll(() => {
     document.body.innerHTML = '<div id="app"></div>';
 
-    Router.add([
+    router.configure({container: '#app'})
+
+    router.add(
       {
         path: '/text',
-        container: '#app',
         view() {
           return page('text');
         },
       },
       {
         path: '/button',
-        container: '#app',
+
         view() {
           return page('button');
         },
       },
       {
         path: '/ignored',
-        container: '#app',
+
         view() {
           return html`
             <div>
@@ -52,16 +53,16 @@ describe('Diff DOM', () => {
       },
       {
         path: '/',
-        container: '#app',
+
         view() {
           return page('both');
         },
       },
-    ]);
+    );
   });
 
   test('Update button nodes', async () => {
-    await Router.to('/button');
+    await router.to('/button');
 
     const app = document.querySelector('#app');
 
@@ -78,7 +79,7 @@ describe('Diff DOM', () => {
   });
 
   test('Updating text node', async () => {
-    await Router.to('/text');
+    await router.to('/text');
 
     const app = document.querySelector('#app');
 
@@ -95,7 +96,7 @@ describe('Diff DOM', () => {
   });
 
   test('Updating text node, when it has button nodes as siblings', async () => {
-    await Router.to('/');
+    await router.to('/');
 
     const app = document.querySelector('#app');
 
@@ -114,14 +115,14 @@ describe('Diff DOM', () => {
   });
 
   test('Element is not changed if it has data-ignored attributes', async () => {
-    await Router.to('/ignored');
+    await router.to('/ignored');
 
     const button = document.querySelector('.ign');
     if (button) {
       expect(button.childElementCount).toBe(0);
 
       button.append(document.createElement('span'));
-      await Router.reload();
+      await router.reload();
 
       expect(button.childElementCount).toBe(1);
     }
@@ -131,13 +132,12 @@ describe('Diff DOM', () => {
     let firstResult = 0;
     let secondResult = 0;
 
-    Router.add({
+    router.add({
       path: '/events(\\d+)?',
-      container: '#app',
       view() {
         return html`
           <div>
-            ${Router.current.parameters && Router.current.parameters[1]
+            ${router.current.parameters && router.current.parameters[1]
               ? html`<button @click=${() => firstResult++}>A</button>`
               : html`<button @click=${() => secondResult++}>B</button>`}
           </div>
@@ -145,7 +145,7 @@ describe('Diff DOM', () => {
       },
     });
 
-    await Router.to('/events');
+    await router.to('/events');
 
     let button = document.querySelector('button');
     if (button) {
@@ -153,7 +153,7 @@ describe('Diff DOM', () => {
       expect(firstResult).toBe(0);
       expect(secondResult).toBe(1);
 
-      await Router.to('/events3');
+      await router.to('/events3');
 
       button = document.querySelector('button');
       if (button) {
@@ -168,9 +168,8 @@ describe('Diff DOM', () => {
   test('Adding events to children of new node', async () => {
     let inner = false;
 
-    Router.add({
+    router.add({
       path: '/child-events',
-      container: '#app',
       view() {
         return html`
           <main>
@@ -182,7 +181,7 @@ describe('Diff DOM', () => {
       },
     });
 
-    await Router.to('/child-events');
+    await router.to('/child-events');
 
     const innerBtn = document.querySelector('button.inner');
 
@@ -203,20 +202,19 @@ describe('Diff DOM', () => {
 
     let count = 0;
 
-    Router.add({
+    router.add({
       path: '/custom-element-diff',
-      container: '#app',
       view() {
         return html` <my-custom count="${count}"></my-custom> `;
       },
     });
 
-    await Router.to('/custom-element-diff');
+    await router.to('/custom-element-diff');
     expect(document.body.innerHTML).toMatch(/count="0"/);
 
     count++;
 
-    await Router.reload();
+    await router.reload();
     expect(document.body.innerHTML).toMatch(/count="1"/);
   });
 
@@ -225,9 +223,8 @@ describe('Diff DOM', () => {
     let valueNumber = 0;
     let valueFunction = () => valueString + valueNumber;
 
-    Router.add({
+    router.add({
       path: '/value-attr',
-      container: '#app',
       view() {
         return html`
           <input id="a" .value=${valueString} />
@@ -237,7 +234,7 @@ describe('Diff DOM', () => {
       },
     });
 
-    await Router.to('/value-attr');
+    await router.to('/value-attr');
 
     const input1 = document.querySelector('#a');
     const input2 = document.querySelector('#b');
@@ -256,7 +253,7 @@ describe('Diff DOM', () => {
     valueString = 'some';
     valueNumber = 1;
 
-    await Router.reload();
+    await router.reload();
 
     if (input1) {
       expect(input1.value).toBe('some');
@@ -272,15 +269,14 @@ describe('Diff DOM', () => {
   test('Event listener is added to element, if there is only event attributes', async () => {
     let clicked = false;
 
-    Router.add({
+    router.add({
       path: '/one-listener',
-      container: '#app',
       view() {
         return html` <button @click=${() => (clicked = true)}>click</button> `;
       },
     });
 
-    await Router.to('/one-listener');
+    await router.to('/one-listener');
 
     expect(clicked).toBe(false);
 

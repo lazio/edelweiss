@@ -1,23 +1,21 @@
 import './crypto_for_jest';
-import { html, Router } from '../build';
+import { html, router } from '../build';
 
-describe('Test "Router"', () => {
+describe('Test "router"', () => {
   beforeAll(() => {
     document.body.innerHTML = '<p class="page"></p><a href="#u"></a>';
   });
 
-  test('"Router.current" before "Router.to" must to have empty values in "path" and "view()"', () => {
-    expect(Router.current.path).toEqual('');
-    expect(Router.current.view()).toEqual('');
+  test('"router.current" before "router.to" must to have default error route."', () => {
+    expect(router.current.path).toEqual('/no-route-found');
+    expect(router.current.view()).toMatch(
+      '<b>There is no route that match "/" path.</b>'
+    );
   });
 
-  test('"Router.to" before "Router.add" must not throw an Error', () => {
-    expect(Router.to('/')).resolves.not.toThrow();
-  });
-
-  test('"Router.to" must use global "container" if there is no local one', () => {
-    Router.configure({ container: '.page ' });
-    Router.add([
+  test('"router.to" must use global "container" if there is no local one', async () => {
+    router.configure({ container: '.page ', prefix: '/pre' });
+    router.add(
       {
         path: '/',
         view() {
@@ -36,66 +34,60 @@ describe('Test "Router"', () => {
         view() {
           return 'No such element';
         },
-      },
-    ]);
+      }
+    );
 
-    expect(Router.to('/test')).resolves.toBe(undefined);
+    await router.to('/');
+
+    expect(document.body.innerHTML).toMatch('Start');
   });
 
-  test('"Router.to" must update "container" element with children that returns from "Route.view()"', async () => {
-    await Router.to('/test');
+  test('"router.to" must update "container" element with children that are returned from "Route.view()"', async () => {
+    await router.to('/test');
 
     const container = document.querySelector('.page');
 
-    if (container) {
-      expect(container.innerHTML).toMatch('Test');
-    }
+    expect(container.innerHTML).toMatch('Test');
   });
 
-  test('"Router.to" must not throw an error if container is not exist', () => {
-    expect(Router.to('/not-found')).resolves.not.toThrow();
+  test('"router.to" must not throw an error if container is not exist', () => {
+    expect(router.to('/not-found')).resolves.not.toThrow();
   });
 
   test('Navigating to any links without setting state, does not throw error', () => {
     const a = document.querySelector('a');
-    if (a) {
-      expect(() => a.click()).not.toThrow();
-    }
+
+    expect(() => a.click()).not.toThrow();
   });
 
   test('Prefix path must be checked internally and users can navigate to path with or without prefix', async () => {
-    Router.configure({ prefix: '/pre' });
-    Router.add({
+    router.add({
       path: '/pre/fix',
       view() {
         return 'Prefix page';
       },
     });
 
-    await Router.to('/pre/fix');
+    await router.to('/pre/fix');
     const pageElement = document.body.querySelector('.page');
 
-    if (pageElement) {
-      expect(pageElement.innerHTML).toBe('Prefix page');
-    }
+    expect(pageElement.innerHTML).toBe('Prefix page');
 
-    await Router.to('/');
-    await Router.to('/fix');
+    await router.to('/');
+    await router.to('/fix');
 
-    if (pageElement) {
-      expect(pageElement.innerHTML).toBe('Prefix page');
-    }
+    expect(pageElement.innerHTML).toBe('Prefix page');
   });
 
   test('Conditional rendering', async () => {
     let clicked = 0;
 
-    Router.add({
+    router.add({
       path: '/conditional',
       view() {
         return html`
           <div>
-            ${Router.current.path.includes('/conditional')
+            ${router.current.path.includes('/conditional')
               ? html`<button class="btn" @click=${() => clicked++}>
                   Button
                 </button>`
@@ -105,15 +97,13 @@ describe('Test "Router"', () => {
       },
     });
 
-    await Router.to('/conditional');
+    await router.to('/conditional');
 
     const button = document.querySelector('.btn');
     expect(button).toBeTruthy();
 
-    if (button) {
-      button.click();
+    button.click();
 
-      expect(clicked).toBe(1);
-    }
+    expect(clicked).toBe(1);
   });
 });

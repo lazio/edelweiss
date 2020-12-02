@@ -1,5 +1,5 @@
 import { render } from '../dom/render';
-import { _current, _routerGlobalOptions } from '../router/router';
+import { current } from '../router/router';
 
 export function createState<T extends object = object>(obj: T): T {
   return new Proxy<T>(obj, {
@@ -23,10 +23,7 @@ export function createState<T extends object = object>(obj: T): T {
         const isSuccessful = Reflect.set(target, property, value, receiver);
 
         if (isSuccessful) {
-          render(
-            _current.container ?? _routerGlobalOptions.container,
-            _current.view()
-          );
+          render(current.container, current.view());
         }
 
         return isSuccessful;
@@ -37,10 +34,7 @@ export function createState<T extends object = object>(obj: T): T {
         const isSuccessful = Reflect.deleteProperty(target, property);
 
         if (isSuccessful) {
-          render(
-            _current.container ?? _routerGlobalOptions.container,
-            _current.view()
-          );
+          render(current.container, current.view());
         }
 
         return isSuccessful;

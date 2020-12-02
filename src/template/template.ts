@@ -1,5 +1,4 @@
 import { uid } from '../utils/uid';
-import { warn } from '../utils/warn';
 import { hooksManager } from '../dom/hooks';
 import { eventListenersMap } from '../dom/events';
 import { isNothing, maybeOf } from '@fluss/core';
@@ -62,7 +61,7 @@ function formCurrentHTML(
       typeof listener === 'object' &&
       !('handleEvent' in listener)
     ) {
-      warn(`Event listener must be type of "function" or object with
+      console.warn(`Event listener must be type of "function" or object with
   "handleEvent" method, but given "${typeof listener}".`);
       listener = () => {};
     }
@@ -106,7 +105,7 @@ function formCurrentHTML(
       typeof stateGetter !== 'string' &&
       typeof stateGetter !== 'number'
     ) {
-      warn(`Value of "${propertyName}" property and attribute must have "string", "number" or "function" type,
+      console.warn(`Value of "${propertyName}" property and attribute must have "string", "number" or "function" type,
       but given "${typeof stateGetter}".`);
       stateGetter = '';
     }
@@ -134,7 +133,7 @@ function formCurrentHTML(
     let hookCallback = variable;
 
     if (typeof hookCallback !== 'function') {
-      warn(
+      console.warn(
         `Event listener must be type of "function", but given "${typeof hookCallback}".`
       );
       hookCallback = () => {};

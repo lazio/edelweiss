@@ -79,27 +79,29 @@ export function defineWebComponent<E extends WebComponentConstructor>(
   elementClass: E
 ): void;
 
-/** Does routing of site. */
-export class Router {
+export namespace router {
   /** Returns info about current route. */
-  static get current(): Readonly<Route>;
+  const current: Readonly<Route>;
 
-  /** Define settings for `Router`. */
-  static configure(options: Partial<RouterOptions>): void;
-  /** Makes routes known for `Router`.  */
-  static add(
-    routes: Omit<Route, 'parameters'> | ReadonlyArray<Omit<Route, 'parameters'>>
+  /**
+   * Define settings for `router`.
+   * Must be called before all `route.add` functions.
+   */
+  function configure(options: Partial<RouterOptions>): void;
+  /** Makes routes known for `router`.  */
+  function add(
+    ...routes: ReadonlyArray<SomePartial<Route, 'parameters' | 'container'>>
   ): void;
   /** Navigates to route based on `path`. */
-  static to(
+  function to(
     path: string,
     options?: {
       willStateChange?: boolean;
     }
   ): Promise<void>;
-  static reload(): Promise<void>;
-  static back(): void;
-  static forward(): void;
+  function reload(): Promise<void>;
+  function back(): void;
+  function forward(): void;
 }
 
 export namespace i18n {
@@ -170,7 +172,7 @@ export type Route = {
    * If local container property is absent, then global one will
    * be used.
    */
-  readonly container?: string;
+  readonly container: string;
   /**
    * Holds variables (capture groups) that are defined inside _path_.
    * First value of array is whole matched string.
@@ -200,3 +202,10 @@ type RouterOptions = {
    */
   container: string;
 };
+
+/**
+ * Creates object based on original with provided property names
+ * as partial.
+ */
+type SomePartial<T, P extends keyof T = keyof T> = Required<Omit<T, P>> &
+  Partial<Pick<T, P>>;

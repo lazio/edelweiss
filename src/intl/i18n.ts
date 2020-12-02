@@ -1,6 +1,5 @@
-import { warn } from '../utils/warn';
 import { render } from '../dom/render';
-import { _current, _routerGlobalOptions } from '../router/router';
+import { current } from '../router/router';
 import { freeze, maybeOf, isNothing, path as pathOf } from '@fluss/core';
 
 type LanguageObject = {
@@ -40,12 +39,9 @@ export function setLanguage(tag: string): void {
     document.documentElement.setAttribute('lang', tag);
     currentLanguage = tag;
 
-    render(
-      _current.container ?? _routerGlobalOptions.container,
-      _current.view()
-    );
+    render(current.container, current.view());
   } else {
-    warn(`There is no translations for '${tag}' language!`);
+    console.warn(`There is no translations for '${tag}' language!`);
   }
 }
 
@@ -62,7 +58,7 @@ export function translate(
       )
       .map((translatedText) => {
         if (typeof translatedText !== 'string') {
-          warn(`Path "${path}" does not match any translation!
+          console.warn(`Path "${path}" does not match any translation!
         Check "path" - it must point to plain text in object hierarchy.`);
           return '';
         }

@@ -1,3 +1,11 @@
+# [1.6.0] - 2020-12-02
+
+### Changed
+
+- `Router` class is transformed into namespace `router`.
+- `container` property of `Route` object cannot be type of `undefined`. Though while adding routes to `router` this property is optional.
+- Signature of `router.add` function: `router.add(...routes)`.
+
 # [1.5.0] - 2020-12-01
 
 ### Added
