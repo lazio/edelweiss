@@ -1,5 +1,4 @@
 import WebComponent from '../component/web_component';
-import { warn } from '../utils/warn';
 import { querySelector } from '@fluss/web';
 import { edelweissPolicy } from '../utils/trusted_types';
 import { maybeOf, tupleOf } from '@fluss/core';
@@ -18,7 +17,8 @@ export function render(to: string, nodes: string): void {
       // Need for prevent logging warning if render finished successfully.
       return true;
     })
-    .extract() ?? warn(`Page does not contain element with selector: "${to}"!`);
+    .extract() ??
+    console.warn(`Page does not contain element with selector: "${to}"!`);
 }
 
 export function renderWebComponent<T extends object>(

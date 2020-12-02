@@ -1,5 +1,5 @@
 import './crypto_for_jest';
-import { html, Router } from '../build';
+import { html, router } from '../build';
 
 let a = 1;
 
@@ -19,7 +19,7 @@ describe('Hooks', () => {
   beforeAll(() => {
     document.body.innerHTML = '<div id="outer"></div>';
 
-    Router.add([
+    router.add(
       {
         path: '/',
         container: '#outer',
@@ -51,18 +51,18 @@ describe('Hooks', () => {
           return html` <div :mounted=${() => (hookIsInvoked = true)}></div> `;
         },
       },
-    ]);
+    );
   });
 
   test('Mounted hook', async () => {
     expect(isMounted).toBe(false);
-    await Router.to('/');
+    await router.to('/');
     defer(() => expect(isMounted).toBe(true));
     defer(() => expect(element).toBeInstanceOf(HTMLParagraphElement));
 
     // If element is on the page, mounted hook must not be invoked.
     isMounted = false;
-    await Router.reload();
+    await router.reload();
     defer(() => expect(isMounted).toBe(false));
 
     // Updated hook isn't invoked
@@ -73,22 +73,22 @@ describe('Hooks', () => {
 
   test('Updated hook', async () => {
     a += 1;
-    await Router.reload();
+    await router.reload();
 
     defer(() => expect(updateCount).toBe(1));
   });
 
   test('Removed hook', async () => {
-    await Router.to('/r');
+    await router.to('/r');
 
     defer(() => expect(isRemoved).toBe(true));
   });
 
   test('Updated hook does not invokes on changing library attributes value', async () => {
-    await Router.to('/');
-    await Router.reload();
-    await Router.reload();
-    await Router.reload();
+    await router.to('/');
+    await router.reload();
+    await router.reload();
+    await router.reload();
 
     defer(() => expect(updateCount).toBe(1));
   });
@@ -96,7 +96,7 @@ describe('Hooks', () => {
   test('Mounted are applied, if they are only attributes of elements', async () => {
     expect(hookIsInvoked).toBe(false);
 
-    await Router.to('/only');
+    await router.to('/only');
 
     defer(() => expect(hookIsInvoked).toBe(true));
   });

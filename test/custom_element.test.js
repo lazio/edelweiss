@@ -1,11 +1,11 @@
 import './crypto_for_jest';
-import { html, Router, WebComponent, defineWebComponent } from '../build';
+import { html, router, WebComponent, defineWebComponent } from '../build';
 
 describe('Custom elements', () => {
   beforeAll(() => {
     document.body.innerHTML = '<div id="app"></div>';
 
-    Router.configure({
+    router.configure({
       container: '#app',
     });
   });
@@ -60,7 +60,7 @@ describe('Custom elements', () => {
   });
 
   test('Defining state in custom element', async () => {
-    Router.add({
+    router.add({
       path: '/def-state',
       view() {
         return html` <my-a></my-a> `;
@@ -83,7 +83,7 @@ describe('Custom elements', () => {
 
     defineWebComponent('my-a', MyA);
 
-    await Router.to('/def-state');
+    await router.to('/def-state');
 
     const myA = document.querySelector('my-a');
     if (myA) {
@@ -92,7 +92,7 @@ describe('Custom elements', () => {
   });
 
   test('Rerender on change state', async () => {
-    Router.add({
+    router.add({
       path: '/state',
       view() {
         return html` <my-desc></my-desc> `;
@@ -125,7 +125,7 @@ describe('Custom elements', () => {
 
     defineWebComponent('my-desc', MyDescCom);
 
-    await Router.to('/state');
+    await router.to('/state');
 
     const customElement = document.querySelector('my-desc');
 
@@ -140,7 +140,7 @@ describe('Custom elements', () => {
   });
 
   test('Diffing similar elements with different event listeners', async () => {
-    Router.add({
+    router.add({
       path: '/listeners(\\d+)?',
       view() {
         return html` <my-listener></my-listener> `;
@@ -158,8 +158,7 @@ describe('Custom elements', () => {
 
       template() {
         return html`<template>
-          ${Router.current.parameters &&
-          Router.current.parameters[1] === undefined
+          ${router.current.parameters[1] === undefined
             ? html`<button
                 @click=${() => {
                   this.changeState({
@@ -180,7 +179,7 @@ describe('Custom elements', () => {
 
     defineWebComponent('my-listener', MyListener);
 
-    await Router.to('/listeners');
+    await router.to('/listeners');
 
     const customElement = document.querySelector('my-listener');
 
@@ -188,7 +187,7 @@ describe('Custom elements', () => {
       customElement.shadowRoot?.querySelector('button')?.click();
       expect(customElement.state.word).toMatch('first');
 
-      await Router.to('/listeners1');
+      await router.to('/listeners1');
 
       customElement.shadowRoot?.querySelector('button')?.click();
       setTimeout(() => expect(customElement.state.word).toMatch('second'), 0);
@@ -196,7 +195,7 @@ describe('Custom elements', () => {
   });
 
   test('Diffing element with text node', async () => {
-    Router.add({
+    router.add({
       path: '/diff-element-text-node(\\d+)?',
       view() {
         return html` <my-diff></my-diff> `;
@@ -214,8 +213,7 @@ describe('Custom elements', () => {
 
       template() {
         return html`<template>
-          ${Router.current.parameters &&
-          Router.current.parameters[1] !== undefined
+          ${router.current.parameters[1] !== undefined
             ? html`<button
                 @click=${() => {
                   this.changeState({
@@ -230,14 +228,14 @@ describe('Custom elements', () => {
 
     defineWebComponent('my-diff', MyDiff);
 
-    await Router.to('/diff-element-text-node');
+    await router.to('/diff-element-text-node');
 
     const customElement = document.querySelector('my-diff');
 
     if (customElement) {
       expect(customElement.shadowRoot?.querySelector('button')).toBeFalsy();
 
-      await Router.to('/diff-element-text-node1');
+      await router.to('/diff-element-text-node1');
 
       customElement.shadowRoot?.querySelector('button')?.click();
 
@@ -246,7 +244,7 @@ describe('Custom elements', () => {
   });
 
   test('Testing reactivity on attribute changes', async () => {
-    Router.add({
+    router.add({
       path: '/reactive-attributes',
       view() {
         return html` <reactive-attributes></reactive-attributes> `;
@@ -272,7 +270,7 @@ describe('Custom elements', () => {
 
     defineWebComponent('reactive-attributes', ReactiveAttributesElement);
 
-    await Router.to('/reactive-attributes');
+    await router.to('/reactive-attributes');
 
     const customElement = document.querySelector('reactive-attributes');
 
@@ -286,7 +284,7 @@ describe('Custom elements', () => {
   });
 
   test("Shadow DOM of custom element must not be rebuilded if state's value did not change.", async () => {
-    Router.add({
+    router.add({
       path: '/not-reactive-values',
       view() {
         return html` <nonreactive-values></nonreactive-values> `;
@@ -319,7 +317,7 @@ describe('Custom elements', () => {
 
     defineWebComponent('nonreactive-values', NonReactiveValuesElement);
 
-    await Router.to('/nonreactive-values');
+    await router.to('/not-reactive-values');
 
     const customElement = document.querySelector('nonreactive-values');
 
