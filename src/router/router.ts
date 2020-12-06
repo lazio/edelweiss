@@ -129,7 +129,7 @@ function findRoute(pathname: string): Route {
   );
 }
 
-/** Navigates to _pathWithPrefix_. */
+/** Navigates to _path_. */
 async function navigate(
   path: string,
   route: Route,
