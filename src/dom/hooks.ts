@@ -1,6 +1,6 @@
 import { isElementNode } from '../utils/predicates';
 import { isHookAttribute, Hooks } from '../utils/library_attributes';
-import { arrayFrom, freeze, maybeOf, promiseOf } from '@fluss/core';
+import { array, freeze, maybe, promise } from '@fluss/core';
 
 export type HookCallback = (self: Element) => void | Promise<void>;
 
@@ -14,7 +14,7 @@ export const hooksManager = freeze({
 /** If parent node is mounted, so its children are also mounted. */
 export function mountedHook(node: Node): void {
   applyHook(node, Hooks.Mounted);
-  arrayFrom(node.childNodes).forEach(mountedHook);
+  array(node.childNodes).forEach(mountedHook);
 }
 
 export function updatedHook(node: Node): void {
@@ -24,7 +24,7 @@ export function updatedHook(node: Node): void {
 /** If parent node is removed, so its children are also removed. */
 export function removedHook(node: Node): void {
   applyHook(node, Hooks.Removed);
-  arrayFrom(node.childNodes).forEach(removedHook);
+  array(node.childNodes).forEach(removedHook);
 }
 
 /**
@@ -38,11 +38,11 @@ function applyHook(node: Node, type: Hooks): void {
    */
   setTimeout(() => {
     if (isElementNode(node)) {
-      arrayFrom(node.attributes)
+      array(node.attributes)
         .filter(({ name }) => isHookAttribute(name))
         .forEach(({ value: id }) => {
-          maybeOf(hooksManager[type].get(id)).map((hook) =>
-            promiseOf(hook(node)).then(() => hooksManager[type].delete(id))
+          maybe(hooksManager[type].get(id)).map((hook) =>
+            promise(hook(node)).then(() => hooksManager[type].delete(id))
           );
         });
     }

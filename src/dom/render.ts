@@ -1,6 +1,6 @@
+import { maybe, tuple } from '@fluss/core';
 import { querySelector } from '@fluss/web';
 import { edelweissPolicy } from '../utils/trusted_types';
-import { maybeOf, tupleOf } from '@fluss/core';
 import { diff, diffChildren } from './diff';
 import { normalizeHTMLForWebComponent } from './normalize_html';
 import type { WebComponent } from '../component/web_component';
@@ -8,9 +8,7 @@ import type { WebComponent } from '../component/web_component';
 /** Render templates on the page. */
 export function render(to: string, nodes: string): void {
   querySelector(to)
-    .map((toElement) =>
-      tupleOf(toElement, toElement.cloneNode(false) as Element)
-    )
+    .map((toElement) => tuple(toElement, toElement.cloneNode(false) as Element))
     .map(([toElement, clone]) => {
       clone.innerHTML = edelweissPolicy.createHTML(nodes);
       diff(toElement, clone);
@@ -29,5 +27,5 @@ export function renderWebComponent<T extends object>(
     true
   );
 
-  maybeOf(element.shadowRoot).map((shadow) => diffChildren(shadow, clonedHTML));
+  maybe(element.shadowRoot).map((shadow) => diffChildren(shadow, clonedHTML));
 }

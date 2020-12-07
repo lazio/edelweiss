@@ -1,7 +1,7 @@
 import { uid } from '../utils/uid';
 import { hooksManager } from '../dom/hooks';
+import { isNothing, maybe } from '@fluss/core';
 import { eventListenersMap } from '../dom/events';
-import { isNothing, maybeOf } from '@fluss/core';
 import {
   Hooks,
   createHookAttributeName,
@@ -32,7 +32,7 @@ export function html(
 ): string {
   return parts.reduce((previous, current, index) => {
     return (
-      maybeOf(variables[index])
+      maybe(variables[index])
         .map((variable) =>
           Array.isArray(variable) ? variable.join('') : variable
         )
