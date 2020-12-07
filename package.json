@@ -1,6 +1,6 @@
 {
   "name": "@prostory/edelweiss",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "description": "Small framework that builds HTML from JS.",
   "keywords": [
     "Edelweiss",
@@ -36,6 +36,6 @@
   },
   "dependencies": {
     "@fluss/core": "^0.10.1",
-    "@fluss/web": "^0.8.1"
+    "@fluss/web": "^0.8.2"
   }
 }
