@@ -7,10 +7,8 @@ describe('Test "router"', () => {
   });
 
   test('"router.current" before "router.to" must to have default error route."', () => {
-    expect(router.current.path).toEqual('/no-route-found');
-    expect(router.current.view()).toMatch(
-      '<b>There is no route that match "/" path.</b>'
-    );
+    expect(router.current.path).toEqual('.+');
+    expect(router.current.view()).toMatch('<b>There is no route that match ');
   });
 
   test('"router.to" must use global "container" if there is no local one', async () => {
