@@ -1,6 +1,6 @@
 import { render } from '../dom/render';
 import { current } from '../router/router';
-import { freeze, maybeOf, isNothing, path as pathOf } from '@fluss/core';
+import { freeze, maybe, isNothing, path as pathOf } from '@fluss/core';
 
 type LanguageObject = {
   [key: string]: string | { [key: string]: LanguageObject };
@@ -50,7 +50,7 @@ export function translate(
   variables: { [key: string]: string } = {}
 ): string {
   return (
-    maybeOf(currentLanguage)
+    maybe(currentLanguage)
       .map((lang) => _languages[lang])
       .chain((translationObjectOrText) =>
         // Getting text from translation object.

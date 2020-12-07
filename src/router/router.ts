@@ -1,7 +1,7 @@
 import { render } from '../dom/render';
 import { setIsRouteChangedMarker } from './markers';
+import { promise, isNothing, maybe } from '@fluss/core';
 import { isMatched, extractParameters } from './utils';
-import { promiseOf, isNothing, maybeOf } from '@fluss/core';
 import type { SomePartial } from '../utils/types';
 
 export type Route = {
@@ -75,7 +75,7 @@ export function to(
   if (_routes.length === 0) {
     console.warn(`You cannot navigate to ${path} because you didn't define any routes!
     At first call "router.add(...)".`);
-    return promiseOf(undefined);
+    return promise(undefined);
   }
 
   return navigate(path, findRoute(path), options.willStateChange);
@@ -86,14 +86,14 @@ export async function reload(): Promise<void> {
 
   // Before route render hook
   if (!isNothing(before)) {
-    await promiseOf(before());
+    await promise(before());
   }
 
   render(container, view());
 
   // After route render hook
   if (!isNothing(after)) {
-    await promiseOf(after());
+    await promise(after());
   }
 }
 
@@ -118,7 +118,7 @@ window.addEventListener('popstate', (event) => {
 
 function findRoute(pathname: string): Route {
   return (
-    maybeOf(_routes.find(({ path }) => isMatched(pathname, path)))
+    maybe(_routes.find(({ path }) => isMatched(pathname, path)))
       .map((route) => ({
         ...route,
         // Parameters need to be updated to hold current path
@@ -129,7 +129,7 @@ function findRoute(pathname: string): Route {
   );
 }
 
-/** Navigates to _pathWithPrefix_. */
+/** Navigates to _path_. */
 async function navigate(
   path: string,
   route: Route,
@@ -139,7 +139,7 @@ async function navigate(
 
   // Before route render hook
   if (!isNothing(route.before)) {
-    if ((await promiseOf(route.before())) === false) {
+    if ((await promise(route.before())) === false) {
       /**
        * Navigating to route can be prevented by
        * returning `false` from `route.before` function.
@@ -166,7 +166,7 @@ async function navigate(
 
   // After route render hook
   if (!isNothing(route.after)) {
-    await promiseOf(route.after());
+    await promise(route.after());
   }
 
   setIsRouteChangedMarker(false);

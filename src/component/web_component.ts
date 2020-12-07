@@ -1,6 +1,6 @@
 import { renderWebComponent } from '../dom/render';
 
-export default abstract class WebComponent<
+export abstract class WebComponent<
   T extends object = object
 > extends HTMLElement {
   #state: T = {} as T;
