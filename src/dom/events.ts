@@ -1,4 +1,4 @@
-import { array, maybe } from '@fluss/core';
+import { maybe } from '@fluss/core';
 import { isElementNode } from '../utils/predicates';
 import { addEventListener } from '@fluss/web';
 import { isEventAttribute } from '../utils/library_attributes';
@@ -28,7 +28,7 @@ export function attachEvents(
   attachToChildren: boolean = false
 ): void {
   if (isElementNode(element)) {
-    array(element.attributes)
+    Array.from(element.attributes)
       .filter(({ name }) => isEventAttribute(name))
       .map(({ value: id }) => {
         maybe(eventListenersMap.get(id)).map(([event, listener]) => {
@@ -48,7 +48,7 @@ export function attachEvents(
       });
 
     if (attachToChildren && element.childElementCount > 0) {
-      array(element.children).forEach((child) =>
+      Array.from(element.children).forEach((child) =>
         attachEvents(child, attachToChildren)
       );
     }

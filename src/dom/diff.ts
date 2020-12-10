@@ -1,6 +1,6 @@
 import { _isRouteChanged } from '../router/markers';
+import { maybe, isNothing } from '@fluss/core';
 import { isLibraryAttribute } from '../utils/library_attributes';
-import { maybe, array, isNothing } from '@fluss/core';
 import { attachEvents, detachEvents } from './events';
 import { mountedHook, removedHook, updatedHook } from './hooks';
 import { isCommentNode, isElementNode, isTextNode } from '../utils/predicates';
@@ -108,8 +108,8 @@ export function diffChildren(
   oldNode: Element | ShadowRoot,
   newNode: Element | DocumentFragment
 ): void {
-  const oldChildNodes = array(oldNode.childNodes);
-  const newChildNodes = array(newNode.childNodes);
+  const oldChildNodes = Array.from(oldNode.childNodes);
+  const newChildNodes = Array.from(newNode.childNodes);
 
   for (
     let i = 0;
@@ -143,7 +143,7 @@ function diffAttributes(oldNode: Element, newNode: Element): boolean {
 
   if (oldNode.attributes.length !== newNode.attributes.length) {
     // Remove exessive attributes
-    array(oldNode.attributes).forEach(({ name }) => {
+    Array.from(oldNode.attributes).forEach(({ name }) => {
       if (!newNode.hasAttribute(name)) {
         oldNode.removeAttribute(name);
 
@@ -159,7 +159,7 @@ function diffAttributes(oldNode: Element, newNode: Element): boolean {
   }
 
   // Add missing attributes and update changed
-  array(newNode.attributes).forEach(({ name, value }) => {
+  Array.from(newNode.attributes).forEach(({ name, value }) => {
     if (oldNode.getAttribute(name) !== value) {
       oldNode.setAttribute(name, value);
 

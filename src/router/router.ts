@@ -1,8 +1,7 @@
 import { render } from '../dom/render';
 import { setIsRouteChangedMarker } from './markers';
-import { promise, isNothing, maybe } from '@fluss/core';
 import { isMatched, extractParameters } from './utils';
-import type { SomePartial } from '../utils/types';
+import { isNothing, maybe, SomePartial } from '@fluss/core';
 
 export type Route = {
   readonly path: string;
@@ -125,7 +124,7 @@ async function navigate(
 
   // Before route render hook
   if (!isNothing(route.before)) {
-    if ((await promise(route.before())) === false) {
+    if ((await Promise.resolve(route.before())) === false) {
       /**
        * Navigating to route can be prevented by
        * returning `false` from `route.before` function.
@@ -152,7 +151,7 @@ async function navigate(
 
   // After route render hook
   if (!isNothing(route.after)) {
-    await promise(route.after());
+    await Promise.resolve(route.after());
   }
 
   setIsRouteChangedMarker(false);
