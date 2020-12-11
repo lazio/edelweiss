@@ -8,5 +8,5 @@ export default {
     format: 'es',
   },
   plugins: [typescript(), terser()],
-  external: ['@fluss/core', '@fluss/web'],
+  external: ['@fluss/core'],
 };

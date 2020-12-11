@@ -1,6 +1,5 @@
 import { maybe } from '@fluss/core';
 import { isElementNode } from '../utils/predicates';
-import { addEventListener } from '@fluss/web';
 import { isEventAttribute } from '../utils/library_attributes';
 
 /**
@@ -32,15 +31,11 @@ export function attachEvents(
       .filter(({ name }) => isEventAttribute(name))
       .map(({ value: id }) => {
         maybe(eventListenersMap.get(id)).map(([event, listener]) => {
-          const detachFn = addEventListener<EventTarget, string>(
-            element,
-            event,
-            listener
-          );
+          element.addEventListener(event, listener);
 
           detachEventListenersMap.set(element, [
             ...(detachEventListenersMap.get(element) ?? []),
-            detachFn,
+            () => element.removeEventListener(event, listener),
           ]);
 
           eventListenersMap.delete(id);
