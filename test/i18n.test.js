@@ -1,4 +1,3 @@
-import { querySelector } from '@fluss/web';
 import { i18n, router, html, translate } from '../build';
 
 describe('Internationalization', () => {
@@ -15,11 +14,10 @@ describe('Internationalization', () => {
   });
 
   test('translate method without adding translation object returns undefined and innerHTML is empty', () => {
-    expect(
-      querySelector('.main')
-        .map((el) => el.innerHTML)
-        .extract()
-    ).toMatch('');
+    const main = document.querySelector('.main');
+
+    expect(main).toBeTruthy();
+    expect(main.innerHTML).toMatch('');
   });
 
   test('adding translation languages with initial language make page with that translation', async () => {
@@ -38,21 +36,19 @@ describe('Internationalization', () => {
     );
     await router.reload();
 
-    expect(
-      querySelector('.main')
-        .map((el) => el.innerHTML)
-        .extract()
-    ).toMatch('Привіт');
+    const main = document.querySelector('.main');
+
+    expect(main).toBeTruthy();
+    expect(main.innerHTML).toMatch('Привіт');
   });
 
   test('changing language cause rerender of the page', () => {
     i18n.setLanguage('en');
 
-    expect(
-      querySelector('.main')
-        .map((el) => el.innerHTML)
-        .extract()
-    ).toMatch('Hello');
+    const main = document.querySelector('.main');
+
+    expect(main).toBeTruthy();
+    expect(main.innerHTML).toMatch('Hello');
   });
 
   test('translate method inserts variable correctly', async () => {
@@ -67,11 +63,11 @@ describe('Internationalization', () => {
     await router.to('/withVar');
 
     expect(i18n.currentLanguage).toBe('en');
-    expect(
-      querySelector('.last')
-        .map((el) => el.innerHTML)
-        .extract()
-    ).toMatch('Hello world');
+
+    const last = document.querySelector('.last');
+
+    expect(last).toBeTruthy();
+    expect(last.innerHTML).toMatch('Hello world');
   });
 
   test('translate function behave as i18n.translate', async () => {
@@ -85,10 +81,9 @@ describe('Internationalization', () => {
     });
     await router.to('/alias');
 
-    expect(
-      querySelector('.alias')
-        .map((el) => el.innerHTML)
-        .extract()
-    ).toMatch('Hello alias');
+    const alias = document.querySelector('.alias');
+
+    expect(alias).toBeTruthy();
+    expect(alias.innerHTML).toMatch('Hello alias');
   });
 });

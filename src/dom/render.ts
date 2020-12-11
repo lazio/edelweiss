@@ -1,22 +1,21 @@
-import { maybe, tuple } from '@fluss/core';
-import { querySelector } from '@fluss/web';
 import { edelweissPolicy } from '../utils/trusted_types';
+import { isNothing, maybe } from '@fluss/core';
 import { diff, diffChildren } from './diff';
 import { normalizeHTMLForWebComponent } from './normalize_html';
 import type { WebComponent } from '../component/web_component';
 
 /** Render templates on the page. */
 export function render(to: string, nodes: string): void {
-  querySelector(to)
-    .map((toElement) => tuple(toElement, toElement.cloneNode(false) as Element))
-    .map(([toElement, clone]) => {
-      clone.innerHTML = edelweissPolicy.createHTML(nodes);
-      diff(toElement, clone);
-      // Need for prevent logging warning if render finished successfully.
-      return true;
-    })
-    .extract() ??
+  const toElement = document.querySelector(to);
+
+  if (isNothing(toElement)) {
     console.warn(`Page does not contain element with selector: "${to}"!`);
+  } else {
+    const clonedToElement = toElement.cloneNode(false) as Element;
+    clonedToElement.innerHTML = edelweissPolicy.createHTML(nodes);
+
+    diff(toElement, clonedToElement);
+  }
 }
 
 export function renderWebComponent<T extends object>(

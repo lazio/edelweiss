@@ -1,8 +1,7 @@
 import { render } from '../dom/render';
 import { setIsRouteChangedMarker } from './markers';
-import { promise, isNothing, maybe } from '@fluss/core';
 import { isMatched, extractParameters } from './utils';
-import type { SomePartial } from '../utils/types';
+import { isNothing, maybe, SomePartial } from '@fluss/core';
 
 export type Route = {
   readonly path: string;
@@ -27,12 +26,16 @@ const _routerGlobalOptions: RouterOptions = {
 };
 
 /** Renders if there is no route that match path. */
-const DEFAULT_ROUTE: Route = {
-  path: '/no-route-found',
+const _DEFAULT_ROUTE: Route = {
+  path: '.+',
   container: 'body',
   parameters: [],
   view(): string {
-    return `<b>There is no route that match "${window.location.pathname}" path.</b>`;
+    return (
+      '<b>There is no route that match ' +
+      `"${window.location.pathname}" path. ` +
+      'Did you forget to call <strong>router.add(...)</strong> function?</b>'
+    );
   },
 };
 
@@ -40,7 +43,7 @@ const DEFAULT_ROUTE: Route = {
 const _routes: Array<Route> = [];
 
 /** Holds current route. */
-export let current: Route = DEFAULT_ROUTE;
+export let current: Route = _DEFAULT_ROUTE;
 
 /**
  * Set global options for router.
@@ -62,7 +65,7 @@ export function add(
   );
 }
 
-export function to(
+export async function to(
   path: string,
   options: {
     /**
@@ -72,29 +75,11 @@ export function to(
     willStateChange?: boolean;
   } = {}
 ): Promise<void> {
-  if (_routes.length === 0) {
-    console.warn(`You cannot navigate to ${path} because you didn't define any routes!
-    At first call "router.add(...)".`);
-    return promise(undefined);
-  }
-
-  return navigate(path, findRoute(path), options.willStateChange);
+  await navigate(path, findRoute(path), options.willStateChange);
 }
 
 export async function reload(): Promise<void> {
-  const { container, view, after, before } = current;
-
-  // Before route render hook
-  if (!isNothing(before)) {
-    await promise(before());
-  }
-
-  render(container, view());
-
-  // After route render hook
-  if (!isNothing(after)) {
-    await promise(after());
-  }
+  await navigate(window.location.pathname, current, false);
 }
 
 export function back(): void {
@@ -125,7 +110,7 @@ function findRoute(pathname: string): Route {
         // variables if there is any.
         parameters: extractParameters(pathname, route.path),
       }))
-      .extract() ?? DEFAULT_ROUTE
+      .extract() ?? _DEFAULT_ROUTE
   );
 }
 
@@ -139,7 +124,7 @@ async function navigate(
 
   // Before route render hook
   if (!isNothing(route.before)) {
-    if ((await promise(route.before())) === false) {
+    if ((await Promise.resolve(route.before())) === false) {
       /**
        * Navigating to route can be prevented by
        * returning `false` from `route.before` function.
@@ -166,7 +151,7 @@ async function navigate(
 
   // After route render hook
   if (!isNothing(route.after)) {
-    await promise(route.after());
+    await Promise.resolve(route.after());
   }
 
   setIsRouteChangedMarker(false);

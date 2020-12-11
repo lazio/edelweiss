@@ -1,3 +1,5 @@
+import type { Constructor } from '@fluss/core';
+
 /**
  * Parent class for all custom elements.
  *
@@ -58,18 +60,13 @@ export abstract class WebComponent<
   abstract template(): string;
 }
 
-type WebComponentConstructor = {
-  new (): WebComponent;
-  prototype: WebComponent;
-};
-
 /**
  * Defines autonomous custom elements. Can be safely called many times.
  *
  * More info about custom elements and their lifecycles
  * [at MDN](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements).
  */
-export function defineWebComponent<E extends WebComponentConstructor>(
+export function defineWebComponent<E extends Constructor<WebComponent>>(
   /** Name of the custom tag. Must contain dash symbol. */
   tagName: string,
   /**

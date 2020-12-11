@@ -1,6 +1,6 @@
 import { render } from '../dom/render';
 import { current } from '../router/router';
-import { freeze, maybe, isNothing, path as pathOf } from '@fluss/core';
+import { maybe, isNothing, path as pathOf } from '@fluss/core';
 
 type LanguageObject = {
   [key: string]: string | { [key: string]: LanguageObject };
@@ -17,7 +17,7 @@ const _languages: Languages = {};
 export let currentLanguage: string | undefined = undefined;
 
 export function languagesTags(): ReadonlyArray<string> {
-  return freeze(Object.keys(_languages));
+  return Object.freeze(Object.keys(_languages));
 }
 
 export function add(languages: Languages, initial?: string): void {

@@ -1,4 +1,5 @@
 import { renderWebComponent } from '../dom/render';
+import type { Constructor } from '@fluss/core';
 
 export abstract class WebComponent<
   T extends object = object
@@ -98,13 +99,8 @@ export abstract class WebComponent<
   abstract template(): string;
 }
 
-type WebComponentConstructor = {
-  new (): WebComponent;
-  prototype: WebComponent;
-};
-
 /** Defines custom element. */
-export function defineWebComponent<E extends WebComponentConstructor>(
+export function defineWebComponent<E extends Constructor<WebComponent>>(
   tagName: string,
   elementClass: E
 ): void {
