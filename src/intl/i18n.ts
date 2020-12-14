@@ -6,7 +6,11 @@ type LanguageObject = {
   [key: string]: string | { [key: string]: LanguageObject };
 };
 
-type Languages = {
+/**
+ * Describe languages object.
+ * Keys must be language identifiers (by example `en`, `uk`, `fr` etc.).
+ */
+export type Languages = {
   [tag: string]: LanguageObject;
 };
 
@@ -17,9 +21,10 @@ const _languages: Languages = {};
 export let currentLanguage: string | undefined = undefined;
 
 export function languagesTags(): ReadonlyArray<string> {
-  return Object.freeze(Object.keys(_languages));
+  return Object.keys(_languages);
 }
 
+/** Add language pack. */
 export function add(languages: Languages, initial?: string): void {
   Object.keys(languages).forEach((lang, index) => {
     if (isNothing(currentLanguage) && index === 0) {
@@ -30,6 +35,7 @@ export function add(languages: Languages, initial?: string): void {
   });
 }
 
+/** Change current language of view. */
 export function setLanguage(tag: string): void {
   if (!isNothing(_languages[tag])) {
     /**
@@ -45,6 +51,7 @@ export function setLanguage(tag: string): void {
   }
 }
 
+/** Returns translated text based on _path_. */
 export function translate(
   path: string,
   variables: { [key: string]: string } = {}

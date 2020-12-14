@@ -4,18 +4,43 @@ import { isMatched, extractParameters } from './utils';
 import { isNothing, maybe, SomePartial } from '@fluss/core';
 
 export type Route = {
+  /**
+   * Path of the route. It will be implicitly converted to `RegExp`,
+   * so you must write valid RegExp in string.
+   *
+   * Variables will be available in _parameters_ field.
+   */
   readonly path: string;
+  /**
+   * Selector of root element that will hold HTML of this route.
+   * If local container property is absent, then global one will
+   * be used.
+   */
   readonly container: string;
+  /**
+   * Holds variables (capture groups) that are defined inside _path_.
+   * First value of array is whole matched string.
+   * Second value (index **1**) and go on are path's variables.
+   */
   readonly parameters: RegExpMatchArray;
+  /**
+   * Hook is invoked before this route will render.
+   *
+   * For preventing navigation to route return `false`
+   * from method.
+   */
   before?: () => void | boolean | Promise<void | boolean>;
+  /** Returns HTML template for this route. */
   view: () => string;
+  /** Hook is invoked after this route renders. */
   after?: () => Promise<void> | void;
 };
 
 type RouterOptions = {
   /**
-   * Container for elements from all routes.
-   * If all routes will have the same container, then this variable may be set and used.
+   * Global container selector of root node of application.
+   * If most routes will have the same container,
+   * then this variable may be set.
    */
   container: string;
 };
@@ -42,17 +67,18 @@ const _DEFAULT_ROUTE: Route = {
 /** Holds all routes that user pass to "router.add()". */
 const _routes: Array<Route> = [];
 
-/** Holds current route. */
+/** Returns info about current route. */
 export let current: Route = _DEFAULT_ROUTE;
 
 /**
- * Set global options for router.
- * Must be called before all `router.add`.
+ * Define settings for `router`.
+ * Must be called before all `route.add` functions.
  */
 export function configure({ container }: Partial<RouterOptions>): void {
   _routerGlobalOptions.container = container ?? '';
 }
 
+/** Makes routes known for `router`.  */
 export function add(
   ...routes: ReadonlyArray<SomePartial<Route, 'parameters' | 'container'>>
 ): void {
@@ -65,6 +91,7 @@ export function add(
   );
 }
 
+/** Navigates to route based on _path_. */
 export async function to(
   path: string,
   options: {

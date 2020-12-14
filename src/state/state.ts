@@ -1,6 +1,7 @@
 import { render } from '../dom/render';
 import { current } from '../router/router';
 
+/** Create state based on object initial values. */
 export function createState<T extends object = object>(obj: T): T {
   return new Proxy<T>(obj, {
     set(target, property, value, receiver) {

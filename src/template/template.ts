@@ -26,6 +26,7 @@ type AllowedValues =
   | ReadonlyArray<string>
   | EventListenerObject;
 
+/** Creates string template that will be evaluated as DOM elements. */
 export function html(
   parts: TemplateStringsArray,
   ...variables: ReadonlyArray<AllowedValues>
@@ -34,7 +35,9 @@ export function html(
     return (
       maybe(variables[index])
         .map((variable) =>
-          Array.isArray(variable) ? variable.join('') : variable
+          Array.isArray(variable)
+            ? variable.join('')
+            : (variable as Exclude<typeof variable, ReadonlyArray<string>>)
         )
         .map(
           (variable) =>
