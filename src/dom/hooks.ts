@@ -1,4 +1,3 @@
-import { maybe } from '@fluss/core';
 import { isElementNode } from '../utils/predicates';
 import { isHookAttribute, Hooks } from '../utils/library_attributes';
 
@@ -41,11 +40,13 @@ function applyHook(node: Node, type: Hooks): void {
       Array.from(node.attributes)
         .filter(({ name }) => isHookAttribute(name))
         .forEach(({ value: id }) => {
-          maybe(hooksManager[type].get(id)).map((hook) =>
+          const hook = hooksManager[type].get(id);
+
+          if (hook !== undefined) {
             Promise.resolve(hook(node)).then(() =>
               hooksManager[type].delete(id)
-            )
-          );
+            );
+          }
         });
     }
   }, 0);

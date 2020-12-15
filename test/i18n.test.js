@@ -10,10 +10,11 @@ describe('Internationalization', () => {
         return html`${i18n.translate('main')}`;
       },
     });
-    router.to('/');
   });
 
-  test('translate method without adding translation object returns undefined and innerHTML is empty', () => {
+  test('translate method without adding translation object returns undefined and innerHTML is empty', async () => {
+    await router.to('/');
+
     const main = document.querySelector('.main');
 
     expect(main).toBeTruthy();

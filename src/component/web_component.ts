@@ -1,5 +1,4 @@
 import { renderWebComponent } from '../dom/render';
-import type { Constructor } from '@fluss/core';
 
 /** Parent class for custom elements. */
 export abstract class WebComponent<
@@ -19,7 +18,7 @@ export abstract class WebComponent<
     });
   }
 
-  /* Returns array of attribute names to monitor for changes. */
+  /** Returns an array of attribute names to monitor for changes. */
   static get observedAttributes(): ReadonlyArray<string> {
     return [];
   }
@@ -137,7 +136,7 @@ export abstract class WebComponent<
  * More info about custom elements and their lifecycles
  * [at MDN](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements).
  */
-export function defineWebComponent<E extends Constructor<WebComponent>>(
+export function defineWebComponent<E extends new () => WebComponent>(
   /** Name of the custom tag. Must contain dash symbol. */
   tagName: string,
   /** Class that describe custom element. `template` method must be overridden. */

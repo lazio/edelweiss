@@ -1,7 +1,6 @@
 import { render } from '../dom/render';
 import { setIsRouteChangedMarker } from './markers';
 import { isMatched, extractParameters } from './utils';
-import { isNothing, maybe, SomePartial } from '@fluss/core';
 
 export type Route = {
   /**
@@ -78,10 +77,19 @@ export function configure({ container }: Partial<RouterOptions>): void {
   _routerGlobalOptions.container = container ?? '';
 }
 
+/**
+ * Same as `Route` type, but does not contain _parameters_
+ * property and _container_ property is optional.
+ *
+ * @see Route
+ */
+type UserRoute = Omit<
+  Omit<Route, 'container'> & Partial<Pick<Route, 'container'>>,
+  'parameters'
+>;
+
 /** Makes routes known for `router`.  */
-export function add(
-  ...routes: ReadonlyArray<SomePartial<Route, 'parameters' | 'container'>>
-): void {
+export function add(...routes: ReadonlyArray<UserRoute>): void {
   routes.forEach((route) =>
     _routes.push({
       ...route,
@@ -122,23 +130,23 @@ export function forward(): void {
  * but not via elements that changes url without setting "state"
  * (default behavior of <a> etc.).
  */
-window.addEventListener('popstate', (event) => {
-  if (!isNothing(event.state)) {
+window.addEventListener('popstate', (event: PopStateEvent) => {
+  if (event.state !== null && typeof event.state === 'object') {
     to(event.state.path, { willStateChange: false });
   }
 });
 
 function findRoute(pathname: string): Route {
-  return (
-    maybe(_routes.find(({ path }) => isMatched(pathname, path)))
-      .map((route) => ({
+  const route = _routes.find(({ path }) => isMatched(pathname, path));
+
+  return route !== undefined
+    ? {
         ...route,
         // Parameters need to be updated to hold current path
         // variables if there is any.
         parameters: extractParameters(pathname, route.path),
-      }))
-      .extract() ?? _DEFAULT_ROUTE
-  );
+      }
+    : _DEFAULT_ROUTE;
 }
 
 /** Navigates to _path_. */
@@ -150,7 +158,7 @@ async function navigate(
   setIsRouteChangedMarker(current.path !== route.path);
 
   // Before route render hook
-  if (!isNothing(route.before)) {
+  if (route.before !== undefined) {
     if ((await Promise.resolve(route.before())) === false) {
       /**
        * Navigating to route can be prevented by
@@ -177,7 +185,7 @@ async function navigate(
   render(route.container, route.view());
 
   // After route render hook
-  if (!isNothing(route.after)) {
+  if (route.after !== undefined) {
     await Promise.resolve(route.after());
   }
 

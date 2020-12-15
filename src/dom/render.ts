@@ -1,5 +1,4 @@
 import { edelweissPolicy } from '../utils/trusted_types';
-import { isNothing, maybe } from '@fluss/core';
 import { diff, diffChildren } from './diff';
 import { normalizeHTMLForWebComponent } from './normalize_html';
 import type { WebComponent } from '../component/web_component';
@@ -8,7 +7,7 @@ import type { WebComponent } from '../component/web_component';
 export function render(to: string, nodes: string): void {
   const toElement = document.querySelector(to);
 
-  if (isNothing(toElement)) {
+  if (toElement === null) {
     console.warn(`Page does not contain element with selector: "${to}"!`);
   } else {
     const clonedToElement = toElement.cloneNode(false) as Element;
@@ -26,5 +25,7 @@ export function renderWebComponent<T extends object>(
     true
   );
 
-  maybe(element.shadowRoot).map((shadow) => diffChildren(shadow, clonedHTML));
+  if (element.shadowRoot !== null) {
+    diffChildren(element.shadowRoot, clonedHTML);
+  }
 }

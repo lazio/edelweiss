@@ -1,6 +1,5 @@
 import { uid } from '../utils/uid';
 import { hooksManager } from '../dom/hooks';
-import { isNothing, maybe } from '@fluss/core';
 import { eventListenersMap } from '../dom/events';
 import {
   Hooks,
@@ -32,20 +31,21 @@ export function html(
   ...variables: ReadonlyArray<AllowedValues>
 ): string {
   return parts.reduce((previous, current, index) => {
-    return (
-      maybe(variables[index])
-        .map((variable) =>
-          Array.isArray(variable)
-            ? variable.join('')
-            : (variable as Exclude<typeof variable, ReadonlyArray<string>>)
-        )
-        .map(
-          (variable) =>
-            // Consume current part with previous part
-            previous + formCurrentHTML(variable, current, index)
-        )
-        .extract() ?? previous + current // End of template
-    );
+    const variable = variables[index];
+
+    if (variable !== null && variable !== undefined) {
+      // @ts-issue - TypeScript cannot infer that variable
+      // is type of ReadonlyArray :(
+      const variableWithoutArray = Array.isArray(variable)
+        ? (variable as ReadonlyArray<string>).join('')
+        : (variable as Exclude<typeof variable, ReadonlyArray<string>>);
+
+      // Consume current part with previous part
+      return previous + formCurrentHTML(variableWithoutArray, current, index);
+    } else {
+      // End of template
+      return previous + current;
+    }
   }, '');
 }
 
@@ -56,7 +56,7 @@ function formCurrentHTML(
 ): string {
   // Handle @event listener if there is any.
   const matchedElementEventListener = eventListenerRegExp.exec(current);
-  if (!isNothing(matchedElementEventListener)) {
+  if (matchedElementEventListener !== null) {
     let listener = variable;
 
     if (
@@ -86,7 +86,7 @@ function formCurrentHTML(
   }
   // Handle ?attribute
   const matchBooleanAttribute = booleanAttributeRegExp.exec(current);
-  if (!isNothing(matchBooleanAttribute)) {
+  if (matchBooleanAttribute !== null) {
     /**
      * It accepts all values and check if it is falsy or truthy.
      * There are 7 falsy values in JS: [values](https://developer.mozilla.org/en-US/docs/Glossary/Falsy)
@@ -99,7 +99,7 @@ function formCurrentHTML(
 
   /** Handle special property and attribute. */
   const matchSpecialProperty = specialPropertiesRegExp.exec(current);
-  if (!isNothing(matchSpecialProperty)) {
+  if (matchSpecialProperty !== null) {
     let stateGetter = variable;
     const propertyName = matchSpecialProperty[1];
 
@@ -132,7 +132,7 @@ function formCurrentHTML(
 
   /** Handle hook attribute. */
   const matchHookAttribute = hookAttributeRegExp.exec(current);
-  if (!isNothing(matchHookAttribute)) {
+  if (matchHookAttribute !== null) {
     let hookCallback = variable;
 
     if (typeof hookCallback !== 'function') {

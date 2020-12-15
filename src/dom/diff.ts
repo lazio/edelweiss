@@ -1,5 +1,4 @@
 import { _isRouteChanged } from '../router/markers';
-import { maybe, isNothing } from '@fluss/core';
 import { isLibraryAttribute } from '../utils/library_attributes';
 import { attachEvents, detachEvents } from './events';
 import { mountedHook, removedHook, updatedHook } from './hooks';
@@ -76,13 +75,15 @@ export function diff(oldNode: Node, newNode: Node): void {
     if (oldNode.textContent !== newNode.textContent) {
       oldNode.textContent = newNode.textContent;
 
-      maybe(oldNode.parentElement).map((parent) => {
+      if (oldNode.parentElement !== null) {
         /**
          * Same reason as above, but here diffing attributes
          * did not apply.
          */
-        _isRouteChanged ? mountedHook(parent) : updatedHook(parent);
-      });
+        _isRouteChanged
+          ? mountedHook(oldNode.parentElement)
+          : updatedHook(oldNode.parentElement);
+      }
     }
   } else if (isCommentNode(oldNode) && isCommentNode(newNode)) {
     /**
@@ -116,18 +117,18 @@ export function diffChildren(
     i < Math.max(newChildNodes.length, oldChildNodes.length);
     i++
   ) {
-    const oNode = oldChildNodes[i];
-    const nNode = newChildNodes[i];
+    const oNode: ChildNode | undefined = oldChildNodes[i];
+    const nNode: ChildNode | undefined = newChildNodes[i];
 
-    if (!isNothing(nNode)) {
-      isNothing(oNode)
+    if (nNode !== undefined) {
+      oNode === undefined
         ? (attachEvents(nNode, true), oldNode.append(nNode), mountedHook(nNode))
         : diff(oNode, nNode);
-    } else if (!isNothing(oNode)) {
+    } else if (oNode !== undefined) {
       oNode.remove();
       removedHook(oNode);
     } else {
-      // Do nothing - old and new node are null or undefined.
+      // Do nothing - old and new node are undefined.
     }
   }
 }

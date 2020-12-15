@@ -1,9 +1,8 @@
 import { render } from '../dom/render';
 import { current } from '../router/router';
-import { maybe, isNothing, path as pathOf } from '@fluss/core';
 
 type LanguageObject = {
-  [key: string]: string | { [key: string]: LanguageObject };
+  [key: string]: string | LanguageObject;
 };
 
 /**
@@ -27,7 +26,7 @@ export function languagesTags(): ReadonlyArray<string> {
 /** Add language pack. */
 export function add(languages: Languages, initial?: string): void {
   Object.keys(languages).forEach((lang, index) => {
-    if (isNothing(currentLanguage) && index === 0) {
+    if (currentLanguage === undefined && index === 0) {
       currentLanguage = initial ?? lang;
     }
 
@@ -37,7 +36,7 @@ export function add(languages: Languages, initial?: string): void {
 
 /** Change current language of view. */
 export function setLanguage(tag: string): void {
-  if (!isNothing(_languages[tag])) {
+  if (_languages[tag] !== undefined) {
     /**
      * Change lang attribute of html element.
      * https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/lang
@@ -56,32 +55,36 @@ export function translate(
   path: string,
   variables: { [key: string]: string } = {}
 ): string {
-  return (
-    maybe(currentLanguage)
-      .map((lang) => _languages[lang])
-      .chain((translationObjectOrText) =>
-        // Getting text from translation object.
-        pathOf<string>(path, translationObjectOrText)
-      )
-      .map((translatedText) => {
-        if (typeof translatedText !== 'string') {
-          console.warn(`Path "${path}" does not match any translation!
-        Check "path" - it must point to plain text in object hierarchy.`);
-          return '';
-        }
+  if (currentLanguage === undefined) {
+    console.warn(
+      'Current language is not defined. Maybe you forgot to add language objects?'
+    );
 
-        return translatedText;
-      })
-      .map((text) => {
-        // Replacing variables in translated text.
-        return Object.entries(variables).reduce(
-          (maybeText, nameAndValue) =>
-            insertVariables(maybeText, ...nameAndValue),
-          text
-        );
-      })
-      .extract() ?? ''
-  );
+    return '';
+  } else {
+    const translationObjectOrText: LanguageObject | undefined =
+      _languages[currentLanguage];
+
+    if (translationObjectOrText === undefined) {
+      console.warn(
+        `There is no translations for '${currentLanguage}' language!`
+      );
+
+      return '';
+    } else {
+      const result = getTranslationValue(
+        translationObjectOrText,
+        path.split('.')
+      );
+
+      // Replacing variables in translated text.
+      return Object.entries(variables).reduce(
+        (maybeText, nameAndValue) =>
+          insertVariables(maybeText, ...nameAndValue),
+        result
+      );
+    }
+  }
 }
 
 // Inserts variable into text if it has any. Otherwise returns original text
@@ -97,4 +100,21 @@ function insertVariables(
         variableValue
       )
     : text;
+}
+
+function getTranslationValue(
+  target: LanguageObject | string,
+  properties: ReadonlyArray<string>
+): string {
+  if (typeof target === 'string') {
+    return target;
+  }
+
+  if (properties.length === 0 || target[properties[0]] === undefined) {
+    console.warn('Parts of "path" argument do not link to translation value!');
+
+    return '';
+  }
+
+  return getTranslationValue(target[properties[0]], properties.slice(1));
 }

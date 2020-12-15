@@ -10,5 +10,4 @@ export default {
     preserveModulesRoot: 'src',
   },
   plugins: [typescript(), terser()],
-  external: ['@fluss/core'],
 };

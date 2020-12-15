@@ -1,4 +1,3 @@
-import { maybe } from '@fluss/core';
 import { isElementNode } from '../utils/predicates';
 import { isEventAttribute } from '../utils/library_attributes';
 
@@ -30,7 +29,11 @@ export function attachEvents(
     Array.from(element.attributes)
       .filter(({ name }) => isEventAttribute(name))
       .map(({ value: id }) => {
-        maybe(eventListenersMap.get(id)).map(([event, listener]) => {
+        const listenerTuple = eventListenersMap.get(id);
+
+        if (listenerTuple !== undefined) {
+          const [event, listener] = listenerTuple;
+
           element.addEventListener(event, listener);
 
           detachEventListenersMap.set(element, [
@@ -39,7 +42,7 @@ export function attachEvents(
           ]);
 
           eventListenersMap.delete(id);
-        });
+        }
       });
 
     if (attachToChildren && element.childElementCount > 0) {
