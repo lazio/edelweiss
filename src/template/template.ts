@@ -20,7 +20,7 @@ type AllowedValues =
   | string
   | number
   | boolean
-  // EventListener, HooksCallback or () => string | number
+  // EventListener, HookCallback or () => string | number
   | Function
   | ReadonlyArray<string>
   | EventListenerObject;
