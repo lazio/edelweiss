@@ -57,106 +57,154 @@ function formCurrentHTML(
   // Handle @event listener if there is any.
   const matchedElementEventListener = eventListenerRegExp.exec(current);
   if (matchedElementEventListener !== null) {
-    let listener = variable;
-
-    if (
-      typeof listener !== 'function' &&
-      typeof listener === 'object' &&
-      !('handleEvent' in listener)
-    ) {
-      console.warn(`Event listener must be type of "function" or object with
-  "handleEvent" method, but given "${typeof listener}".`);
-      listener = () => {};
-    }
-
-    const eventId = uid();
-    eventListenersMap.set(
-      eventId,
-      // It is up to user to set proper type of function as variable.
-      [
-        matchedElementEventListener[1],
-        listener as EventListenerOrEventListenerObject,
-      ]
-    );
-
-    return current.replace(
+    return handleEventListener(
       matchedElementEventListener[0],
-      `${createEventIdAttributeName(index)}="${eventId}"`
+      matchedElementEventListener[1],
+      current,
+      variable,
+      index
     );
   }
+
   // Handle ?attribute
   const matchBooleanAttribute = booleanAttributeRegExp.exec(current);
   if (matchBooleanAttribute !== null) {
-    /**
-     * It accepts all values and check if it is falsy or truthy.
-     * There are 7 falsy values in JS: [values](https://developer.mozilla.org/en-US/docs/Glossary/Falsy)
-     */
-    return current.replace(
+    return handleBoolean(
       matchBooleanAttribute[0],
-      variable ? matchBooleanAttribute[1] : ''
+      matchBooleanAttribute[1],
+      current,
+      variable
     );
   }
 
   /** Handle special property and attribute. */
   const matchSpecialProperty = specialPropertiesRegExp.exec(current);
   if (matchSpecialProperty !== null) {
-    let stateGetter = variable;
-    const propertyName = matchSpecialProperty[1];
-
-    if (
-      typeof stateGetter !== 'function' &&
-      typeof stateGetter !== 'string' &&
-      typeof stateGetter !== 'number'
-    ) {
-      console.warn(`Value of "${propertyName}" property and attribute must have "string", "number" or "function" type,
-      but given "${typeof stateGetter}".`);
-      stateGetter = '';
-    }
-
-    const propertyValue: string =
-      typeof stateGetter === 'function' ? stateGetter() : `${stateGetter}`;
-
-    // We doesn't return value, because updated hook need to be handled.
-    current = current.replace(
-      specialPropertiesRegExp,
-      // Attribute is defined here, so we don't need to call
-      // setAttribute method.
-      `${propertyName}="${propertyValue}" :${Hooks.Updated}=`
+    const [editedCurrent, editedVariable] = handleProperty(
+      matchSpecialProperty[1],
+      current,
+      variable
     );
-
-    // Assign updating function to variable.
-    variable = (element: HTMLElement & { [key: string]: string }) => {
-      element[propertyName] = propertyValue;
-    };
+    current = editedCurrent;
+    variable = editedVariable;
   }
 
   /** Handle hook attribute. */
   const matchHookAttribute = hookAttributeRegExp.exec(current);
   if (matchHookAttribute !== null) {
-    let hookCallback = variable;
-
-    if (typeof hookCallback !== 'function') {
-      console.warn(
-        `Event listener must be type of "function", but given "${typeof hookCallback}".`
-      );
-      hookCallback = () => {};
-    }
-
-    const dataHookId = uid();
     /**
      * matchHookAttribute can contain only hook keywords, so we can not
      * check its value.
      */
-    const hookName = matchHookAttribute[1] as Hooks;
-
-    // It is up to user to set proper type of function as variable.
-    hooksManager[hookName].set(dataHookId, hookCallback as HookCallback);
-
-    return current.replace(
-      hookAttributeRegExp,
-      `${createHookAttributeName(hookName, index)}="${dataHookId}"`
-    );
+    return handleHook(matchHookAttribute[1] as Hooks, current, variable, index);
   }
 
   return current + variable;
+}
+
+function handleEventListener(
+  fullCustomEventAttribute: string,
+  eventName: string,
+  current: string,
+  variable: Exclude<AllowedValues, null | undefined | ReadonlyArray<string>>,
+  index: number
+): string {
+  let listener = variable;
+
+  if (
+    typeof listener !== 'function' &&
+    typeof listener === 'object' &&
+    !('handleEvent' in listener)
+  ) {
+    console.warn(`Event listener must be type of "function" or object with
+  "handleEvent" method, but given "${typeof listener}".`);
+    listener = () => {};
+  }
+
+  const eventId = uid();
+  eventListenersMap.set(
+    eventId,
+    // It is up to user to set proper type of function as variable.
+    [eventName, listener as EventListenerOrEventListenerObject]
+  );
+
+  return current.replace(
+    fullCustomEventAttribute,
+    `${createEventIdAttributeName(index)}="${eventId}"`
+  );
+}
+
+function handleBoolean(
+  fullBooleanAttribute: string,
+  attributeName: string,
+  current: string,
+  variable: Exclude<AllowedValues, null | undefined | ReadonlyArray<string>>
+): string {
+  /**
+   * It accepts all values and check if it is falsy or truthy.
+   * There are 7 falsy values in JS: [values](https://developer.mozilla.org/en-US/docs/Glossary/Falsy)
+   */
+  return current.replace(fullBooleanAttribute, variable ? attributeName : '');
+}
+
+function handleProperty(
+  propertyName: string,
+  current: string,
+  variable: Exclude<AllowedValues, null | undefined | ReadonlyArray<string>>
+): [current: string, variable: Function] {
+  let stateGetter = variable;
+
+  if (
+    typeof stateGetter !== 'function' &&
+    typeof stateGetter !== 'string' &&
+    typeof stateGetter !== 'number'
+  ) {
+    console.warn(`Value of "${propertyName}" property and attribute must have "string", "number" or "function" type,
+      but given "${typeof stateGetter}".`);
+    stateGetter = '';
+  }
+
+  const propertyValue: string =
+    typeof stateGetter === 'function' ? stateGetter() : `${stateGetter}`;
+
+  // We doesn't return value, because updated hook need to be handled.
+  current = current.replace(
+    specialPropertiesRegExp,
+    // Attribute is defined here, so we don't need to call
+    // setAttribute method.
+    `${propertyName}="${propertyValue}" :${Hooks.Updated}=`
+  );
+
+  // Assign updating function to variable.
+  variable = (element: HTMLElement & { [key: string]: string }) => {
+    element[propertyName] = propertyValue;
+  };
+
+  return [current, variable];
+}
+
+function handleHook(
+  hookName: Hooks,
+  current: string,
+  variable: Exclude<AllowedValues, null | undefined | ReadonlyArray<string>>,
+  index: number
+): string {
+  let hookCallback = variable;
+
+  if (typeof hookCallback !== 'function') {
+    console.warn(
+      `Event listener must be type of "function", but given "${typeof hookCallback}".`
+    );
+    hookCallback = () => {};
+  }
+
+  const dataHookId = uid();
+
+  // It is up to user to set proper type of function as variable.
+  hooksManager[hookName].set(dataHookId, hookCallback as HookCallback);
+
+  return current.replace(
+    hookAttributeRegExp,
+    `${createHookAttributeName(hookName, index)}="${dataHookId}"`
+  );
 }
