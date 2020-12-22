@@ -113,14 +113,22 @@ export async function to(
   await navigate(path, findRoute(path), options.willStateChange);
 }
 
+/**
+ * Reloads current page.
+ *
+ * `before` and `after` route hooks will
+ *  be invoked also.
+ */
 export async function reload(): Promise<void> {
   await navigate(window.location.pathname, current, false);
 }
 
+/** Makes one step back in navigation history. */
 export function back(): void {
   window.history.back();
 }
 
+/** Makes one step forward in navigation history. */
 export function forward(): void {
   window.history.forward();
 }
