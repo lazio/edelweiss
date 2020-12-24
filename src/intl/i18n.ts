@@ -53,7 +53,7 @@ export function setLanguage(tag: string): void {
 /** Returns translated text based on _path_. */
 export function translate(
   path: string,
-  variables: { [key: string]: string } = {}
+  variables: Record<string, string> = {}
 ): string {
   if (currentLanguage === undefined) {
     console.warn(
