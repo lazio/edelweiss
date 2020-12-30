@@ -1,4 +1,37 @@
-# [1.7.0] - 2020-12-02
+# [1.8.0] - 2020-12-30
+
+### Added
+
+- doc comments to `router`'s functions.
+- `exports` field to _package.json_.
+
+### Changed
+
+- type of _variables_ parameter in `translate` function.
+- Building of framework: now it is published as set of ES modules (earlier it was one ES module).
+
+### Removed
+
+- `@fluss/core` from dependencies.
+- `Object.freeze` method from code.
+
+## [1.7.2] - 2020-12-11
+
+### Removed
+
+- `@fluss/web` from dependencies.
+
+## [1.7.1] - 2020-12-07
+
+### Changed
+
+- `router.reload` function can be prevented from reloading page as `router.to` function does.
+
+### Fixed
+
+- typos in doc comment of inner `navigate` function.
+
+## [1.7.0] - 2020-12-02
 
 ### Removed
 

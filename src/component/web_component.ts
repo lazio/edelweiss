@@ -1,11 +1,15 @@
 import { renderWebComponent } from '../dom/render';
-import type { Constructor } from '@fluss/core';
 
+/** Parent class for custom elements. */
 export abstract class WebComponent<
   T extends object = object
 > extends HTMLElement {
-  #state: T = {} as T;
+  private readonly _state: T = {} as T;
 
+  /**
+   * When overriding constructor always call **super()** at start,
+   * so that the correct prototype chain will be established.
+   */
   constructor() {
     super();
 
@@ -14,31 +18,48 @@ export abstract class WebComponent<
     });
   }
 
-  get state(): T {
-    return this.#state;
+  /** Returns an array of attribute names to monitor for changes. */
+  static get observedAttributes(): ReadonlyArray<string> {
+    return [];
   }
 
   /**
-   * Users must override this method instead of
-   * `connectedCallback`.
+   * Returns state of custom element.
+   * For changing state use `changeState` method.
+   */
+  get state(): T {
+    return this._state;
+  }
+
+  /**
+   * Called this method when the element is added to the document
+   * (can be called many times if an element is repeatedly added/removed).
+   *
+   * Alias to `connectedCallback`.
    */
   connected(): void {}
 
   /**
-   * Users must override this method instead of
-   * `disconnectedCallback`.
+   * Called this method when the element is removed from the document
+   * (can be called many times if an element is repeatedly added/removed).
+   *
+   * Alias to `disconnectedCallback`.
    */
   disconnected(): void {}
 
   /**
-   * Users must override this method instead of
-   * `adoptedCallback`.
+   * Called when the element is moved to a new document
+   * (happens in `document.adoptNode`).
+   *
+   * Alias to `adoptedCallback`.
    */
   adopted(): void {}
 
   /**
-   * Users must override this method instead of
-   * `attributeChangedCallback`.
+   * Called when one of attributes returned by `observedAttributes`
+   * is modified.
+   *
+   * Alias to `attributeChangedCallback`.
    */
   attributeChanged(
     attributeName: string,
@@ -47,7 +68,7 @@ export abstract class WebComponent<
   ): void {}
 
   /** Users must not override this method! */
-  connectedCallback(): void {
+  private connectedCallback(): void {
     // This method may be called once element is no longer connected
     // to DOM, so it must be checked.
     // [MDN](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements)
@@ -58,18 +79,18 @@ export abstract class WebComponent<
   }
 
   /** Users must not override this method! */
-  disconnectedCallback(): void {
+  private disconnectedCallback(): void {
     this.disconnected();
   }
 
   /** Users must not override this method! */
-  adoptedCallback(): void {
+  private adoptedCallback(): void {
     this.adopted();
     renderWebComponent(this);
   }
 
   /** Users must not override this method! */
-  attributeChangedCallback(
+  private attributeChangedCallback(
     name: string,
     oldValue: string,
     newValue: string
@@ -78,9 +99,13 @@ export abstract class WebComponent<
     renderWebComponent(this);
   }
 
+  /**
+   * Change part of state of custom element.
+   * Every change is reactive.
+   */
   changeState(parts: Partial<T>): void {
     // TODO: get rid of any.
-    const innerState = this.#state as any;
+    const innerState = this._state as any;
 
     let isStateChanged = false;
 
@@ -96,12 +121,25 @@ export abstract class WebComponent<
     }
   }
 
+  /**
+   * Defines inner DOM of custom element as Shadow DOM.
+   *
+   * Returned HTML will be wrapped with `HTMLTemplateElement`,
+   * if method returns HTML that are not wrapped with top-level `<template>`.
+   */
   abstract template(): string;
 }
 
-/** Defines custom element. */
-export function defineWebComponent<E extends Constructor<WebComponent>>(
+/**
+ * Defines autonomous custom elements. Can be safely called many times.
+ *
+ * More info about custom elements and their lifecycles
+ * [at MDN](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements).
+ */
+export function defineWebComponent<E extends new () => WebComponent>(
+  /** Name of the custom tag. Must contain dash symbol. */
   tagName: string,
+  /** Class that describe custom element. `template` method must be overridden. */
   elementClass: E
 ): void {
   customElements.get(tagName) ?? customElements.define(tagName, elementClass);

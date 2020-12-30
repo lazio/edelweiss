@@ -1,5 +1,4 @@
 import { _isRouteChanged } from '../router/markers';
-import { maybe, isNothing } from '@fluss/core';
 import { isLibraryAttribute } from '../utils/library_attributes';
 import { attachEvents, detachEvents } from './events';
 import { mountedHook, removedHook, updatedHook } from './hooks';
@@ -9,81 +8,9 @@ const IGNORED_ATTRIBUTE_NAME = 'data-ignored';
 
 export function diff(oldNode: Node, newNode: Node): void {
   if (isElementNode(oldNode) && isElementNode(newNode)) {
-    if (oldNode.tagName === newNode.tagName) {
-      /**
-       * If element has boolean `data-ignore` attribute, then
-       * this element and his descendants will not be checked
-       * for difference. It is useful for elements, which has
-       * dynamic content or is changed by programmer, not through
-       * template differing (by example JS animation).
-       */
-      if (
-        oldNode.hasAttribute(IGNORED_ATTRIBUTE_NAME) &&
-        newNode.hasAttribute(IGNORED_ATTRIBUTE_NAME)
-      ) {
-        return;
-      }
-
-      if (newNode.hasChildNodes()) {
-        detachEvents(oldNode);
-
-        if (diffAttributes(oldNode, newNode)) {
-          /**
-           * If route is changed, then DOM must be rebuilded.
-           * Due to diffing algorithm, some nodes can be left from
-           * old page and reused. In that case we need to know,
-           * whether page is changed in order to call proper hook.
-           */
-          _isRouteChanged ? mountedHook(oldNode) : updatedHook(oldNode);
-        } else {
-          /**
-           * Mounted hook need to be called if route is changed,
-           * but attributes do not. This is the case, when element
-           * has only hook attribute.
-           */
-          _isRouteChanged && mountedHook(oldNode);
-        }
-
-        attachEvents(oldNode);
-
-        diffChildren(oldNode, newNode);
-      } else if (oldNode.hasChildNodes()) {
-        attachEvents(newNode, true);
-
-        oldNode.replaceWith(newNode);
-        mountedHook(newNode);
-        removedHook(oldNode);
-      } else {
-        detachEvents(oldNode);
-
-        // Same reason as above.
-        if (diffAttributes(oldNode, newNode)) {
-          _isRouteChanged ? mountedHook(oldNode) : updatedHook(oldNode);
-        } else {
-          _isRouteChanged && mountedHook(oldNode);
-        }
-
-        attachEvents(oldNode);
-      }
-    } else {
-      attachEvents(newNode, true);
-
-      oldNode.replaceWith(newNode);
-      mountedHook(newNode);
-      removedHook(oldNode);
-    }
+    diffElements(oldNode, newNode);
   } else if (isTextNode(oldNode) && isTextNode(newNode)) {
-    if (oldNode.textContent !== newNode.textContent) {
-      oldNode.textContent = newNode.textContent;
-
-      maybe(oldNode.parentElement).map((parent) => {
-        /**
-         * Same reason as above, but here diffing attributes
-         * did not apply.
-         */
-        _isRouteChanged ? mountedHook(parent) : updatedHook(parent);
-      });
-    }
+    diffTexts(oldNode, newNode);
   } else if (isCommentNode(oldNode) && isCommentNode(newNode)) {
     /**
      * Comment node is separated, because we do not need
@@ -97,6 +24,88 @@ export function diff(oldNode: Node, newNode: Node): void {
     (oldNode as ChildNode).replaceWith(newNode);
     mountedHook(newNode);
     removedHook(oldNode);
+  }
+}
+
+function diffElements(oldNode: Element, newNode: Element): void {
+  if (oldNode.tagName === newNode.tagName) {
+    /**
+     * If element has boolean `data-ignore` attribute, then
+     * this element and his descendants will not be checked
+     * for difference. It is useful for elements, which has
+     * dynamic content or is changed by programmer, not through
+     * template differing (by example JS animation).
+     */
+    if (
+      oldNode.hasAttribute(IGNORED_ATTRIBUTE_NAME) &&
+      newNode.hasAttribute(IGNORED_ATTRIBUTE_NAME)
+    ) {
+      return;
+    }
+
+    if (newNode.hasChildNodes()) {
+      detachEvents(oldNode);
+
+      if (diffAttributes(oldNode, newNode)) {
+        /**
+         * If route is changed, then DOM must be rebuilded.
+         * Due to diffing algorithm, some nodes can be left from
+         * old page and reused. In that case we need to know,
+         * whether page is changed in order to call proper hook.
+         */
+        _isRouteChanged ? mountedHook(oldNode) : updatedHook(oldNode);
+      } else {
+        /**
+         * Mounted hook need to be called if route is changed,
+         * but attributes do not. This is the case, when element
+         * has only hook attribute.
+         */
+        _isRouteChanged && mountedHook(oldNode);
+      }
+
+      attachEvents(oldNode);
+
+      diffChildren(oldNode, newNode);
+    } else if (oldNode.hasChildNodes()) {
+      attachEvents(newNode, true);
+
+      oldNode.replaceWith(newNode);
+      mountedHook(newNode);
+      removedHook(oldNode);
+    } else {
+      detachEvents(oldNode);
+
+      // Same reason as above.
+      if (diffAttributes(oldNode, newNode)) {
+        _isRouteChanged ? mountedHook(oldNode) : updatedHook(oldNode);
+      } else {
+        _isRouteChanged && mountedHook(oldNode);
+      }
+
+      attachEvents(oldNode);
+    }
+  } else {
+    attachEvents(newNode, true);
+
+    oldNode.replaceWith(newNode);
+    mountedHook(newNode);
+    removedHook(oldNode);
+  }
+}
+
+function diffTexts(oldNode: Text, newNode: Text): void {
+  if (oldNode.textContent !== newNode.textContent) {
+    oldNode.textContent = newNode.textContent;
+
+    if (oldNode.parentElement !== null) {
+      /**
+       * Same reason as in diffElements function,
+       * but here diffing attributes did not apply.
+       */
+      _isRouteChanged
+        ? mountedHook(oldNode.parentElement)
+        : updatedHook(oldNode.parentElement);
+    }
   }
 }
 
@@ -116,18 +125,18 @@ export function diffChildren(
     i < Math.max(newChildNodes.length, oldChildNodes.length);
     i++
   ) {
-    const oNode = oldChildNodes[i];
-    const nNode = newChildNodes[i];
+    const oNode: ChildNode | undefined = oldChildNodes[i];
+    const nNode: ChildNode | undefined = newChildNodes[i];
 
-    if (!isNothing(nNode)) {
-      isNothing(oNode)
+    if (nNode !== undefined) {
+      oNode === undefined
         ? (attachEvents(nNode, true), oldNode.append(nNode), mountedHook(nNode))
         : diff(oNode, nNode);
-    } else if (!isNothing(oNode)) {
+    } else if (oNode !== undefined) {
       oNode.remove();
       removedHook(oNode);
     } else {
-      // Do nothing - old and new node are null or undefined.
+      // Do nothing - old and new node are undefined.
     }
   }
 }

@@ -1,15 +1,14 @@
-import { maybe } from '@fluss/core';
 import { isElementNode } from '../utils/predicates';
 import { isHookAttribute, Hooks } from '../utils/library_attributes';
 
 export type HookCallback = (self: Element) => void | Promise<void>;
 
 /** Holds callbacks for every element's hooks. */
-export const hooksManager = Object.freeze({
+export const hooksManager = {
   [Hooks.Mounted]: new Map<string, HookCallback>(),
   [Hooks.Updated]: new Map<string, HookCallback>(),
   [Hooks.Removed]: new Map<string, HookCallback>(),
-});
+} as const;
 
 /** If parent node is mounted, so its children are also mounted. */
 export function mountedHook(node: Node): void {
@@ -41,11 +40,13 @@ function applyHook(node: Node, type: Hooks): void {
       Array.from(node.attributes)
         .filter(({ name }) => isHookAttribute(name))
         .forEach(({ value: id }) => {
-          maybe(hooksManager[type].get(id)).map((hook) =>
+          const hook = hooksManager[type].get(id);
+
+          if (hook !== undefined) {
             Promise.resolve(hook(node)).then(() =>
               hooksManager[type].delete(id)
-            )
-          );
+            );
+          }
         });
     }
   }, 0);
