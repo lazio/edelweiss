@@ -1,6 +1,6 @@
 # Edelweiss
 
-This is web framework that is bundled as _ES module_.
+This is web framework that is bundled as _ES modules_.
 
 ## Installation
 
