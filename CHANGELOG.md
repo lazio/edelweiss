@@ -1,4 +1,10 @@
-# [1.8.0] - 2020-12-30
+# Unreleased
+
+### Added
+
+- asynchronous templates.
+
+## [1.8.0] - 2020-12-30
 
 ### Added
 

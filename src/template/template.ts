@@ -1,4 +1,5 @@
 import { uid } from '../utils/uid';
+import { createStub } from '../dom/async_html';
 import { hooksManager } from '../dom/hooks';
 import { eventListenersMap } from '../dom/events';
 import {
@@ -22,6 +23,7 @@ type AllowedValues =
   | boolean
   // EventListener, HookCallback or () => string | number
   | Function
+  | Promise<string>
   | ReadonlyArray<string>
   | EventListenerObject;
 
@@ -54,6 +56,10 @@ function formCurrentHTML(
   current: string,
   index: number
 ): string {
+  if (variable instanceof Promise) {
+    return current + createStub(variable);
+  }
+
   // Handle @event listener if there is any.
   const matchedElementEventListener = eventListenerRegExp.exec(current);
   if (matchedElementEventListener !== null) {

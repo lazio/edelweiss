@@ -85,4 +85,44 @@ describe('Test "router"', () => {
 
     expect(clicked).toBe(1);
   });
+
+  test('should lazily load asyncronous html', async () => {
+    const asyncChild = Promise.resolve(5);
+
+    router.add({
+      path: '/async',
+      view() {
+        return html` <div class="async-child">Child ${asyncChild}</div> `;
+      },
+    });
+
+    await router.to('/async');
+
+    const div = document.querySelector('.async-child');
+    expect(div).toBeDefined();
+    setTimeout(() => expect(div.innerHTML).toMatch('Child 5'), 0);
+  });
+
+  test('should lazily load asyncronous html and attach listeners', async () => {
+    let clicked = false;
+
+    const asyncChild = () =>
+      Promise.resolve(html`<button @click=${() => (clicked = true)}></button>`);
+
+    router.add({
+      path: '/async-button',
+      view() {
+        return html` <div class="async-child">${asyncChild()}</div> `;
+      },
+    });
+
+    await router.to('/async-button');
+
+    const button = document.querySelector('.async-child button');
+    expect(button).toBeDefined();
+    setTimeout(() => {
+      button.click();
+      expect(clicked).toBe(true);
+    }, 0);
+  });
 });
