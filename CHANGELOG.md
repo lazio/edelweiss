@@ -2,7 +2,7 @@
 
 ### Added
 
-- asynchronous templates.
+- `future` function that allow to load asynchronous templates.
 
 ## [1.8.0] - 2020-12-30
 

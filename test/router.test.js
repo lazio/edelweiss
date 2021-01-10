@@ -1,5 +1,5 @@
 import './crypto_for_jest';
-import { html, router } from '../build';
+import { html, router, future } from '../build';
 
 describe('Test "router"', () => {
   beforeAll(() => {
@@ -87,12 +87,14 @@ describe('Test "router"', () => {
   });
 
   test('should lazily load asyncronous html', async () => {
-    const asyncChild = Promise.resolve(5);
+    const asyncChild = () => Promise.resolve(5);
 
     router.add({
       path: '/async',
       view() {
-        return html` <div class="async-child">Child ${asyncChild}</div> `;
+        return html`
+          <div class="async-child">Child ${future(asyncChild())}</div>
+        `;
       },
     });
 
@@ -112,7 +114,7 @@ describe('Test "router"', () => {
     router.add({
       path: '/async-button',
       view() {
-        return html` <div class="async-child">${asyncChild()}</div> `;
+        return html` <div class="async-child">${future(asyncChild())}</div> `;
       },
     });
 
@@ -123,6 +125,32 @@ describe('Test "router"', () => {
     setTimeout(() => {
       button.click();
       expect(clicked).toBe(true);
+    }, 0);
+  });
+
+  test('should lazily load asyncronous html and show stub component', async () => {
+    const asyncChild = () => Promise.resolve(html`<button>Button</button>`);
+
+    router.add({
+      path: '/async-stub',
+      view() {
+        return html`
+          <div class="async-child">${future(asyncChild(), html`<a>A</a>`)}</div>
+        `;
+      },
+    });
+
+    await router.to('/async-stub');
+
+    const a = document.querySelector('.async-child a');
+    expect(a).toBeDefined();
+    
+    setTimeout(() => {
+      const button = document.querySelector('.async-child button');
+      const a = document.querySelector('.async-child a');
+
+      expect(button).toBeDefined();
+      expect(a).toBeNull();
     }, 0);
   });
 });
