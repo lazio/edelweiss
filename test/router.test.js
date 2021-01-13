@@ -144,13 +144,39 @@ describe('Test "router"', () => {
 
     const a = document.querySelector('.async-child a');
     expect(a).toBeDefined();
-    
+
     setTimeout(() => {
       const button = document.querySelector('.async-child button');
       const a = document.querySelector('.async-child a');
 
       expect(button).toBeDefined();
       expect(a).toBeNull();
+    }, 0);
+  });
+
+  test('should load asynchronous component inside another async component', async () => {
+    const a = () =>
+      new Promise((resolve) => setTimeout(() => resolve(5), 1000));
+    const b = () => Promise.resolve(html`<p>${future(a())}</p>`);
+
+    router.add({
+      path: '/async-nested',
+      view() {
+        return html` <div class="async-child">${future(b())}</div> `;
+      },
+    });
+
+    await router.to('/async-nested');
+
+    setTimeout(() => {
+      const p = document.querySelector('.async-child p');
+      expect(p).toBeDefined();
+      expect(p.innerHTML).toMatch('<div.+');
+      expect(p.innerHTML).not.toMatch('5');
+
+      setTimeout(() => {
+        expect(p.innerHTML).toMatch('5');
+      }, 0);
     }, 0);
   });
 });
