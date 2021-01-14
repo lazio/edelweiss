@@ -156,8 +156,10 @@ describe('Test "router"', () => {
 
   test('should load asynchronous component inside another async component', async () => {
     const a = () =>
-      new Promise((resolve) => setTimeout(() => resolve(5), 1000));
-    const b = () => Promise.resolve(html`<p>${future(a())}</p>`);
+      new Promise((resolve) =>
+        setTimeout(() => resolve(html`<span>foo</span>`), 3000)
+      );
+    const b = () => Promise.resolve(html`<p>${future(a())} baz</p>`);
 
     router.add({
       path: '/async-nested',
@@ -172,11 +174,8 @@ describe('Test "router"', () => {
       const p = document.querySelector('.async-child p');
       expect(p).toBeDefined();
       expect(p.innerHTML).toMatch('<div.+');
-      expect(p.innerHTML).not.toMatch('5');
-
-      setTimeout(() => {
-        expect(p.innerHTML).toMatch('5');
-      }, 0);
+      expect(p.innerHTML).toMatch('baz');
+      expect(p.innerHTML).toMatch('foo');
     }, 0);
   });
 });

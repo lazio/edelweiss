@@ -16,10 +16,12 @@ export function createStub(stubId: string, stubComponent: string): string {
 }
 
 export function getStubElement(
-  stub: string,
-  root: Element | ShadowRoot
+  root: Element | ShadowRoot,
+  stubId?: string
 ): HTMLDivElement | null {
   return root.querySelector(
-    `[${DATA_ASYNC_HTML_STUB_ATTRIBUTE_NAME}="${stub}"]`
+    `[${DATA_ASYNC_HTML_STUB_ATTRIBUTE_NAME}${
+      stubId === undefined ? '' : `="${stubId}"`
+    }]`
   );
 }

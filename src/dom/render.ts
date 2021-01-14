@@ -34,27 +34,36 @@ export function renderWebComponent<T extends object>(
 }
 
 function renderLazyTemplates(root: Element | ShadowRoot): void {
-  asyncHTMLMap.forEach((lazyTemplate, stub) => {
-    const stubElement = getStubElement(stub, root);
+  asyncHTMLMap.forEach((lazyTemplate, stubId) => {
+    const stubElement = getStubElement(root, stubId);
 
     if (stubElement !== null) {
       lazyTemplate
         .then(
           (html) => {
+            const stubParentElement = stubElement.parentElement;
+
             const cloneElement = stubElement.cloneNode(false) as Element;
             cloneElement.innerHTML = edelweissPolicy.createHTML(html);
             diff(stubElement, cloneElement);
             stubElement.replaceWith(...stubElement.childNodes);
+
+            if (
+              stubParentElement !== null &&
+              getStubElement(stubParentElement) !== null
+            ) {
+              renderLazyTemplates(stubParentElement);
+            }
           },
           () => {
             console.error(
               'An error is occured while loading lazy template with stub "' +
-                stub +
+                stubId +
                 '".'
             );
           }
         )
-        .then(() => asyncHTMLMap.delete(stub));
+        .then(() => asyncHTMLMap.delete(stubId));
     }
   });
 }
