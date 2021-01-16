@@ -22,7 +22,7 @@ type AllowedValues =
   | boolean
   // EventListener, HookCallback or () => string | number
   | Function
-  | ReadonlyArray<string>
+  | Iterable<string>
   | EventListenerObject;
 
 /** Creates string template that will be evaluated as DOM elements. */
@@ -35,13 +35,16 @@ export function html(
 
     if (variable !== null && variable !== undefined) {
       // @ts-issue - TypeScript cannot infer that variable
-      // is type of ReadonlyArray :(
-      const variableWithoutArray = Array.isArray(variable)
-        ? (variable as ReadonlyArray<string>).join('')
-        : (variable as Exclude<typeof variable, ReadonlyArray<string>>);
+      // is type of Iterable :(
+      const variableWithoutIterable =
+        typeof variable === 'object' && Symbol.iterator in variable
+          ? Array.from(variable as Iterable<string>).join('')
+          : (variable as Exclude<typeof variable, Iterable<string>>);
 
       // Consume current part with previous part
-      return previous + formCurrentHTML(variableWithoutArray, current, index);
+      return (
+        previous + formCurrentHTML(variableWithoutIterable, current, index)
+      );
     } else {
       // End of template
       return previous + current;
@@ -50,7 +53,7 @@ export function html(
 }
 
 function formCurrentHTML(
-  variable: Exclude<AllowedValues, null | undefined | ReadonlyArray<string>>,
+  variable: string | number | boolean | Function | EventListenerObject,
   current: string,
   index: number
 ): string {
