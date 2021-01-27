@@ -6,6 +6,7 @@ export default {
   output: {
     dir: 'build',
     format: 'es',
+    sourcemap: true,
     preserveModules: true,
     preserveModulesRoot: 'src',
   },

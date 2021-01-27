@@ -1,8 +1,14 @@
 # Unreleased
 
+Framework is completely rewritten.
+
 ### Added
 
 - `future` function that allow to load asynchronous templates.
+
+### Removed
+
+- element hooks.
 
 ## [1.8.0] - 2020-12-30
 
