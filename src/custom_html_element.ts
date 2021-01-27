@@ -14,10 +14,6 @@ export interface Property<R> {
     : Dependency<string, R>;
 }
 
-declare const f: Property<number>;
-
-const test = f()
-
 /**
  * Parent class for custom elements.
  * At least `render` method need to be defined.
