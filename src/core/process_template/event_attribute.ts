@@ -4,7 +4,7 @@ import { EVENT_ATTRIBUTE_PREFIX } from '../constants';
 export function processEventListener(
   currentNode: Element,
   name: string,
-  value: unknown
+  value: string
 ): void {
   const eventMarker = markers.find((marker) => value === marker.toString());
 

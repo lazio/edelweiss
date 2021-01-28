@@ -12,7 +12,7 @@ export interface Bridge {
    * For node bridge that is start comment node.
    */
   readonly node: Node;
-  readonly dependency: Dependency;
+  readonly dependency: Dependency<unknown, unknown>;
 
   update(value: unknown): void;
 }
@@ -20,9 +20,13 @@ export interface Bridge {
 export class RegularAttributeBridge implements Bridge {
   readonly node: Element;
   readonly name: string;
-  readonly dependency: Dependency;
+  readonly dependency: Dependency<unknown, string>;
 
-  constructor(node: Element, name: string, dependency: Dependency) {
+  constructor(
+    node: Element,
+    name: string,
+    dependency: Dependency<unknown, string>
+  ) {
     this.node = node;
     this.name = name;
     this.dependency = dependency;
@@ -44,9 +48,13 @@ export class RegularAttributeBridge implements Bridge {
 export class ToggleAttributeBridge implements Bridge {
   readonly node: Element;
   readonly name: string;
-  readonly dependency: Dependency;
+  readonly dependency: Dependency<unknown, boolean>;
 
-  constructor(node: Element, name: string, dependency: Dependency) {
+  constructor(
+    node: Element,
+    name: string,
+    dependency: Dependency<unknown, boolean>
+  ) {
     this.node = node;
     this.name = name;
     this.dependency = dependency;
@@ -62,16 +70,22 @@ export class ToggleAttributeBridge implements Bridge {
 export class PropertyBridge implements Bridge {
   readonly node: Element;
   readonly name: string;
-  readonly dependency: Dependency;
+  readonly dependency: Dependency<unknown, unknown>;
 
-  constructor(node: Element, name: string, dependency: Dependency) {
+  constructor(
+    node: Element,
+    name: string,
+    dependency: Dependency<unknown, unknown>
+  ) {
     this.node = node;
     this.name = name;
     this.dependency = dependency;
   }
 
   update(value: unknown): void {
-    (this.node as any)[this.name] = this.dependency.action(value);
+    (this.node as Element & { [property: string]: unknown })[
+      this.name
+    ] = this.dependency.action(value);
   }
 }
 

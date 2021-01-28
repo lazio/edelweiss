@@ -14,6 +14,7 @@ export function future(
     | Iterable<string | HTMLTemplateElement> = ''
 ): readonly [
   buildedTemplate: Dependency<
+    string | HTMLTemplateElement | Iterable<string | HTMLTemplateElement>,
     string | HTMLTemplateElement | Iterable<string | HTMLTemplateElement>
   >,
   update: (

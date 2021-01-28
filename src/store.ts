@@ -1,10 +1,14 @@
 export type Listener<A> = (value: A) => void;
 export type Mutator<A> = (old: A) => A;
 
+export interface StoreProperty<V> {
+  (): V;
+  (value: V | Mutator<V>): void;
+}
+
+/** Reactive container of state object. */
 export type Store<T extends object> = {
-  readonly [P in keyof T]: <V extends Mutator<T[P]> | T[P]>(
-    value?: V
-  ) => void | T[P];
+  readonly [P in keyof T]: StoreProperty<T[P]>;
 } & {
   /**
    * Attach _listener_ to react on changes of _property_ in store.
@@ -34,7 +38,7 @@ export function store<S extends object>(value: S): Store<S> {
   > = new Map();
 
   return new Proxy<Store<S>>((value as unknown) as Store<S>, {
-    get(target: Store<S>, property: keyof S, receiver) {
+    get(target: Store<S>, property: keyof S, receiver: unknown) {
       return (
         argument?: Mutator<S[keyof S]> | S[keyof S] | keyof S,
         listener?: Listener<S[keyof S]>
@@ -56,10 +60,10 @@ export function store<S extends object>(value: S): Store<S> {
           }
         } else if (property === 'subscribe') {
           if (argument !== undefined && listener !== undefined) {
-            listeners.set(argument as keyof S, [
-              ...(listeners.get(argument as keyof S) ?? []),
-              listener,
-            ]);
+            listeners.set(
+              argument as keyof S,
+              (listeners.get(argument as keyof S) ?? []).concat([listener])
+            );
 
             return () => {
               listeners.set(
@@ -70,6 +74,7 @@ export function store<S extends object>(value: S): Store<S> {
               );
             };
           } else {
+            // Returns dummy functon to not fail in runtime.
             return () => {};
           }
         }

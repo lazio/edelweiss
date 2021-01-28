@@ -1,8 +1,18 @@
-import { Action } from './reactive';
+/**
+ * Is a instruction to be accomplished in response
+ * of change value of reactive state.
+ */
+export type Action<A, R = unknown> = (value: A) => R;
 
 /** Define binding between reactive property and needed action. */
-export class Dependency<V = unknown, R = unknown> {
+export class Dependency<V, R> {
+  /**
+   * Name of the property of state object,
+   * change of which will cause invoking _action_ function.
+   * **Not for direct use.**
+   */
   readonly property: string;
+  /** Dependent from _property_ procedure. **Not for direct use.**  */
   readonly action: Action<V, R>;
   /**
    * Store most recent result of _action_
@@ -19,7 +29,7 @@ export class Dependency<V = unknown, R = unknown> {
 
   constructor(property: string, action: Action<V, R>, initialValue: V) {
     this.property = property;
-    this.action = (value: V) => {
+    this.action = (value: V): R => {
       const result = action(value);
       this.value = result;
       return result;

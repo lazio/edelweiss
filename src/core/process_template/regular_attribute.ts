@@ -30,7 +30,7 @@ function replaceMarkerWithValue(
   if (attributeMarker !== undefined) {
     let newAttributeValue: string;
 
-    if (isDependency(attributeMarker.value)) {
+    if (isDependency<unknown, string>(attributeMarker.value)) {
       const attributeBridge = new RegularAttributeBridge(
         node,
         attributeName,

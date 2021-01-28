@@ -6,16 +6,16 @@ import { bridges, ToggleAttributeBridge } from '../bridge';
 export function processToggleAttribute(
   currentNode: Element,
   name: string,
-  value: unknown
+  value: string
 ): void {
   const toggleMarker = markers.find((marker) => value === marker.toString());
 
   if (toggleMarker !== undefined) {
     const validToggleAttributeName = name.replace(TOGGLE_ATTRIBUTE_PREFIX, '');
 
-    let toggleAttributeValue: unknown;
+    let toggleAttributeValue: boolean;
 
-    if (isDependency(toggleMarker.value)) {
+    if (isDependency<unknown, boolean>(toggleMarker.value)) {
       const toggleBridge = new ToggleAttributeBridge(
         currentNode,
         validToggleAttributeName,
@@ -23,9 +23,9 @@ export function processToggleAttribute(
       );
       bridges.push(toggleBridge);
 
-      toggleAttributeValue = toggleMarker.value.value;
+      toggleAttributeValue = Boolean(toggleMarker.value.value);
     } else {
-      toggleAttributeValue = toggleMarker.value;
+      toggleAttributeValue = Boolean(toggleMarker.value);
     }
 
     toggleAttributeValue

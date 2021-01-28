@@ -5,13 +5,27 @@ import type { Dependency } from './core/dependency';
 /**
  * Describes type of reactive property.
  * Property can be defined in class via `declare` keyword.
+ *
+ * If property is called without argument -
+ * it returns reactive container with value, that can
+ * be used in **computed** context or in DOM.
+ *
+ * If type of argument is function, then returned
+ * reactive container will contain derived value, that
+ * are returned by function.
+ *
+ * If argument is `null` - bounded attribute will be
+ * deleted and value of property will be set to empty
+ * string.
+ *
+ * If argument is type of `string`, then container's
+ * value is updated and elements that are bound to
+ * container is rerendered.
  */
-export interface Property<R> {
-  <A extends null | string | ((value: string) => R)>(
-    argument?: A
-  ): A extends null | string
-    ? void
-    : Dependency<string, R>;
+export interface Property {
+  (): Dependency<string, string>;
+  <R>(argument: (value: string) => R): Dependency<string, R>;
+  (argument: null | string): void;
 }
 
 /**
@@ -71,7 +85,7 @@ export abstract class CustomHTMLElement extends HTMLElement {
    * method.
    */
   protected attributeChangedCallback(
-    this: CustomHTMLElement & { [property: string]: Property<unknown> },
+    this: CustomHTMLElement & { [property: string]: Property },
     name: string,
     oldValue: string | null,
     newValue: string | null
@@ -98,7 +112,7 @@ function createAccessorFor(target: CustomHTMLElement, property: string): void {
 
   Reflect.defineProperty(target, toCamelCase(property), {
     get() {
-      return (value?: null | string | ((value: string) => unknown)) => {
+      return <R>(value?: null | string | ((value: string) => R)) => {
         if (typeof value === 'function') {
           return dependency(value);
         } else if (value === undefined) {

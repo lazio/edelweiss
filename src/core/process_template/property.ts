@@ -6,7 +6,7 @@ import { PROPERTY_ATTRIBUTE_PREFIX } from '../constants';
 export function processProperty(
   currentNode: Element,
   name: string,
-  value: unknown
+  value: string
 ): void {
   const propertyMarker = markers.find((marker) => value === marker.toString());
 
@@ -28,7 +28,9 @@ export function processProperty(
       propertyValue = propertyMarker.value;
     }
 
-    (currentNode as any)[validPropertyName] = propertyValue;
+    (currentNode as Element & { [property: string]: unknown })[
+      validPropertyName
+    ] = propertyValue;
 
     currentNode.removeAttribute(name);
     removeMarker(propertyMarker);
