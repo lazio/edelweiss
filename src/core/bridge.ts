@@ -61,7 +61,7 @@ export class ToggleAttributeBridge implements Bridge {
   }
 
   update(value: unknown): void {
-    this.dependency.action(value)
+    Boolean(this.dependency.action(value))
       ? this.node.setAttribute(this.name, '')
       : this.node.removeAttribute(this.name);
   }

@@ -30,12 +30,15 @@ export interface Property {
 
 /**
  * Parent class for custom elements.
- * At least `render` method need to be defined.
+ * At least `template` method need to be defined.
  */
 export abstract class CustomHTMLElement extends HTMLElement {
   /**
    * Returns an array of attribute names to monitor for changes.
    * For declared attributes same reactive properties will be created.
+   * Default value of new properties is empty string.
+   * Property is always reflect same attribute's value and
+   * vise versa.
    * Name of properties will be in _camelCase_ notation.
    */
   static get observedAttributes(): ReadonlyArray<string> {

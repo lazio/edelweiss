@@ -8,7 +8,7 @@ import { markers, removeMarker } from '../marker';
 export function processNodes(currentNode: Comment, walker: TreeWalker): void {
   const nodeMarker = markers.find(
     (marker) =>
-      marker.toString() === createComment(currentNode!.textContent ?? '')
+      marker.toString() === createComment(currentNode.textContent ?? '')
   );
 
   if (nodeMarker !== undefined) {

@@ -1,10 +1,19 @@
-# Unreleased
+# [2.0.0]
 
 Framework is completely rewritten.
 
 ### Added
 
-- `future` function that allow to load asynchronous templates.
+- `future` function that allows to load asynchronous templates.
+- `bind` function that creates reactive DOM bindings.
+- `render` function to export (does not create reactive points of app, only attach html to DOM once).
+
+### Changed
+
+- `state` to `store` function.
+- `router` is now simple function that can render pages based on current location path.
+- `html` function returns now `HTMLTemplateElement` and can accept any value.
+- `WebComponent` renamed to `CustomHTMLElement`. Reactive system of new class is now based on `Property` type (like `bind`) and observed attributes.
 
 ### Removed
 

@@ -2,7 +2,7 @@
  * Is a instruction to be accomplished in response
  * of change value of reactive state.
  */
-export type Action<A, R = unknown> = (value: A) => R;
+export type Action<A, R> = (value: A) => R;
 
 /** Define binding between reactive property and needed action. */
 export class Dependency<V, R> {
