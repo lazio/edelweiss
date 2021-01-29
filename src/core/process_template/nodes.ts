@@ -2,8 +2,8 @@ import { uid } from '../utilities/uid';
 import { isIterable } from '../utilities/is_iterable';
 import { isDependency } from '../dependency';
 import { createComment } from '../utilities/create_comment';
-import { bridges, NodeBridge } from '../bridge';
 import { markers, removeMarker } from '../marker';
+import { bridges, NodeBridge, SecureHTMLNode } from '../bridge';
 
 export function processNodes(currentNode: Comment, walker: TreeWalker): void {
   const nodeMarker = markers.find(
@@ -36,12 +36,7 @@ function procesValue(
   value: unknown
 ): ReadonlyArray<ChildNode> {
   // If marker is Dependency - set up reactive binding.
-  if (
-    isDependency<
-      unknown,
-      string | HTMLTemplateElement | Iterable<string | HTMLTemplateElement>
-    >(value)
-  ) {
+  if (isDependency<unknown, SecureHTMLNode>(value)) {
     const endNode = document.createComment(`{{${uid()}}}`);
     const nodeBridge = new NodeBridge(currentNode, value, endNode);
 
@@ -64,6 +59,7 @@ function procesValue(
   } else if (value instanceof HTMLTemplateElement) {
     return [...document.adoptNode(value.content).childNodes];
   } else {
+    // Reason of explicit conversion to string is the same as in `NodeBridge`.
     return [document.createTextNode(String(value))];
   }
 }

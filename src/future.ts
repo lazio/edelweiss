@@ -1,5 +1,6 @@
 import { reactive } from './core/reactive';
-import { Dependency } from './core/dependency';
+import type { Dependency } from './core/dependency';
+import type { SecureHTMLNode } from './core/bridge';
 
 /**
  * Allow to insert into template asychronous HTML.
@@ -8,20 +9,10 @@ import { Dependency } from './core/dependency';
  * If promise rejects, then _fallback_ remains/inserts in DOM.
  */
 export function future(
-  fallback:
-    | string
-    | HTMLTemplateElement
-    | Iterable<string | HTMLTemplateElement> = ''
+  fallback: SecureHTMLNode = ''
 ): readonly [
-  buildedTemplate: Dependency<
-    string | HTMLTemplateElement | Iterable<string | HTMLTemplateElement>,
-    string | HTMLTemplateElement | Iterable<string | HTMLTemplateElement>
-  >,
-  update: (
-    value: Promise<
-      string | HTMLTemplateElement | Iterable<string | HTMLTemplateElement>
-    >
-  ) => Promise<void>
+  buildedTemplate: Dependency<SecureHTMLNode, SecureHTMLNode>,
+  update: (value: Promise<SecureHTMLNode>) => Promise<void>
 ] {
   const bound = reactive({ nodes: fallback });
 

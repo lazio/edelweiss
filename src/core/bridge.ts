@@ -2,6 +2,17 @@ import { Dependency } from './dependency';
 import { isIterable } from './utilities/is_iterable';
 
 /**
+ * Describe values that can be inserted into template
+ * as nodes. `string` value will be converted to `Text`
+ * node and `HTMLTemplateElement`'s children will be
+ * adopted to outer document.
+ */
+export type SecureHTMLNode =
+  | string
+  | HTMLTemplateElement
+  | Iterable<string | HTMLTemplateElement>;
+
+/**
  * Base class for binding between DOM nodes
  * and dependencies.
  */
@@ -92,19 +103,18 @@ export class PropertyBridge implements Bridge {
 export class NodeBridge implements Bridge {
   constructor(
     readonly node: Comment,
-    readonly dependency: Dependency<
-      unknown,
-      string | HTMLTemplateElement | Iterable<string | HTMLTemplateElement>
-    >,
+    readonly dependency: Dependency<unknown, SecureHTMLNode>,
     readonly endNode: Comment
   ) {}
 
   private _processValue(
     value: string | HTMLTemplateElement
-  ): ReadonlyArray<ChildNode | string> {
+  ): ReadonlyArray<ChildNode> {
     return value instanceof HTMLTemplateElement
       ? [...document.adoptNode(value.content).childNodes]
-      : [String(value)];
+      : // Users can provide value of type other than `string`.
+        // In that case value must be explicitly converted to `string`.
+        [document.createTextNode(String(value))];
   }
 
   update(value: unknown): void {

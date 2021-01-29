@@ -1,6 +1,7 @@
 import { html } from './html';
 import { reactive } from './core/reactive';
-import { Dependency } from './core/dependency';
+import type { Dependency } from './core/dependency';
+import type { SecureHTMLNode } from './core/bridge';
 
 /** Shape of route. */
 export interface Route {
@@ -17,9 +18,7 @@ export interface Route {
    */
   readonly notFound?: boolean;
   /** @param parameters regexp's capturing groups. */
-  template(
-    ...parameters: ReadonlyArray<string>
-  ): string | HTMLTemplateElement | Iterable<string | HTMLTemplateElement>;
+  template(...parameters: ReadonlyArray<string>): SecureHTMLNode;
 }
 
 // If user will not set custom not found route,
@@ -41,10 +40,7 @@ const defaultNotFoundRoute: Route = {
 export function router(
   ...routes: ReadonlyArray<Route>
 ): readonly [
-  page: Dependency<
-    string,
-    string | HTMLTemplateElement | Iterable<string | HTMLTemplateElement>
-  >,
+  page: Dependency<string, SecureHTMLNode>,
   to: (path: string) => void
 ] {
   const bound = reactive({ url: window.location.pathname });

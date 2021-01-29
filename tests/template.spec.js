@@ -86,4 +86,13 @@ describe('html', () => {
 
     expect(template.content.firstElementChild.title).toBe('foo');
   });
+
+  test('should insert null and other values except HTMLTemplateElement as text node', () => {
+    const template = html` <span>${null}${undefined}${12345}${true}</span> `;
+
+    expect(template.content.firstElementChild.innerHTML).toMatch('null');
+    expect(template.content.firstElementChild.innerHTML).toMatch('undefined');
+    expect(template.content.firstElementChild.innerHTML).toMatch('12345');
+    expect(template.content.firstElementChild.innerHTML).toMatch('true');
+  });
 });
