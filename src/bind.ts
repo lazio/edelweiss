@@ -1,5 +1,5 @@
 import { reactive } from './core/reactive';
-import { Dependency } from './core/dependency';
+import type { Dependency } from './core/dependency';
 
 /**
  * Creates container for bounded value
