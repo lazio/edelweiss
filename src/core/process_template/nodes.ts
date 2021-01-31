@@ -12,7 +12,7 @@ export function processNodes(currentNode: Comment, walker: TreeWalker): void {
   );
 
   if (nodeMarker !== undefined) {
-    let nodes: ReadonlyArray<ChildNode> = procesValue(
+    let nodes: ReadonlyArray<ChildNode> = processValue(
       currentNode,
       nodeMarker.value
     );
@@ -31,7 +31,7 @@ export function processNodes(currentNode: Comment, walker: TreeWalker): void {
   }
 }
 
-function procesValue(
+function processValue(
   currentNode: Comment,
   value: unknown
 ): ReadonlyArray<ChildNode> {
@@ -43,7 +43,7 @@ function procesValue(
     bridges.push(nodeBridge);
 
     return [
-      ...procesValue(currentNode, value.value),
+      ...processValue(currentNode, value.value),
       // We must insert end node into DOM to
       // work for reactive binding.
       endNode,
@@ -52,7 +52,7 @@ function procesValue(
     let nodes: Array<ChildNode> = [];
 
     for (const iterableValue of value as Iterable<unknown>) {
-      nodes = nodes.concat(procesValue(currentNode, iterableValue));
+      nodes = nodes.concat(processValue(currentNode, iterableValue));
     }
 
     return nodes;
