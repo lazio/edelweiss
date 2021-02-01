@@ -1,5 +1,6 @@
-import { Dependency } from './dependency';
 import { isIterable } from './utilities/is_iterable';
+import { adoptToNodes } from './utilities/adopt_to_nodes';
+import type { Dependency } from './dependency';
 
 /**
  * Describe values that can be inserted into template
@@ -107,23 +108,13 @@ export class NodeBridge implements Bridge {
     readonly endNode: Comment
   ) {}
 
-  private _processValue(
-    value: string | HTMLTemplateElement
-  ): ReadonlyArray<ChildNode> {
-    return value instanceof HTMLTemplateElement
-      ? [...document.adoptNode(value.content).childNodes]
-      : // Users can provide value of type other than `string`.
-        // In that case value must be explicitly converted to `string`.
-        [document.createTextNode(String(value))];
-  }
-
   update(value: unknown): void {
     const changedValue = this.dependency.action(value);
     const nodes = isIterable(changedValue)
       ? [...changedValue]
-          .map(this._processValue)
+          .map(adoptToNodes)
           .reduce((all, current) => all.concat(current), [])
-      : this._processValue(changedValue);
+      : adoptToNodes(changedValue);
 
     while (
       this.node.nextSibling !== null &&

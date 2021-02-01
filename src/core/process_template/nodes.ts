@@ -1,6 +1,7 @@
 import { uid } from '../utilities/uid';
 import { isIterable } from '../utilities/is_iterable';
 import { isDependency } from '../dependency';
+import { adoptToNodes } from '../utilities/adopt_to_nodes';
 import { createComment } from '../utilities/create_comment';
 import { markers, removeMarker } from '../marker';
 import { bridges, NodeBridge, SecureHTMLNode } from '../bridge';
@@ -56,10 +57,7 @@ function processValue(
     }
 
     return nodes;
-  } else if (value instanceof HTMLTemplateElement) {
-    return [...document.adoptNode(value.content).childNodes];
   } else {
-    // Reason of explicit conversion to string is the same as in `NodeBridge`.
-    return [document.createTextNode(String(value))];
+    return adoptToNodes(value);
   }
 }
