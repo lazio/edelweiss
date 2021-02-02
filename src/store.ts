@@ -59,24 +59,21 @@ export function store<S extends object>(value: S): Store<S> {
             }
           }
         } else if (property === 'subscribe') {
-          if (argument !== undefined && listener !== undefined) {
+          listeners.set(
+            argument as keyof S,
+            (listeners.get(argument as keyof S) ?? []).concat([
+              listener as Listener<S[keyof S]>,
+            ])
+          );
+
+          return () => {
             listeners.set(
               argument as keyof S,
-              (listeners.get(argument as keyof S) ?? []).concat([listener])
+              (listeners.get(argument as keyof S) ?? []).filter(
+                (fn) => fn !== listener
+              )
             );
-
-            return () => {
-              listeners.set(
-                argument as keyof S,
-                (listeners.get(argument as keyof S) ?? []).filter(
-                  (fn) => fn !== listener
-                )
-              );
-            };
-          } else {
-            // Returns dummy functon to not fail in runtime.
-            return () => {};
-          }
+          };
         }
       };
     },
