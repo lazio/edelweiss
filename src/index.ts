@@ -9,3 +9,4 @@ export * from './custom_html_element';
 // pass dependency value through application and
 // properly type it as argument or property.
 export type { Dependency } from './core/dependency';
+export type { SecureHTMLNode } from './core/bridge';
