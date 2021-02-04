@@ -15,10 +15,6 @@ Framework is completely rewritten.
 - `html` function returns now `HTMLTemplateElement` and can accept any value.
 - `WebComponent` renamed to `CustomHTMLElement`. Reactive system of new class is now based on `Property` type (like `bind`) and observed attributes.
 
-### Removed
-
-- element hooks.
-
 ## [1.8.0] - 2020-12-30
 
 ### Added

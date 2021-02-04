@@ -1,4 +1,5 @@
 import {
+  HOOK_ATTRIBUTE_PREFIX,
   EVENT_ATTRIBUTE_PREFIX,
   TOGGLE_ATTRIBUTE_PREFIX,
   PROPERTY_ATTRIBUTE_PREFIX,
@@ -53,6 +54,11 @@ export function createContent(
           previousTemplatePart = previousTemplate.replace(
             attributeName,
             PROPERTY_ATTRIBUTE_PREFIX + attributeName.slice(1)
+          );
+        } else if (attributeName.startsWith(':')) {
+          previousTemplatePart = previousTemplate.replace(
+            attributeName,
+            HOOK_ATTRIBUTE_PREFIX + attributeName.slice(1)
           );
         } else {
           previousTemplatePart = previousTemplate;

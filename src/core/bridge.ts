@@ -1,5 +1,6 @@
 import { isIterable } from './utilities/is_iterable';
 import { adoptToNodes } from './utilities/adopt_to_nodes';
+import { callHook, callHookOnElementWithChildren, Hooks } from './hooks';
 import type { Dependency } from './dependency';
 
 /**
@@ -53,6 +54,7 @@ export class RegularAttributeBridge implements Bridge {
         this.name,
         attributeValue.replace(oldValue, newValue)
       );
+      callHook(Hooks.UPDATED, this.node);
     }
   }
 }
@@ -76,6 +78,7 @@ export class ToggleAttributeBridge implements Bridge {
     Boolean(this.dependency.action(value))
       ? this.node.setAttribute(this.name, '')
       : this.node.removeAttribute(this.name);
+    callHook(Hooks.UPDATED, this.node);
   }
 }
 
@@ -98,6 +101,7 @@ export class PropertyBridge implements Bridge {
     (this.node as Element & { [property: string]: unknown })[
       this.name
     ] = this.dependency.action(value);
+    callHook(Hooks.UPDATED, this.node);
   }
 }
 
@@ -111,7 +115,7 @@ export class NodeBridge implements Bridge {
   update(value: unknown): void {
     const changedValue = this.dependency.action(value);
     const nodes = isIterable(changedValue)
-      ? [...changedValue]
+      ? Array.from(changedValue)
           .map(adoptToNodes)
           .reduce((all, current) => all.concat(current), [])
       : adoptToNodes(changedValue);
@@ -123,10 +127,15 @@ export class NodeBridge implements Bridge {
       // Cleanup bridges that are pointed to node that will
       // be removed.
       removeBridgeConnectedTo(this.node.nextSibling);
+      callHookOnElementWithChildren(
+        Hooks['WILL_UNMOUNT'],
+        this.node.nextSibling
+      );
       this.node.nextSibling.remove();
     }
 
     this.node.after(...nodes);
+    nodes.forEach((node) => callHookOnElementWithChildren(Hooks.MOUNTED, node));
   }
 }
 

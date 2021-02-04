@@ -1,7 +1,9 @@
 import './crypto_for_jest';
-import { html } from '../build/index.js';
+import { html, render, bind } from '../build/index.js';
 
 describe('html', () => {
+  beforeAll(() => (document.body.innerHTML = ''));
+
   test('html creates DOM nodes', () => {
     const template = html`<p></p>`;
 
@@ -94,5 +96,100 @@ describe('html', () => {
     expect(template.content.firstElementChild.innerHTML).toMatch('undefined');
     expect(template.content.firstElementChild.innerHTML).toMatch('12345');
     expect(template.content.firstElementChild.innerHTML).toMatch('true');
+  });
+
+  test('should invoke hook if element is mounted to DOM', () => {
+    let isButtonMounted = false;
+
+    const template = html`
+      <button :mounted=${() => (isButtonMounted = true)}>Mounted</button>
+    `;
+
+    render(document.body, template);
+
+    expect(isButtonMounted).toBe(true);
+  });
+
+  test("should invoke hook if element's regular attribute is changed", () => {
+    let isElementUpdated = false;
+
+    const [value, update] = bind('');
+
+    const template = html`
+      <button class=${value()} :updated=${() => (isElementUpdated = true)}>
+        Updated
+      </button>
+    `;
+
+    update('new value');
+
+    expect(isElementUpdated).toBe(true);
+  });
+
+  test("should invoke hook if element's boolean attribute is changed", () => {
+    let isElementUpdated = false;
+
+    const [value, update] = bind(false);
+
+    const template = html`
+      <span ?disabled=${value()} :updated=${() => (isElementUpdated = true)}>
+        Updated
+      </span>
+    `;
+
+    update(true);
+
+    expect(isElementUpdated).toBe(true);
+  });
+
+  test("should invoke hook if element's property is changed", () => {
+    let isElementUpdated = false;
+
+    const [value, update] = bind('');
+
+    const template = html`
+      <div .hidden="${value()}" :updated=${() => (isElementUpdated = true)}>
+        Updated
+      </div>
+    `;
+
+    update('secret');
+
+    expect(isElementUpdated).toBe(true);
+  });
+
+  test('should invoke hook if element is removed from DOM', () => {
+    let isElementRemoved = false;
+
+    const [check, update] = bind(false);
+
+    const template = html`
+      <p>
+        ${check((value) =>
+          value
+            ? html`<span></span>`
+            : html`<p :will-unmount=${() => (isElementRemoved = true)}></p>`
+        )}
+      </p>
+    `;
+
+    update(true);
+
+    expect(isElementRemoved).toBe(true);
+  });
+
+  test("hook's first parameter must be element", () => {
+    let element;
+
+    const [value, update] = bind(false);
+
+    const template = html`<p
+      ?h="${value()}"
+      :updated=${(p) => (element = p)}
+    ></p>`;
+
+    update(true);
+
+    expect(element).toBeInstanceOf(HTMLParagraphElement);
   });
 });

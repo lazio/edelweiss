@@ -1,23 +1,19 @@
+import { isElement } from '../utilities/is_element';
+import { isComment } from '../utilities/is_comment';
+import { processHook } from './hook';
 import { processNodes } from './nodes';
 import { processProperty } from './property';
 import { processEventListener } from './event_attribute';
 import { processToggleAttribute } from './toggle_attribute';
 import { processRegularAttribute } from './regular_attribute';
 import {
+  HOOK_ATTRIBUTE_PREFIX,
   EVENT_ATTRIBUTE_PREFIX,
   TOGGLE_ATTRIBUTE_PREFIX,
   PROPERTY_ATTRIBUTE_PREFIX,
 } from '../constants';
 
 type FilteredNode = Element | Comment;
-
-function isCommentNode(node: Node): node is Comment {
-  return node.nodeType === Node.COMMENT_NODE;
-}
-
-function isElementNode(node: Node): node is Element {
-  return node.nodeType === Node.ELEMENT_NODE;
-}
 
 /**
  * Processing template is accomplished in three steps:
@@ -37,20 +33,22 @@ export function processTemplate(
 
   let currentNode: FilteredNode | null = null;
   while ((currentNode = walker.nextNode() as FilteredNode | null) !== null) {
-    if (isCommentNode(currentNode)) {
+    if (isComment(currentNode)) {
       processNodes(currentNode, walker);
-    } else if (isElementNode(currentNode)) {
-      for (const { name, value } of currentNode.attributes) {
+    } else if (isElement(currentNode)) {
+      Array.from(currentNode.attributes).forEach(({ name, value }) => {
         if (name.startsWith(EVENT_ATTRIBUTE_PREFIX)) {
-          processEventListener(currentNode, name, value);
+          processEventListener(currentNode as Element, name, value);
         } else if (name.startsWith(TOGGLE_ATTRIBUTE_PREFIX)) {
-          processToggleAttribute(currentNode, name, value);
+          processToggleAttribute(currentNode as Element, name, value);
         } else if (name.startsWith(PROPERTY_ATTRIBUTE_PREFIX)) {
-          processProperty(currentNode, name, value);
+          processProperty(currentNode as Element, name, value);
+        } else if (name.startsWith(HOOK_ATTRIBUTE_PREFIX)) {
+          processHook(currentNode as Element, name, value);
         } else {
-          processRegularAttribute(currentNode, name, value);
+          processRegularAttribute(currentNode as Element, name, value);
         }
-      }
+      });
     }
   }
 
