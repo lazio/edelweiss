@@ -32,6 +32,8 @@ const defaultNotFoundRoute: Route = {
   },
 };
 
+const page = reactive({ url: window.location.pathname });
+
 /**
  * Creates reactive router.
  * _pattern_ will be converted to `RegExp` and
@@ -39,50 +41,44 @@ const defaultNotFoundRoute: Route = {
  */
 export function router(
   ...routes: ReadonlyArray<Route>
-): readonly [
-  page: Dependency<string, SecureHTMLNode>,
-  to: (path: string) => void
-] {
-  const bound = reactive({ url: window.location.pathname });
+): Dependency<string, SecureHTMLNode> {
+  return page.url((path) => {
+    const route =
+      routes.find((route) => patternToRegExp(route.pattern).test(path)) ??
+      routes.find((route) => route.notFound) ??
+      defaultNotFoundRoute;
 
-  return [
-    bound.url((value) => {
-      const route =
-        routes.find((route) => patternToRegExp(route.pattern).test(value)) ??
-        routes.find((route) => route.notFound) ??
-        defaultNotFoundRoute;
+    window.history.pushState({ path }, '', path);
 
-      // TODO: add relative path navigating?
-      window.history.pushState({ path: value }, '', value);
-
-      return route.template(
-        ...(patternToRegExp(route.pattern).exec(value) ?? []).slice(1)
-      );
-    }),
-    (path: string) => bound.url(path),
-  ];
-}
-
-/**
- * Handles routing that are accomplished with browser's buttons
- * or through _History API_:
- *  - forward
- *  - back
- * @param navigator function that are returned by main `router`
- * as second argument.
- */
-export function setUpNavigationWithBrowserHistory(
-  navigator: (path: string) => void
-): void {
-  window.addEventListener('popstate', (event: PopStateEvent) => {
-    if (event.state) {
-      navigator(event.state.path);
-    }
+    return route.template(
+      ...(patternToRegExp(route.pattern).exec(path) ?? []).slice(1)
+    );
   });
 }
 
-/** RegExp that match against string and take
- * inner part of value without `^` and `$`.
+/**
+ * Navigates to _path_.
+ * If no route is defined for _path_,
+ * then route with `notFound` property will
+ * be rendered. Otherwise - default _not found_ route.
+ */
+export function to(path: string): void {
+  page.url(path);
+}
+
+// Handles routing that are accomplished with browser's buttons
+// or through _History API_:
+//  - forward
+//  - back
+window.addEventListener('popstate', (event: PopStateEvent) => {
+  if (event.state) {
+    to(event.state.path);
+  }
+});
+
+/**
+ * RegExp that match against string and take
+ * inner part of path without `^` and `$`.
  * Needed for situations when user can provide
  * `^` or `$`, but not both at the same time.
  */

@@ -1,11 +1,11 @@
 import './crypto_for_jest';
-import { html, router } from '../build/index.js';
+import { html, router, to } from '../build/index.js';
 
 describe('router', () => {
   beforeAll(() => (window.location.pathname = '/'));
 
   test('should insert template based on current location', () => {
-    const [page] = router(
+    const page = router(
       {
         pattern: '/',
         template: () => html`start`,
@@ -25,7 +25,7 @@ describe('router', () => {
   });
 
   test('should update template', () => {
-    const [page, to] = router(
+    const page = router(
       {
         pattern: '/',
         template: () => html`start`,
@@ -49,7 +49,7 @@ describe('router', () => {
   });
 
   test('should insert default not found route if there is no match', () => {
-    const [page, to] = router(
+    const page = router(
       {
         pattern: '/',
         template: () => html`start`,
@@ -68,7 +68,7 @@ describe('router', () => {
   });
 
   test('should insert custom not found route if there is no match', () => {
-    const [page, to] = router(
+    const page = router(
       {
         pattern: '/',
         template: () => html`start`,
