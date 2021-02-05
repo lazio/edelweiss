@@ -7,13 +7,18 @@ export type Action<A, R> = (value: A) => R;
 /** Define binding between reactive property and needed action. */
 export class Dependency<V, R> {
   /**
+   * Holds reactive's id to distinguish reactives with
+   * similar property names.
+   */
+  readonly _id: string;
+  /**
    * Name of the property of state object,
    * change of which will cause invoking _action_ function.
    * **Not for direct use.**
    */
-  readonly property: string;
+  readonly _property: string;
   /** Dependent from _property_ procedure. **Not for direct use.**  */
-  readonly action: Action<V, R>;
+  readonly _action: Action<V, R>;
   /**
    * Store most recent result of _action_
    * method.
@@ -27,9 +32,15 @@ export class Dependency<V, R> {
    */
   value: R;
 
-  constructor(property: string, action: Action<V, R>, initialValue: V) {
-    this.property = property;
-    this.action = (value: V): R => {
+  constructor(
+    id: string,
+    property: string,
+    action: Action<V, R>,
+    initialValue: V
+  ) {
+    this._id = id;
+    this._property = property;
+    this._action = (value: V): R => {
       const result = action(value);
       this.value = result;
       return result;

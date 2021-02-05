@@ -49,7 +49,7 @@ export class RegularAttributeBridge implements Bridge {
     const attributeValue = this.node.getAttribute(this.name);
     if (attributeValue !== null) {
       const oldValue = String(this.dependency.value);
-      const newValue = String(this.dependency.action(value));
+      const newValue = String(this.dependency._action(value));
       this.node.setAttribute(
         this.name,
         attributeValue.replace(oldValue, newValue)
@@ -75,7 +75,7 @@ export class ToggleAttributeBridge implements Bridge {
   }
 
   update(value: unknown): void {
-    Boolean(this.dependency.action(value))
+    Boolean(this.dependency._action(value))
       ? this.node.setAttribute(this.name, '')
       : this.node.removeAttribute(this.name);
     callHook(Hooks.UPDATED, this.node);
@@ -100,7 +100,7 @@ export class PropertyBridge implements Bridge {
   update(value: unknown): void {
     (this.node as Element & { [property: string]: unknown })[
       this.name
-    ] = this.dependency.action(value);
+    ] = this.dependency._action(value);
     callHook(Hooks.UPDATED, this.node);
   }
 }
@@ -113,7 +113,7 @@ export class NodeBridge implements Bridge {
   ) {}
 
   update(value: unknown): void {
-    const changedValue = this.dependency.action(value);
+    const changedValue = this.dependency._action(value);
     const nodes = isIterable(changedValue)
       ? Array.from(changedValue)
           .map(adoptToNodes)

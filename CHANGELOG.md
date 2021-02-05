@@ -14,6 +14,7 @@ Framework is completely rewritten.
 - `router` is now simple function that can render pages based on current location path.
 - `html` function returns now `HTMLTemplateElement` and can accept any value.
 - `WebComponent` renamed to `CustomHTMLElement`. Reactive system of new class is now based on `Property` type (like `bind`) and observed attributes.
+- `removed` hook is renamed to `will-unmount`.
 
 ## [1.8.0] - 2020-12-30
 
