@@ -37,7 +37,9 @@ describe('CustomHTMLElement', () => {
 
     const element = document.createElement('my-element2');
 
-    expect(stripComments(element.shadowRoot.innerHTML)).toMatch('<div></div>');
+    expect(stripComments(element.shadowRoot.innerHTML)).toMatch(
+      '<div>null</div>'
+    );
   });
 
   test('updating reactive property should update shadow DOM', () => {

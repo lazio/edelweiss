@@ -23,8 +23,8 @@ import type { Dependency } from './core/dependency';
  * container is rerendered.
  */
 export interface Property {
-  (): Dependency<string, string>;
-  <R>(argument: (value: string) => R): Dependency<string, R>;
+  (): Dependency<null | string, null | string>;
+  <R>(argument: (value: null | string) => R): Dependency<null | string, R>;
   (argument: null | string): void;
 }
 
@@ -111,18 +111,20 @@ function attachReactiveAccessorsTo(target: CustomHTMLElement): void {
 }
 
 function createAccessorFor(target: CustomHTMLElement, property: string): void {
-  const [dependency, update] = bind('');
+  const [dependency, update] = bind<null | string>(
+    target.getAttribute(property)
+  );
 
   Reflect.defineProperty(target, toCamelCase(property), {
     get() {
-      return <R>(value?: null | string | ((value: string) => R)) => {
+      return <R>(value?: null | string | ((value: null | string) => R)) => {
         if (typeof value === 'function') {
           return dependency(value);
         } else if (value === undefined) {
           return dependency();
         } else if (value === null) {
           target.removeAttribute(property);
-          update('');
+          update(null);
         } else {
           target.setAttribute(property, value);
           update(value);
