@@ -52,7 +52,15 @@ export class RegularAttributeBridge implements Bridge {
       const newValue = String(this.dependency._action(value));
       this.node.setAttribute(
         this.name,
-        attributeValue.replace(oldValue, newValue)
+        // Always keep one space on left and right boundary
+        // of value. Useful particularly for class attribute.
+        // If newValue is part of some string, then that
+        // string must be created in _transform_ argument
+        // of `bind` function.
+        attributeValue.replace(
+          new RegExp('\\s*' + oldValue + '\\s*'),
+          ' ' + newValue + ' '
+        )
       );
       callHook(Hooks.UPDATED, this.node);
     }
