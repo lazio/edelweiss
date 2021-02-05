@@ -192,4 +192,36 @@ describe('html', () => {
 
     expect(element).toBeInstanceOf(HTMLParagraphElement);
   });
+
+  test('should not concat class names', () => {
+    const [name, updateName] = bind('bar');
+
+    const template = html` <p class="foo ${name()}"></p> `;
+
+    expect(template.content.firstElementChild.getAttribute('class')).toMatch(
+      /^foo bar$/
+    );
+
+    updateName('baz');
+
+    expect(template.content.firstElementChild.getAttribute('class')).toMatch(
+      /^foo baz$/
+    );
+  });
+
+  test("should not add leading and trailing spaces to attribute's value", () => {
+    const [type, updateType] = bind('text');
+
+    const template = html` <input type="${type()}" /> `;
+
+    expect(template.content.firstElementChild.getAttribute('type')).toMatch(
+      /^text$/
+    );
+
+    updateType('email');
+
+    expect(template.content.firstElementChild.getAttribute('type')).toMatch(
+      /^email$/
+    );
+  });
 });

@@ -57,10 +57,11 @@ export class RegularAttributeBridge implements Bridge {
         // If newValue is part of some string, then that
         // string must be created in _transform_ argument
         // of `bind` function.
-        attributeValue.replace(
-          new RegExp('\\s*' + oldValue + '\\s*'),
-          ' ' + newValue + ' '
-        )
+        attributeValue
+          .replace(new RegExp('\\s*' + oldValue + '\\s*'), ' ' + newValue + ' ')
+          // If value is single, then leading and trailing spaces are
+          // undesirable.
+          .trim()
       );
       callHook(Hooks.UPDATED, this.node);
     }
