@@ -88,13 +88,14 @@ export abstract class CustomHTMLElement extends HTMLElement {
    * method.
    */
   protected attributeChangedCallback(
-    this: CustomHTMLElement & { [property: string]: Property },
     name: string,
     oldValue: string | null,
     newValue: string | null
   ): void {
     if (oldValue !== newValue) {
-      this[toCamelCase(name)](newValue);
+      ((this as unknown) as CustomHTMLElement & {
+        [property: string]: Property;
+      })[toCamelCase(name)](newValue);
     }
   }
 
