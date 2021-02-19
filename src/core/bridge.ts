@@ -135,7 +135,7 @@ export class NodeBridge implements Bridge {
     ) {
       // Cleanup bridges that are pointed to node that will
       // be removed.
-      removeBridgeConnectedTo(this.node.nextSibling);
+      removeBridgesConnectedTo(this.node.nextSibling);
       callHookOnElementWithChildren(
         Hooks['WILL_UNMOUNT'],
         this.node.nextSibling
@@ -150,6 +150,6 @@ export class NodeBridge implements Bridge {
 
 export let bridges: Array<Bridge> = [];
 
-function removeBridgeConnectedTo(node: Node): void {
+function removeBridgesConnectedTo(node: Node): void {
   bridges = bridges.filter((bridge) => !bridge.node.isSameNode(node));
 }
