@@ -40,28 +40,33 @@ export function createContent(
 
         marker = new AttributeMarker(values[index]);
 
-        if (attributeName.startsWith('@')) {
-          previousTemplatePart = previousTemplate.replace(
-            attributeName,
-            EVENT_ATTRIBUTE_PREFIX + attributeName.slice(1)
-          );
-        } else if (attributeName.startsWith('?')) {
-          previousTemplatePart = previousTemplate.replace(
-            attributeName,
-            TOGGLE_ATTRIBUTE_PREFIX + attributeName.slice(1)
-          );
-        } else if (attributeName.startsWith('.')) {
-          previousTemplatePart = previousTemplate.replace(
-            attributeName,
-            PROPERTY_ATTRIBUTE_PREFIX + attributeName.slice(1)
-          );
-        } else if (attributeName.startsWith(':')) {
-          previousTemplatePart = previousTemplate.replace(
-            attributeName,
-            HOOK_ATTRIBUTE_PREFIX + attributeName.slice(1)
-          );
-        } else {
-          previousTemplatePart = previousTemplate;
+        switch (attributeName.charAt(0)) {
+          case '@':
+            previousTemplatePart = previousTemplate.replace(
+              attributeName,
+              EVENT_ATTRIBUTE_PREFIX + attributeName.slice(1)
+            );
+            break;
+          case '?':
+            previousTemplatePart = previousTemplate.replace(
+              attributeName,
+              TOGGLE_ATTRIBUTE_PREFIX + attributeName.slice(1)
+            );
+            break;
+          case '.':
+            previousTemplatePart = previousTemplate.replace(
+              attributeName,
+              PROPERTY_ATTRIBUTE_PREFIX + attributeName.slice(1)
+            );
+            break;
+          case ':':
+            previousTemplatePart = previousTemplate.replace(
+              attributeName,
+              HOOK_ATTRIBUTE_PREFIX + attributeName.slice(1)
+            );
+            break;
+          default:
+            previousTemplatePart = previousTemplate;
         }
       } else {
         marker = new NodeMarker(values[index]);
