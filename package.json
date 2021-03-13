@@ -25,7 +25,7 @@
     "copy:license": "cp LICENSE build/",
     "copy:settings": "cp package.json build/",
     "release": "npm run build; npm publish build/ --access public",
-    "test": "NODE_OPTIONS=--experimental-vm-modules npx jest"
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest"
   },
   "author": "Kapelianovych Yevhen",
   "license": "MIT",
