@@ -7,6 +7,8 @@ Framework is completely rewritten.
 - `future` function that allows to load asynchronous templates.
 - `bind` function that creates reactive DOM bindings.
 - `render` function to export (does not create reactive points of app, only attach html to DOM once).
+- initial language is now user's preffered language (taked from browser).
+- `Translation` interface to describe shape of translation objects.
 
 ### Changed
 
@@ -15,6 +17,14 @@ Framework is completely rewritten.
 - `html` function returns now `HTMLTemplateElement` and can accept any value.
 - `WebComponent` renamed to `CustomHTMLElement`. Reactive system of new class is now based on `Property` type (like `bind`) and observed attributes.
 - `removed` hook is renamed to `will-unmount`.
+- `currentLanguage` variable is renamed to `getCurrentLanguage` function.
+- `currentTags` function is renamed to `getCurrentLanguages`.
+- `addTranslation` function lost second parameter - `initial`.
+
+### Removed
+
+- `i18n` namespace, all inner members are exported as separate functions now.
+- `Languages` type.
 
 ## [1.8.0] - 2020-12-30
 

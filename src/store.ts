@@ -31,14 +31,16 @@ export type Store<T extends object> = {
  * To update value of property, either pass new value or function,
  * that accepts old property value and returns new one.
  */
-export function store<S extends object>(value: S): Store<S> {
+export const store = <S extends Record<string, unknown>>(
+  value: S
+): Store<S> => {
   const listeners: Map<
     keyof S,
     ReadonlyArray<Listener<S[keyof S]>>
   > = new Map();
 
   return new Proxy<Store<S>>((value as unknown) as Store<S>, {
-    get(target: Store<S>, property: keyof S, receiver: unknown) {
+    get(target: Store<S>, property: string, receiver: unknown) {
       return (
         argument?: Mutator<S[keyof S]> | S[keyof S] | keyof S,
         listener?: Listener<S[keyof S]>
@@ -55,7 +57,9 @@ export function store<S extends object>(value: S): Store<S> {
 
             if (!Object.is(oldValue, newValue)) {
               Reflect.set(target, property, newValue, receiver);
-              (listeners.get(property) ?? []).forEach((fn) => fn(newValue));
+              (listeners.get(property as keyof S) ?? []).forEach((fn) =>
+                fn(newValue)
+              );
             }
           }
         } else if (property === 'subscribe') {
@@ -78,4 +82,4 @@ export function store<S extends object>(value: S): Store<S> {
       };
     },
   });
-}
+};

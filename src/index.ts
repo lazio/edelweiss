@@ -1,4 +1,5 @@
 export * from './html';
+export * from './i18n';
 export * from './bind';
 export * from './store';
 export * from './render';
