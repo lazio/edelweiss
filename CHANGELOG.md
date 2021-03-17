@@ -8,6 +8,7 @@ Framework is completely rewritten.
 - `render` function to export (does not create reactive points of app, only attach html to DOM once).
 - initial language is now user's preffered language (taked from browser).
 - `Translation` interface to describe shape of translation objects.
+- `Transformer`, `Mutator` and `Listener` types.
 
 ### Changed
 

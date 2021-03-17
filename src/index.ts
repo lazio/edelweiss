@@ -2,6 +2,7 @@ export * from './html';
 export * from './i18n';
 export * from './bind';
 export * from './store';
+export * from './types';
 export * from './render';
 export * from './router';
 export * from './custom_html_element';

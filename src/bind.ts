@@ -1,5 +1,6 @@
 import { reactive } from './core/reactive';
 import type { Dependency } from './core/dependency';
+import type { Mutator, Transformer } from './types';
 
 /**
  * Creates container for bounded value
@@ -14,7 +15,7 @@ import type { Dependency } from './core/dependency';
  */
 export interface ValueContainerFunction<V> {
   (): Dependency<V, V>;
-  <R>(transform: (value: V) => R): Dependency<V, R>;
+  <R>(transform: Transformer<V, R>): Dependency<V, R>;
 }
 
 /**
@@ -24,7 +25,7 @@ export interface ValueContainerFunction<V> {
  * new value.
  */
 export interface UpdateValueContainerFunction<V> {
-  (value: V | ((old: V) => V)): void;
+  (value: V | Mutator<V>): void;
 }
 
 /**
@@ -47,7 +48,7 @@ export function bind<V>(
     (argument) => {
       bound.value(
         typeof argument === 'function'
-          ? (argument as (old: V) => V)(bound.value())
+          ? (argument as Mutator<V>)(bound.value())
           : argument
       );
     },

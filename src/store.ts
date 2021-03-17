@@ -1,5 +1,4 @@
-export type Listener<A> = (value: A) => void;
-export type Mutator<A> = (old: A) => A;
+import type { Mutator, Listener } from './types';
 
 export interface StoreProperty<V> {
   (): V;
