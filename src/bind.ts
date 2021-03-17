@@ -43,11 +43,11 @@ export function bind<V>(
   const bound = reactive({ value });
 
   return [
-    (fn = (x: V): V => x) => bound.value((value) => fn(value)),
+    (transform = (value: V): V => value) => bound.value(transform),
     (argument) => {
       bound.value(
         typeof argument === 'function'
-          ? bound.value(argument as (old: V) => V).value
+          ? (argument as (old: V) => V)(bound.value())
           : argument
       );
     },

@@ -3,7 +3,6 @@ export * from './i18n';
 export * from './bind';
 export * from './store';
 export * from './render';
-export * from './future';
 export * from './router';
 export * from './custom_html_element';
 

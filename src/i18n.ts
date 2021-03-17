@@ -13,8 +13,7 @@ const language = reactive({ value: window.navigator.language });
 export const setLanguage = (code: string): void => language.value(code);
 
 /** Return current translation language. */
-export const getCurrentLanguage = (): string =>
-  language.value((code) => code).value;
+export const getCurrentLanguage = (): string => language.value();
 
 /** Add translation object as supported language. */
 export const addTranslation = (

@@ -4,7 +4,6 @@ Framework is completely rewritten.
 
 ### Added
 
-- `future` function that allows to load asynchronous templates.
 - `bind` function that creates reactive DOM bindings.
 - `render` function to export (does not create reactive points of app, only attach html to DOM once).
 - initial language is now user's preffered language (taked from browser).

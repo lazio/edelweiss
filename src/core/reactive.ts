@@ -3,6 +3,7 @@ import { bridges } from './bridge';
 import { Action, Dependency } from './dependency';
 
 interface ReactiveProperty<V> {
+  (): V;
   (value: V): void;
   <R>(value: Action<V, R>): Dependency<V, R>;
 }
@@ -25,7 +26,7 @@ export function reactive<T extends object>(obj: T): Reactive<T> {
 
   return new Proxy<Reactive<T>>((obj as unknown) as Reactive<T>, {
     get(target: Reactive<T>, property: string, receiver: unknown) {
-      return <R>(value: Action<T[keyof T], R> | T[keyof T]) => {
+      return <R>(value?: Action<T[keyof T], R> | T[keyof T]) => {
         if (property in target) {
           const valueInState: T[keyof T] = Reflect.get(
             target,
@@ -33,7 +34,9 @@ export function reactive<T extends object>(obj: T): Reactive<T> {
             receiver
           );
 
-          if (typeof value === 'function') {
+          if (value === undefined) {
+            return valueInState;
+          } else if (typeof value === 'function') {
             return new Dependency<T[keyof T], R>(
               reactiveId,
               property,
