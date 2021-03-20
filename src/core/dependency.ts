@@ -40,11 +40,7 @@ export class Dependency<V, R> {
   ) {
     this._id = id;
     this._property = property;
-    this._action = (value: V): R => {
-      const result = action(value);
-      this.value = result;
-      return result;
-    };
+    this._action = (value: V): R => (this.value = action(value));
     this.value = action(initialValue);
   }
 }
