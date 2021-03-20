@@ -1,4 +1,3 @@
-import { isElement } from '../utilities/is_element';
 import { isComment } from '../utilities/is_comment';
 import { processHook } from './hook';
 import { processNodes } from './nodes';
@@ -33,23 +32,21 @@ export function processTemplate(
 
   let currentNode: FilteredNode | null = null;
   while ((currentNode = walker.nextNode() as FilteredNode | null) !== null) {
-    if (isComment(currentNode)) {
-      processNodes(currentNode, walker);
-    } else if (isElement(currentNode)) {
-      Array.from(currentNode.attributes).forEach(({ name, value }) => {
-        if (name.startsWith(EVENT_ATTRIBUTE_PREFIX)) {
-          processEventListener(currentNode as Element, name, value);
-        } else if (name.startsWith(TOGGLE_ATTRIBUTE_PREFIX)) {
-          processToggleAttribute(currentNode as Element, name, value);
-        } else if (name.startsWith(PROPERTY_ATTRIBUTE_PREFIX)) {
-          processProperty(currentNode as Element, name, value);
-        } else if (name.startsWith(HOOK_ATTRIBUTE_PREFIX)) {
-          processHook(currentNode as Element, name, value);
-        } else {
-          processRegularAttribute(currentNode as Element, name, value);
-        }
-      });
-    }
+    isComment(currentNode)
+      ? processNodes(currentNode, walker)
+      : Array.from(currentNode.attributes).forEach(({ name, value }) => {
+          if (name.startsWith(EVENT_ATTRIBUTE_PREFIX)) {
+            processEventListener(currentNode as Element, name, value);
+          } else if (name.startsWith(TOGGLE_ATTRIBUTE_PREFIX)) {
+            processToggleAttribute(currentNode as Element, name, value);
+          } else if (name.startsWith(PROPERTY_ATTRIBUTE_PREFIX)) {
+            processProperty(currentNode as Element, name, value);
+          } else if (name.startsWith(HOOK_ATTRIBUTE_PREFIX)) {
+            processHook(currentNode as Element, name, value);
+          } else {
+            processRegularAttribute(currentNode as Element, name, value);
+          }
+        });
   }
 
   return template;
