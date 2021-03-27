@@ -101,9 +101,9 @@ describe('html', () => {
   test('should invoke hook if element is mounted to DOM', () => {
     let isButtonMounted = false;
 
-    const template = html`
-      <button :mounted=${() => (isButtonMounted = true)}>Mounted</button>
-    `;
+    const template = html`<button :mounted=${() => (isButtonMounted = true)}>
+      Mounted
+    </button>`;
 
     render(document.body, template);
 

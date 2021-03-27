@@ -1,4 +1,4 @@
-# [2.0.0]
+# [2.0.0-alpha1] - 2020-03-
 
 Framework is completely rewritten.
 
@@ -19,7 +19,7 @@ Framework is completely rewritten.
 - `removed` hook is renamed to `will-unmount`.
 - `currentLanguage` variable is renamed to `getCurrentLanguage` function.
 - `currentTags` function is renamed to `getCurrentLanguages`.
-- `addTranslation` function lost second parameter - `initial`.
+- `i18n.add` function was renamed to `addTranslation` and it lost second parameter - `initial`.
 
 ### Removed
 

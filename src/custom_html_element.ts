@@ -1,6 +1,7 @@
 import { bind } from './bind';
 import { render } from './render';
 import type { Dependency } from './core/dependency';
+import type { Transformer } from './types';
 
 /**
  * Describes type of reactive property.
@@ -24,8 +25,8 @@ import type { Dependency } from './core/dependency';
  */
 export interface Property {
   (): Dependency<null | string, null | string>;
-  <R>(argument: (value: null | string) => R): Dependency<null | string, R>;
-  (argument: null | string): void;
+  <R>(transformer: Transformer<null | string, R>): Dependency<null | string, R>;
+  (value: null | string): void;
 }
 
 /**
@@ -118,7 +119,7 @@ function createAccessorFor(target: CustomHTMLElement, property: string): void {
 
   Reflect.defineProperty(target, toCamelCase(property), {
     get() {
-      return <R>(value?: null | string | ((value: null | string) => R)) => {
+      return <R>(value?: null | string | Transformer<null | string, R>) => {
         if (typeof value === 'function') {
           return dependency(value);
         } else if (value === undefined) {
