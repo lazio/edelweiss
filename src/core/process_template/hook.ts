@@ -2,11 +2,11 @@ import { markers, removeMarker } from '../marker';
 import { HOOK_ATTRIBUTE_PREFIX } from '../constants';
 import { Hooks, registerHook, Hook } from '../hooks';
 
-export function processHook(
+export const processHook = (
   node: Element,
   attributeName: string,
   attributeValue: string
-): void {
+): void => {
   const hookMarker = markers.find(
     (marker) => attributeValue === marker.toString()
   );
@@ -27,4 +27,4 @@ export function processHook(
     node.removeAttribute(attributeName);
     removeMarker(hookMarker);
   }
-}
+};

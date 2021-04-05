@@ -9,9 +9,8 @@ import { processTemplate } from './core/process_template';
  * inside template, after adopting it to main `document`
  * these styles will not be scoped by default.
  */
-export function html(
+export const html = (
   statics: TemplateStringsArray,
   ...values: ReadonlyArray<unknown>
-): HTMLTemplateElement {
-  return processTemplate(createTemplate(createContent(statics, ...values)));
-}
+): HTMLTemplateElement =>
+  processTemplate(createTemplate(createContent(statics, ...values)));

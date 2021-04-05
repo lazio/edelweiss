@@ -3,6 +3,46 @@ import { render } from './render';
 import type { Dependency } from './core/dependency';
 import type { Transformer } from './types';
 
+/** Converts kebab-case to camelCase. */
+const toCamelCase = (name: string): string =>
+  name.replace(/-(\w)/g, (match, letter: string) => letter.toUpperCase());
+
+const attachReactiveAccessorsTo = (target: CustomHTMLElement): void => {
+  const constructor = target.constructor as typeof CustomHTMLElement;
+
+  constructor.observedAttributes.forEach((property) =>
+    createAccessorFor(target, property)
+  );
+};
+
+const createAccessorFor = (
+  target: CustomHTMLElement,
+  property: string
+): void => {
+  const [extract, update] = bind<null | string>(target.getAttribute(property));
+
+  Reflect.defineProperty(target, toCamelCase(property), {
+    get() {
+      return <R>(value?: null | string | Transformer<null | string, R>) => {
+        if (typeof value === 'function') {
+          return extract(value);
+        } else if (value === undefined) {
+          return extract();
+        } else if (value === null) {
+          target.removeAttribute(property);
+          update(null);
+        } else {
+          target.setAttribute(property, value);
+          update(value);
+        }
+      };
+    },
+    set() {},
+    enumerable: true,
+    configurable: true,
+  });
+};
+
 /**
  * Describes type of reactive property.
  * Property can be defined in class via `declare` keyword.
@@ -102,46 +142,4 @@ export abstract class CustomHTMLElement extends HTMLElement {
 
   /** Defines inner DOM of custom element as Shadow DOM. */
   protected abstract template(): HTMLTemplateElement;
-}
-
-function attachReactiveAccessorsTo(target: CustomHTMLElement): void {
-  const constructor = target.constructor as typeof CustomHTMLElement;
-
-  constructor.observedAttributes.forEach((property) =>
-    createAccessorFor(target, property)
-  );
-}
-
-function createAccessorFor(target: CustomHTMLElement, property: string): void {
-  const [dependency, update] = bind<null | string>(
-    target.getAttribute(property)
-  );
-
-  Reflect.defineProperty(target, toCamelCase(property), {
-    get() {
-      return <R>(value?: null | string | Transformer<null | string, R>) => {
-        if (typeof value === 'function') {
-          return dependency(value);
-        } else if (value === undefined) {
-          return dependency();
-        } else if (value === null) {
-          target.removeAttribute(property);
-          update(null);
-        } else {
-          target.setAttribute(property, value);
-          update(value);
-        }
-      };
-    },
-    set() {},
-    enumerable: true,
-    configurable: true,
-  });
-}
-
-/** Converts kebab-case to camelCase. */
-function toCamelCase(name: string): string {
-  return name.replace(/-(\w)/g, (match, letter: string) =>
-    letter.toUpperCase()
-  );
 }

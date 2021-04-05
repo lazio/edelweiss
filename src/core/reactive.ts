@@ -1,6 +1,6 @@
 import { uid } from './utilities/uid';
 import { bridges } from './bridge';
-import { Action, Dependency } from './dependency';
+import { Action, createDependency, Dependency } from './dependency';
 
 interface ReactiveProperty<V> {
   (): V;
@@ -19,7 +19,7 @@ type Reactive<T extends object> = {
  * as argument to needed property. In order to emit
  * change - provide a value.
  */
-export function reactive<T extends object>(obj: T): Reactive<T> {
+export const reactive = <T extends object>(obj: T): Reactive<T> => {
   // Store reactive's id to touch only those bridges,
   // that have dependencies from _obj_'s properties.
   const reactiveId = uid();
@@ -37,7 +37,7 @@ export function reactive<T extends object>(obj: T): Reactive<T> {
           if (value === undefined) {
             return valueInState;
           } else if (typeof value === 'function') {
-            return new Dependency<T[keyof T], R>(
+            return createDependency<T[keyof T], R>(
               reactiveId,
               property,
               value as Action<T[keyof T], R>,
@@ -47,10 +47,8 @@ export function reactive<T extends object>(obj: T): Reactive<T> {
             if (!Object.is(value, valueInState)) {
               Reflect.set(target, property, value, receiver);
               bridges
-                .filter(
-                  (bridge) =>
-                    bridge.dependency._id === reactiveId &&
-                    bridge.dependency._property === property
+                .filter((bridge) =>
+                  bridge.dependency._owns(reactiveId, property)
                 )
                 .forEach((bridge) => bridge.update(value));
             }
@@ -59,4 +57,4 @@ export function reactive<T extends object>(obj: T): Reactive<T> {
       };
     },
   });
-}
+};

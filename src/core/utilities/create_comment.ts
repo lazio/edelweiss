@@ -1,3 +1,1 @@
-export function createComment(content: string): string {
-  return `<!--${content}-->`;
-}
+export const createComment = (content: string): string => `<!--${content}-->`;

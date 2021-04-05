@@ -3,11 +3,11 @@ import { markers, removeMarker } from '../marker';
 import { bridges, PropertyBridge } from '../bridge';
 import { PROPERTY_ATTRIBUTE_PREFIX } from '../constants';
 
-export function processProperty(
+export const processProperty = (
   currentNode: Element,
   name: string,
   value: string
-): void {
+): void => {
   const propertyMarker = markers.find((marker) => value === marker.toString());
 
   if (propertyMarker !== undefined) {
@@ -35,4 +35,4 @@ export function processProperty(
     currentNode.removeAttribute(name);
     removeMarker(propertyMarker);
   }
-}
+};

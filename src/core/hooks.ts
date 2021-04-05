@@ -1,4 +1,4 @@
-import { isElement } from './utilities/is_element';
+import { isElement } from './utilities/node_type';
 
 /**
  * Function that invokes on some action made with element.
@@ -20,20 +20,18 @@ const hookMaps = {
   [Hooks['WILL_UNMOUNT']]: new WeakMap<Element, Hook>(),
 } as const;
 
-export function callHook(name: Hooks, node: Node): void {
-  if (isElement(node)) {
-    hookMaps[name].get(node)?.(node);
-  }
-}
+export const callHook = (name: Hooks, node: Node): void => {
+  isElement(node) && hookMaps[name].get(node)?.(node);
+};
 
-export function registerHook(name: Hooks, node: Element, hook: Hook): void {
+export const registerHook = (name: Hooks, node: Element, hook: Hook): void => {
   hookMaps[name].set(node, hook);
-}
+};
 
-export function callHookOnElementWithChildren(
+export const callHookOnElementWithChildren = (
   name: Hooks,
   element: Node
-): void {
+): void => {
   callHook(name, element);
 
   if (isElement(element) && element.childElementCount > 0) {
@@ -41,4 +39,4 @@ export function callHookOnElementWithChildren(
       callHookOnElementWithChildren(name, child);
     }
   }
-}
+};

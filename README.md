@@ -18,7 +18,7 @@ For easier creation of `edelweiss` powered apps, use _Edelweiss CLI_. More info 
 
 ## Getting started
 
-As many other libraries do, Edelweiss lets you define HTML markup in declarative way.
+As many other libraries do, Edelweiss lets you build HTML in declarative way.
 
 ### HTML
 
@@ -124,7 +124,7 @@ That's it 👐!
 
 The main method you should provide - `template`. It should return HTML that will be attached to [ShadowDOM (opened)](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_shadow_DOM).
 
-For communicating with outer world you can define reactive properties. This is _camelCase_d representation of declared `observedAttributes` getter.
+For communicating with outer world you can define reactive properties. This is _camelCased_ representation of declared `observedAttributes` getter.
 
 ```ts
 class MyCustomElement extends CustomHTMLElement {
@@ -428,4 +428,4 @@ const codes = getSupportedLanguages();
 
 ## Word from author
 
-Have fun!
+Have fun! ✌️

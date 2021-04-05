@@ -2,15 +2,15 @@ type Policy = {
   createHTML: (text: string) => string;
 };
 
-declare namespace window {
+declare namespace globalThis {
   var trustedTypes: {
     createPolicy: (name: string, rules: Policy) => Policy;
   };
 }
 
 // Polyfill for trusted types
-if (typeof window.trustedTypes === 'undefined') {
-  window.trustedTypes = {
+if (typeof globalThis.trustedTypes === 'undefined') {
+  globalThis.trustedTypes = {
     createPolicy(name: string, rules: Policy) {
       return rules;
     },
@@ -19,7 +19,7 @@ if (typeof window.trustedTypes === 'undefined') {
 
 // Policy of "edelweiss" framework for preventing XSS vulnerability.
 // More info [here](https://github.com/w3c/webappsec-trusted-types)
-export const edelweissPolicy: Policy = window.trustedTypes.createPolicy(
+export const edelweissPolicy: Policy = globalThis.trustedTypes.createPolicy(
   'edelweiss',
   {
     createHTML(text: string) {

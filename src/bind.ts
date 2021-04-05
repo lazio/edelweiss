@@ -13,7 +13,7 @@ import type { Mutator, Transformer } from './types';
  * If functions is invoked without argument,
  * then value is returned as is.
  */
-export interface ValueContainerFunction<V> {
+export interface Extractor<V> {
   (): Dependency<V, V>;
   <R>(transform: Transformer<V, R>): Dependency<V, R>;
 }
@@ -24,7 +24,7 @@ export interface ValueContainerFunction<V> {
  * version. Also function can accept just a
  * new value.
  */
-export interface UpdateValueContainerFunction<V> {
+export interface Updater<V> {
   (value: V | Mutator<V>): void;
 }
 
@@ -35,12 +35,9 @@ export interface UpdateValueContainerFunction<V> {
  * _update_ function can accept new value or calculate
  * new value based on old one.
  */
-export function bind<V>(
+export const bind = <V>(
   value: V
-): readonly [
-  container: ValueContainerFunction<V>,
-  update: UpdateValueContainerFunction<V>
-] {
+): readonly [extract: Extractor<V>, update: Updater<V>] => {
   const bound = reactive({ value });
 
   return [
@@ -53,4 +50,4 @@ export function bind<V>(
       );
     },
   ];
-}
+};

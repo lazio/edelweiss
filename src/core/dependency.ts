@@ -1,3 +1,5 @@
+import { isObject } from './utilities/checks';
+
 /**
  * Is a instruction to be accomplished in response
  * of change value of reactive state.
@@ -5,20 +7,7 @@
 export type Action<A, R> = (value: A) => R;
 
 /** Define binding between reactive property and needed action. */
-export class Dependency<V, R> {
-  /**
-   * Holds reactive's id to distinguish reactives with
-   * similar property names.
-   */
-  readonly _id: string;
-  /**
-   * Name of the property of state object,
-   * change of which will cause invoking _action_ function.
-   * **Not for direct use.**
-   */
-  readonly _property: string;
-  /** Dependent from _property_ procedure. **Not for direct use.**  */
-  readonly _action: Action<V, R>;
+export interface Dependency<V, R> {
   /**
    * Store most recent result of _action_
    * method.
@@ -30,21 +19,51 @@ export class Dependency<V, R> {
    * Assigning value to this property will not have
    * any effect.
    */
-  value: R;
-
-  constructor(
-    id: string,
-    property: string,
-    action: Action<V, R>,
-    initialValue: V
-  ) {
-    this._id = id;
-    this._property = property;
-    this._action = (value: V): R => (this.value = action(value));
-    this.value = action(initialValue);
-  }
+  readonly value: R;
+  /** Tells that this object is type of `Dependency`. */
+  readonly _isDependency: boolean;
+  /**
+   * Tells if _id_ and _property_ belongs to this
+   * `Dependency`.
+   */
+  _owns: (id: string, property: string) => boolean;
+  /**
+   * Dependency action between property's value and
+   * value in DOM.
+   */
+  _handle: (value: V) => R;
 }
 
-export function isDependency<V, R>(value: unknown): value is Dependency<V, R> {
-  return value instanceof Dependency;
-}
+/** Initializes `Dependency`. */
+export const createDependency = <V, R>(
+  /**
+   * Holds reactive's id to distinguish reactives with
+   * similar property names.
+   */
+  id: string,
+  /**
+   * Name of the state's property,
+   * change of which will cause invoking _action_ function.
+   */
+  property: string,
+  /** Dependent from _property_ procedure.  */
+  action: Action<V, R>,
+  initialValue: V
+) => {
+  let _value = action(initialValue);
+
+  return {
+    _owns: (dependencyId: string, dependencyPropertyName: string) =>
+      id === dependencyId && property === dependencyPropertyName,
+    _handle: (value: V) => (_value = action(value)),
+    get value(): R {
+      return _value;
+    },
+    get _isDependency(): boolean {
+      return true;
+    },
+  };
+};
+
+export const isDependency = <V, R>(value: unknown): value is Dependency<V, R> =>
+  isObject(value) && (value as Dependency<V, R>)._isDependency;

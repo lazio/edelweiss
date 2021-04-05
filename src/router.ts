@@ -1,7 +1,18 @@
 import { html } from './html';
 import { reactive } from './core/reactive';
 import type { Dependency } from './core/dependency';
-import type { SecureHTMLNode } from './core/bridge';
+import type { Child } from './core/bridge';
+
+/**
+ * RegExp that match against string and take
+ * inner part of path without `^` and `$`.
+ * Needed for situations when user can provide
+ * `^` or `$`, but not both at the same time.
+ */
+const START_END_REGEXP = /^\^*?([^$^]+)\$*?$/;
+
+const patternToRegExp = (pattern: string): RegExp =>
+  new RegExp(pattern.replace(START_END_REGEXP, '^$1$'));
 
 /** Shape of route. */
 export interface Route {
@@ -18,7 +29,7 @@ export interface Route {
    */
   readonly notFound?: boolean;
   /** @param parameters regexp's capturing groups. */
-  template(...parameters: ReadonlyArray<string>): SecureHTMLNode;
+  template(...parameters: ReadonlyArray<string>): Child;
 }
 
 // If user will not set custom not found route,
@@ -39,10 +50,10 @@ const page = reactive({ url: window.location.pathname });
  * _pattern_ will be converted to `RegExp` and
  * matched agains a whole URL.
  */
-export function router(
+export const router = (
   ...routes: ReadonlyArray<Route>
-): Dependency<string, SecureHTMLNode> {
-  return page.url((path) => {
+): Dependency<string, Child> =>
+  page.url((path) => {
     const route =
       routes.find((route) => patternToRegExp(route.pattern).test(path)) ??
       routes.find((route) => route.notFound) ??
@@ -54,7 +65,6 @@ export function router(
       ...(patternToRegExp(route.pattern).exec(path) ?? []).slice(1)
     );
   });
-}
 
 /**
  * Navigates to _path_.
@@ -62,9 +72,7 @@ export function router(
  * then route with `notFound` property will
  * be rendered. Otherwise - default _not found_ route.
  */
-export function to(path: string): void {
-  page.url(path);
-}
+export const to = (path: string): void => page.url(path);
 
 // Handles routing that are accomplished with browser's buttons
 // or through _History API_:
@@ -75,15 +83,3 @@ window.addEventListener('popstate', (event: PopStateEvent) => {
     to(event.state.path);
   }
 });
-
-/**
- * RegExp that match against string and take
- * inner part of path without `^` and `$`.
- * Needed for situations when user can provide
- * `^` or `$`, but not both at the same time.
- */
-const START_END_REGEXP = /^\^*?([^$^]+)\$*?$/;
-
-function patternToRegExp(pattern: string): RegExp {
-  return new RegExp(pattern.replace(START_END_REGEXP, '^$1$'));
-}

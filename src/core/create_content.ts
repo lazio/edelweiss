@@ -1,10 +1,10 @@
+import { Marker, markers, NodeMarker, AttributeMarker } from './marker';
 import {
   HOOK_ATTRIBUTE_PREFIX,
   EVENT_ATTRIBUTE_PREFIX,
   TOGGLE_ATTRIBUTE_PREFIX,
   PROPERTY_ATTRIBUTE_PREFIX,
 } from './constants';
-import { Marker, markers, NodeMarker, AttributeMarker } from './marker';
 
 /**
  * This RegExp has two capturing groups:
@@ -18,11 +18,11 @@ const PRECEEDING_ATTRIBUTE_REGEXP = /(\S+)=["']?((?:.(?!["']?\s+(?:\S+)=|\s*\/?[
  * inserts markers for values: either static or dynamic. Markers are
  * differs by position - attribute or node.
  */
-export function createContent(
+export const createContent = (
   statics: TemplateStringsArray,
   ...values: ReadonlyArray<unknown>
-): string {
-  return statics.reduce((all, current, index) => {
+): string =>
+  statics.reduce((all, current, index) => {
     const previousTemplate = all + current;
 
     // Statics is always greater by one then values.
@@ -78,4 +78,3 @@ export function createContent(
       return previousTemplatePart + marker.toString();
     }
   }, '');
-}

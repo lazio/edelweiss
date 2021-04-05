@@ -1,7 +1,12 @@
 import type { Mutator, Listener } from './types';
 
 export interface StoreProperty<V> {
+  /** Gets value from store. */
   (): V;
+  /**
+   * Updates value in store either with completely new value
+   * or with _mutator_ function.
+   */
   (value: V | Mutator<V>): void;
 }
 

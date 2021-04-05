@@ -3,11 +3,11 @@ import { markers, removeMarker } from '../marker';
 import { TOGGLE_ATTRIBUTE_PREFIX } from '../constants';
 import { bridges, ToggleAttributeBridge } from '../bridge';
 
-export function processToggleAttribute(
+export const processToggleAttribute = (
   currentNode: Element,
   name: string,
   value: string
-): void {
+): void => {
   const toggleMarker = markers.find((marker) => value === marker.toString());
 
   if (toggleMarker !== undefined) {
@@ -35,4 +35,4 @@ export function processToggleAttribute(
     currentNode.removeAttribute(name);
     removeMarker(toggleMarker);
   }
-}
+};

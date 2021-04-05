@@ -1,10 +1,10 @@
 import { uid } from '../utilities/uid';
-import { isIterable } from '../utilities/is_iterable';
+import { isIterable } from '../utilities/checks';
 import { isDependency } from '../dependency';
 import { adoptToNodes } from '../utilities/adopt_to_nodes';
 import { createComment } from '../utilities/create_comment';
 import { markers, removeMarker } from '../marker';
-import { bridges, NodeBridge, SecureHTMLNode } from '../bridge';
+import { bridges, NodeBridge, Child } from '../bridge';
 
 export function processNodes(currentNode: Comment, walker: TreeWalker): void {
   const nodeMarker = markers.find(
@@ -37,7 +37,7 @@ function processValue(
   value: unknown
 ): ReadonlyArray<ChildNode> {
   // If marker is Dependency - set up reactive binding.
-  if (isDependency<unknown, SecureHTMLNode>(value)) {
+  if (isDependency<unknown, Child>(value)) {
     const endNode = document.createComment(`{{${uid()}}}`);
     const nodeBridge = new NodeBridge(currentNode, value, endNode);
 

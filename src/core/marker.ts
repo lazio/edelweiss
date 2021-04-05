@@ -32,6 +32,6 @@ export class NodeMarker implements Marker {
 
 export let markers: Array<Marker> = [];
 
-export function removeMarker(marker: Marker): void {
+export const removeMarker = (marker: Marker): void => {
   markers = markers.filter((item) => item !== marker);
-}
+};

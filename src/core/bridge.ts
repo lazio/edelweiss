@@ -1,4 +1,4 @@
-import { isIterable } from './utilities/is_iterable';
+import { isIterable } from './utilities/checks';
 import { adoptToNodes } from './utilities/adopt_to_nodes';
 import { callHook, callHookOnElementWithChildren, Hooks } from './hooks';
 import type { Dependency } from './dependency';
@@ -9,7 +9,7 @@ import type { Dependency } from './dependency';
  * node and `HTMLTemplateElement`'s children will be
  * adopted to outer document.
  */
-export type SecureHTMLNode =
+export type Child =
   | string
   | HTMLTemplateElement
   | Iterable<string | HTMLTemplateElement>;
@@ -30,6 +30,12 @@ export interface Bridge {
   update(value: unknown): void;
 }
 
+export let bridges: Array<Bridge> = [];
+
+const removeBridgesConnectedTo = (node: Node): void => {
+  bridges = bridges.filter((bridge) => !bridge.node.isSameNode(node));
+};
+
 export class RegularAttributeBridge implements Bridge {
   readonly node: Element;
   readonly name: string;
@@ -49,7 +55,7 @@ export class RegularAttributeBridge implements Bridge {
     const attributeValue = this.node.getAttribute(this.name);
     if (attributeValue !== null) {
       const oldValue = String(this.dependency.value);
-      const newValue = String(this.dependency._action(value));
+      const newValue = String(this.dependency._handle(value));
       this.node.setAttribute(
         this.name,
         // Always keep one space on left and right boundary
@@ -84,7 +90,7 @@ export class ToggleAttributeBridge implements Bridge {
   }
 
   update(value: unknown): void {
-    Boolean(this.dependency._action(value))
+    Boolean(this.dependency._handle(value))
       ? this.node.setAttribute(this.name, '')
       : this.node.removeAttribute(this.name);
     callHook(Hooks.UPDATED, this.node);
@@ -109,7 +115,7 @@ export class PropertyBridge implements Bridge {
   update(value: unknown): void {
     (this.node as Element & { [property: string]: unknown })[
       this.name
-    ] = this.dependency._action(value);
+    ] = this.dependency._handle(value);
     callHook(Hooks.UPDATED, this.node);
   }
 }
@@ -117,12 +123,12 @@ export class PropertyBridge implements Bridge {
 export class NodeBridge implements Bridge {
   constructor(
     readonly node: Comment,
-    readonly dependency: Dependency<unknown, SecureHTMLNode>,
+    readonly dependency: Dependency<unknown, Child>,
     readonly endNode: Comment
   ) {}
 
   update(value: unknown): void {
-    const changedValue = this.dependency._action(value);
+    const changedValue = this.dependency._handle(value);
     const nodes = isIterable(changedValue)
       ? Array.from(changedValue)
           .map(adoptToNodes)
@@ -146,10 +152,4 @@ export class NodeBridge implements Bridge {
     this.node.after(...nodes);
     nodes.forEach((node) => callHookOnElementWithChildren(Hooks.MOUNTED, node));
   }
-}
-
-export let bridges: Array<Bridge> = [];
-
-function removeBridgesConnectedTo(node: Node): void {
-  bridges = bridges.filter((bridge) => !bridge.node.isSameNode(node));
 }

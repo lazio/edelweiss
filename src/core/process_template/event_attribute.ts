@@ -1,11 +1,11 @@
 import { markers, removeMarker } from '../marker';
 import { EVENT_ATTRIBUTE_PREFIX } from '../constants';
 
-export function processEventListener(
+export const processEventListener = (
   currentNode: Element,
   name: string,
   value: string
-): void {
+): void => {
   const eventMarker = markers.find((marker) => value === marker.toString());
 
   if (eventMarker !== undefined) {
@@ -20,4 +20,4 @@ export function processEventListener(
     currentNode.removeAttribute(name);
     removeMarker(eventMarker);
   }
-}
+};

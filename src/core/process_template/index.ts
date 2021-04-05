@@ -1,4 +1,4 @@
-import { isComment } from '../utilities/is_comment';
+import { isComment } from '../utilities/node_type';
 import { processHook } from './hook';
 import { processNodes } from './nodes';
 import { processProperty } from './property';
@@ -22,9 +22,9 @@ type FilteredNode = Element | Comment;
  *     Here bridges are established.
  *  3. Removing marker and relative unneeded stuff (special attributes).
  */
-export function processTemplate(
+export const processTemplate = (
   template: HTMLTemplateElement
-): HTMLTemplateElement {
+): HTMLTemplateElement => {
   const walker = document.createTreeWalker(
     template.content,
     NodeFilter.SHOW_ELEMENT + NodeFilter.SHOW_COMMENT
@@ -50,4 +50,4 @@ export function processTemplate(
   }
 
   return template;
-}
+};
